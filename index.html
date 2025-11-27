@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리들여행사 - 효돈동 역대주민자치위원장님 VIP 투어</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow-x: hidden;
+            word-break: keep-all;
+        }
+        .font-serif {
+            font-family: 'Noto Serif KR', serif;
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://content.paulreiffer.com/wp-content/uploads/2015/09/Lujiazui-Shanghai-Pudong-Skyline-Sunset-Oriental-Pearl-Tower-China-City-Cityscape-Flare-Landscape-Paul-Reiffer-Photographer.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: #ef4444;
+        }
+        
+        /* Card Interactive Effects */
+        .spot-card, .food-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .spot-card:hover, .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        .spot-card:active, .food-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Touch Hint Badge */
+        .touch-hint {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Modal */
+        .modal-container {
+            transition: all 0.3s ease-in-out;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            display: none; /* Hidden by default */
+            background-color: #000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .video-wrapper iframe, 
+        .video-thumbnail {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .video-thumbnail {
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .play-button {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 0, 0, 0.9); /* YouTube Red */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        .play-button::after {
+            content: '';
+            width: 0; 
+            height: 0; 
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 16px solid white;
+            margin-left: 4px;
+        }
+        .video-thumbnail:hover .play-button {
+            transform: scale(1.1);
+            background-color: #ff0000;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
+        
+        /* Floating Button Animation */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.33); }
+            80%, 100% { opacity: 0; }
+        }
+        .pulse-ring::before {
+            content: ''; position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+            background-color: #ef4444; border-radius: 50%; z-index: -1;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <!-- 우리들여행사 로고 (강원경 대표님) -->
+                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain">
+            </a>
+            
+            <div class="hidden md:flex space-x-6 font-medium text-gray-700 text-sm lg:text-base">
+                <a href="#about" class="hover:text-red-500 transition">핵심 포인트</a>
+                <a href="#day1" class="hover:text-red-500 transition">1일차</a>
+                <a href="#day2" class="hover:text-red-500 transition">2일차</a>
+                <a href="#day3" class="hover:text-red-500 transition">3일차</a>
+                <a href="#hotel" class="hover:text-red-500 transition">호텔/식사</a>
+                <a href="tel:010-4025-9889" class="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition shadow-lg flex items-center gap-2">
+                    <i class="fas fa-phone-alt"></i> VIP 상담
+                </a>
+            </div>
+
+            <div class="md:hidden flex items-center gap-4">
+                <a href="tel:010-4025-9889" class="text-red-600 text-2xl animate-pulse"><i class="fas fa-phone-square-alt"></i></a>
+                <button class="text-gray-700" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"><i class="fas fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="flex flex-col p-4 space-y-3">
+                <a href="#about" class="block text-gray-700">핵심 포인트</a>
+                <a href="#day1" class="block text-gray-700">1일차 일정</a>
+                <a href="#day2" class="block text-gray-700">2일차 일정</a>
+                <a href="#day3" class="block text-gray-700">3일차 일정</a>
+                <a href="#hotel" class="block text-gray-700">호텔 및 식사</a>
+                <a href="tel:010-4025-9889" class="block text-red-600 font-bold bg-red-50 p-2 rounded text-center"><i class="fas fa-phone mr-2"></i> 강원경 대표 직통전화</a>
+            </div>
+        </div>
+    </nav>
+
+    <a href="tel:010-4025-9889" class="fixed bottom-6 right-6 z-40 bg-red-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-red-700 transition pulse-ring md:hidden">
+        <i class="fas fa-phone-alt text-2xl"></i>
+    </a>
+
+    <!-- Hero -->
+    <header class="hero-bg h-screen flex items-center justify-center text-center px-4 relative">
+        <div class="text-white z-10" data-aos="fade-up">
+            <div class="inline-block border border-yellow-400 rounded-full px-4 py-1 mb-4 bg-black/30 backdrop-blur-sm">
+                <span class="text-yellow-400 font-bold tracking-wider text-sm md:text-base">VIP SPECIAL INVITATION</span>
+            </div>
+            <h2 class="text-xl md:text-3xl font-light mb-2 text-white font-serif">효돈동 역대주민자치위원장님을 위한</h2>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-shadow leading-tight font-serif">
+                상해, 가흥, 복원, 소주<br><span class="text-red-500">고품격 3일</span> 여행
+            </h1>
+            <p class="text-base md:text-xl font-light mb-8 max-w-2xl mx-auto opacity-90 text-shadow">
+                지역 발전을 위해 헌신하신 위원장님들의 노고에 감사드리며,<br>오직 위원장님들만을 위해 준비한 최고의 예우와 품격으로 모시겠습니다.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/30">
+                    <span class="block text-sm text-gray-200">출발일</span><span class="font-bold text-lg">2026. 01. 27 (화)</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/30">
+                    <span class="block text-sm text-gray-200">항공편</span><span class="font-bold text-lg">춘추항공 (제주 직항)</span>
+                </div>
+            </div>
+            <div class="mt-12 animate-bounce">
+                <a href="#about" class="text-white text-3xl opacity-80 hover:opacity-100 transition"><i class="fas fa-chevron-down"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- About -->
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 section-title">Travel Highlights</h2>
+                <p class="text-gray-600">위원장님들의 편안하고 특별한 여행을 위해 준비했습니다.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 mx-auto bg-red-50 rounded-full flex items-center justify-center mb-6 text-red-600"><i class="fas fa-ban text-2xl"></i></div>
+                    <h3 class="text-xl font-bold mb-3">3 NO 정책</h3>
+                    <p class="text-gray-500 text-sm">NO 쇼핑, NO 옵션<br>현지 추가 비용 부담 없는<br>깔끔하고 투명한 여행</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center mb-6 text-blue-600"><i class="fas fa-camera text-2xl"></i></div>
+                    <h3 class="text-xl font-bold mb-3">완벽한 포토 스팟</h3>
+                    <p class="text-gray-500 text-sm">수향마을의 낭만적인 야경과<br>상해의 현대적 스카이라인 조망</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 mx-auto bg-yellow-50 rounded-full flex items-center justify-center mb-6 text-yellow-600"><i class="fas fa-hotel text-2xl"></i></div>
+                    <h3 class="text-xl font-bold mb-3">전 일정 5성급 호텔</h3>
+                    <p class="text-gray-500 text-sm">메이상 리조트 & 오션 호텔<br>최고급 숙소에서 즐기는 편안한 휴식</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Day 1 -->
+    <section id="day1" class="py-20 bg-white border-b">
+        <div class="container mx-auto px-6">
+            <div class="flex items-end mb-12" data-aos="fade-right">
+                <div class="text-6xl font-black text-red-100 -mb-4 -ml-2 absolute z-0 select-none">01</div>
+                <div class="relative z-10">
+                    <span class="text-red-500 font-bold tracking-widest text-sm">DAY 1</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-1">역사의 발자취와 수향마을</h2>
+                    <p class="text-gray-500 mt-2 text-sm">제주 ➔ 상해 ➔ 가흥(김구 피난처) ➔ 복원(야경 뱃놀이)</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('kimgoo')" data-aos="fade-up">
+                    <div class="touch-hint"><i class="fas fa-images"></i> 추가 사진</div>
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://www.korea.kr/newsWeb/resources/attaches/2019.04/01/1%280%29.JPG" alt="김구 피난처" class="w-full h-full object-cover" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kim_Koo_Museum.JPG/640px-Kim_Koo_Museum.JPG'">
+                        <div class="absolute top-4 left-4 bg-gray-700 text-white text-xs font-bold px-3 py-1 rounded-full">HISTORY</div>
+                    </div>
+                    <div class="p-6 spot-content">
+                        <h3 class="text-xl font-bold mb-2">가흥 김구 선생 피난처</h3>
+                        <p class="text-gray-600 text-sm line-clamp-3">1932년 윤봉길 의사 의거 후, 김구 선생이 일제의 감시를 피해 머물렀던 역사적 현장입니다.</p>
+                    </div>
+                </div>
+                <div class="spot-card rounded-xl overflow-hidden lg:col-span-2" onclick="openModal('wuzhen')" data-aos="fade-up" data-aos-delay="100">
+                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 홍보 영상 보기</div>
+                    <div class="flex flex-col md:flex-row h-full">
+                        <div class="md:w-1/2 relative h-64 md:h-auto">
+                             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjOk2fxpXwf34zaKtBxspnCtnXZ1Z2pVivWalLO04GXULulV2Ur2m1Jcp6XbtBa42iWU1UyO09ywIUGp8TLU_3aiJ1mqfeKpwLrNpPoRSzEpn4e2vXzpdn-rBRG3Fcgp9_nd0nCZvF8S-gS/s1600/wuzhen-water-town-15.jpg" alt="Wuzhen" class="w-full h-full object-cover">
+                        </div>
+                        <div class="md:w-1/2 p-8 flex flex-col justify-center">
+                            <h3 class="text-2xl font-bold mb-3">복원 고진 (Wuzhen)</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-4">7세기에 건설된 역사 깊은 '수향(水鄉)' 마을. 낮의 고즈넉함과 밤의 화려한 야경이 공존하는 최고의 명소입니다.</p>
+                            <div class="bg-purple-50 p-4 rounded-lg"><span class="font-bold text-purple-700 text-sm">✨ 추천 포인트</span><p class="text-xs text-gray-600">수향 + 전통 + 사진 명소 + 낮·밤 반전 매력</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Day 2 -->
+    <section id="day2" class="py-20 bg-gray-50 border-b">
+        <div class="container mx-auto px-6">
+            <div class="flex items-end mb-12" data-aos="fade-right">
+                <div class="text-6xl font-black text-blue-100 -mb-4 -ml-2 absolute z-0 select-none">02</div>
+                <div class="relative z-10">
+                    <span class="text-blue-500 font-bold tracking-widest text-sm">DAY 2</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-1">물의 도시와 상해의 야경</h2>
+                    <p class="text-gray-500 mt-2 text-sm">소주 이동 ➔ 호구탑/산당가 ➔ 상해 이동 ➔ 와이탄/남경로</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="spot-card rounded-xl overflow-hidden shadow-sm" onclick="openModal('suzhou')" data-aos="fade-up">
+                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 홍보 영상</div>
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://www.asiaodysseytravel.com/images/china-tours/group-tours/suzhou-lingering-garden-700-1.jpg" alt="Suzhou" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6 spot-content">
+                        <h3 class="text-xl font-bold mb-2">소주 (Suzhou)</h3>
+                        <p class="text-gray-600 text-sm mb-4">운하와 정원, 고택이 어우러진 도시. 호구탑과 산당가에서 중국 전통의 미를 느껴보세요.</p>
+                        <div class="mt-4 bg-green-50 p-3 rounded-lg text-xs text-gray-600"><strong>✨ 추천 포인트:</strong> 운하+전통+도시 감성의 조화</div>
+                    </div>
+                </div>
+                <div class="spot-card rounded-xl overflow-hidden shadow-sm" onclick="openModal('waitan')" data-aos="fade-up" data-aos-delay="100">
+                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 4K 영상</div>
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://ak-d.tripcdn.com/images/1mi59224x8xehgwd66EE1_W_400_0_R5_Q90.jpg?proc=source%2Ftrip" alt="The Bund" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6 spot-content">
+                        <h3 class="text-xl font-bold mb-2">와이탄 (The Bund)</h3>
+                        <p class="text-gray-600 text-sm mb-4">황푸강변의 유럽식 건축물과 푸동의 마천루가 빚어내는 상해 최고의 야경 명소입니다.</p>
+                        <div class="mt-4 bg-yellow-50 p-3 rounded-lg text-xs text-gray-600"><strong>✨ 추천 포인트:</strong> 황홀한 야경의 진수</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Day 3 -->
+    <section id="day3" class="py-20 bg-white border-b">
+        <div class="container mx-auto px-6">
+            <div class="flex items-end mb-12" data-aos="fade-right">
+                <div class="text-6xl font-black text-green-100 -mb-4 -ml-2 absolute z-0 select-none">03</div>
+                <div class="relative z-10">
+                    <span class="text-green-600 font-bold tracking-widest text-sm">DAY 3</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-1">상해의 과거와 현재</h2>
+                    <p class="text-gray-500 mt-2 text-sm">주가각(수향마을) ➔ 티엔즈팡 ➔ 판룽티엔디 ➔ 공항 이동</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('zhujiajiao')" data-aos="fade-up">
+                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 뱃놀이 영상</div>
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_C4DB46B6FBE19C399AF867351CFF2697.jpg" alt="Zhujiajiao" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6 spot-content">
+                        <h3 class="text-xl font-bold mb-2">주가각 (Zhujiajiao)</h3>
+                        <p class="text-gray-600 text-sm mb-4">상해 인근의 대표 수향 고촌. 좁은 골목과 운하, 돌다리가 어우러진 힐링 명소입니다.</p>
+                    </div>
+                </div>
+                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('tianzifang')" data-aos="fade-up" data-aos-delay="100">
+                    <div class="touch-hint"><i class="fas fa-images"></i> 추가 사진</div>
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://ak-d.tripcdn.com/images/100e1a0000019795o9EB0_Z_640_10000_R5.jpg_.webp?proc=autoorient&proc=source%2Ftrip" alt="Tianzifang" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6 spot-content">
+                        <h3 class="text-xl font-bold mb-2">티엔즈팡 (Tianzifang)</h3>
+                        <p class="text-gray-600 text-sm mb-4">좁은 골목에 공방과 갤러리가 모인 예술 거리. 옛 상하이와 현대 예술의 조화를 느껴보세요.</p>
+                    </div>
+                </div>
+                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('panlong')" data-aos="fade-up" data-aos-delay="200">
+                    <div class="touch-hint"><i class="fas fa-images"></i> 추가 사진</div>
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="https://www.sasaki.com/wp-content/uploads/2020/09/8-Panlong-Historic-Core-1000x548.jpg" alt="Panlong Tiandi" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6 spot-content">
+                        <h3 class="text-xl font-bold mb-2">판룽티엔디</h3>
+                        <p class="text-gray-600 text-sm mb-4">전통 수향마을을 현대적 복합문화공간으로 재해석한 최신 핫플레이스입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hotel & Food -->
+    <section id="hotel" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-red-500 font-bold tracking-wider uppercase text-sm">ACCOMMODATION & DINING</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-2">편안한 휴식과 맛있는 식사</h2>
+            </div>
+            
+            <!-- Hotels -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
+                <div class="spot-card rounded-xl overflow-hidden shadow-lg border border-gray-100 flex flex-col md:flex-row" onclick="openModal('meishang')" data-aos="fade-up">
+                    <div class="touch-hint"><i class="fas fa-images"></i> 상세 사진</div>
+                    <div class="md:w-1/2 h-64 md:h-auto relative">
+                        <img src="https://ak-d.tripcdn.com/images/1mc4f12000lkamd2o4923_W_750_375_R5.webp" alt="Meishang Resort" class="w-full h-full object-cover">
+                    </div>
+                    <div class="md:w-1/2 p-8 flex flex-col justify-center">
+                        <span class="text-sm text-gray-400 mb-1">DAY 1</span>
+                        <h3 class="text-2xl font-bold mb-2">복원 메이상 리조트</h3>
+                        <p class="text-red-500 font-bold text-sm mb-4">★★★★★ (5성급)</p>
+                        <p class="text-gray-600 text-sm mb-4">고진의 분위기와 현대적 편의시설이 조화된 럭셔리 리조트.</p>
+                        <div class="text-xs text-purple-600 bg-purple-50 p-2 rounded inline-block"><strong>혜택:</strong> 투숙객 고진 관광지구 무제한 출입</div>
+                    </div>
+                </div>
+                <div class="spot-card rounded-xl overflow-hidden shadow-lg border border-gray-100 flex flex-col md:flex-row" onclick="openModal('ocean')" data-aos="fade-up" data-aos-delay="100">
+                    <div class="touch-hint"><i class="fas fa-images"></i> 상세 사진</div>
+                    <div class="md:w-1/2 h-64 md:h-auto relative">
+                        <img src="https://images.trvl-media.com/lodging/1000000/570000/564000/563959/w276h393x4y0-eddc44ec.jpg?impolicy=resizecrop&ra=fill&rh=575&rw=575" alt="Ocean Hotel" class="w-full h-full object-cover">
+                    </div>
+                    <div class="md:w-1/2 p-8 flex flex-col justify-center">
+                        <span class="text-sm text-gray-400 mb-1">DAY 2</span>
+                        <h3 class="text-2xl font-bold mb-2">상해 오션 호텔</h3>
+                        <p class="text-red-500 font-bold text-sm mb-4">★★★★★ (5성급)</p>
+                        <p class="text-gray-600 text-sm mb-4">상해 북외탄 위치, 공항 및 주요 관광지 접근성 최상.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gastronomy -->
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h3 class="text-2xl font-bold text-gray-800">상하이 미식 가이드</h3>
+                <p class="text-gray-500 mt-2">사진을 클릭하면 더 자세한 설명이 나옵니다.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="food-card group aspect-[4/5]" onclick="openModal('xiaolongbao')" data-aos="fade-up" data-aos-delay="200">
+                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
+                    <img src="https://previews.123rf.com/images/nungning20/nungning202202/nungning20220200150/182109254-xiao-long-bao-small-chinese-steamed-bun-filling-with-minced-pork-on-black-plate-eating-by-use.jpg" alt="Xiaolongbao" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
+                        <h4 class="text-white text-xl font-bold">샤오롱바오</h4>
+                        <p class="text-gray-300 text-sm mt-2 opacity-100">육즙 가득한 상하이 대표 딤섬</p>
+                    </div>
+                </div>
+                <div class="food-card group aspect-[4/5]" onclick="openModal('shengjianbao')" data-aos="fade-up" data-aos-delay="300">
+                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
+                    <img src="https://rachelgouk.com/wp-content/uploads/2023/05/shu-cai-ji-sheng-jian-bao-shanghai-54.jpg" alt="Shengjianbao" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
+                        <h4 class="text-white text-xl font-bold">성젠바오</h4>
+                        <p class="text-gray-300 text-sm mt-2 opacity-100">바닥은 바삭, 속은 촉촉한 만두</p>
+                    </div>
+                </div>
+                <div class="food-card group aspect-[4/5]" onclick="openModal('hongshaorou')" data-aos="fade-up" data-aos-delay="400">
+                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
+                    <img src="https://thewoksoflife.com/wp-content/uploads/2013/07/hongshao-rou-1.jpg" alt="Hong Shao Rou" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
+                        <h4 class="text-white text-xl font-bold">홍샤오러우</h4>
+                        <p class="text-gray-300 text-sm mt-2 opacity-100">입에서 녹는 붉은 삼겹살 조림</p>
+                    </div>
+                </div>
+                <div class="food-card group aspect-[4/5]" onclick="openModal('noodles')" data-aos="fade-up" data-aos-delay="500">
+                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
+                    <img src="https://thewoksoflife.com/wp-content/uploads/2019/06/scallion-oil-noodles-15.jpg" alt="Noodles" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
+                        <h4 class="text-white text-xl font-bold">총유반면</h4>
+                        <p class="text-gray-300 text-sm mt-2 opacity-100">향긋한 파기름 비빔면</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white text-gray-600 py-10 border-t border-gray-200">
+        <div class="container mx-auto px-6 text-center md:text-left">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <!-- 우리들여행사 로고 (강원경 대표님) -->
+                   <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain mb-4">
+                   <p class="text-xs text-gray-500">(주)우리들여행 | 대표: 강원경 | 제주특별자치도 서귀포시 일주동로 8568, 2층 202호</p>
+                </div>
+                <div class="text-xs text-center md:text-right text-gray-500">
+                    <p class="mb-2">* 상기 일정 및 식사는 현지 사정에 의해 다소 변경될 수 있습니다.</p>
+                    <p>&copy; 2026 Urideul Tour Agency. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Structure -->
+    <div id="detailModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl z-10 overflow-hidden transform transition-all scale-95 opacity-0 modal-container" id="modalContentWrapper">
+            <div class="relative">
+                <img id="modalImg" src="" alt="Detail" class="w-full h-64 md:h-96 object-cover">
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/80 transition z-20">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 md:p-8 max-h-[60vh] overflow-y-auto">
+                <h3 id="modalTitle" class="text-2xl font-bold mb-3 text-gray-900"></h3>
+                <div class="w-12 h-1 bg-red-500 mb-4"></div>
+                <p id="modalDesc" class="text-gray-600 leading-relaxed whitespace-pre-line"></p>
+                
+                <!-- Youtube Video Container -->
+                <div id="videoContainer" class="video-wrapper">
+                    <!-- Iframe will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: true, offset: 50, duration: 800 });
+
+        // Data for Modals with PROFESSIONALLY CURATED VIDEOS (Embed-Safe, Cinematic)
+        // 이재명 대표님 요청: 소주 영상 교체 + 4K 고화질 영상으로 엄선 (2026 VIP 투어용)
+        const modalData = {
+            'kimgoo': {
+                title: '가흥 김구 선생 피난처',
+                img: 'https://contents.history.go.kr/data/img/mp/imsi/thumb/mp_001_0050_0030_0020_0040.jpg', 
+                desc: '이 피난처는 1932년 4월 윤봉길 의사 의거 이후, 일제의 대대적인 체포 작전을 피해 김구 선생과 임정 요인들이 피신했던 역사적인 장소입니다.\n\n원래 청나라 말기에 지어진 목조+벽돌 가옥으로, 김구 선생은 이곳 2층 침실에 머물렀습니다. 내부에는 비상시를 대비한 비밀 통로가 있었으며, 일제 경찰의 급습 시 뒷문으로 바로 아래층 호수(남호)의 쪽배를 타고 탈출할 수 있도록 설계되었습니다.\n\n단순한 은신처가 아닌, 목숨을 걸고 조국의 독립을 위해 활동했던 중대한 거점으로서 그 의미가 깊습니다.'
+            },
+            'wuzhen': {
+                title: '복원 고진 (Wuzhen)',
+                img: 'https://res.klook.com/images/fl_lossy.progressive%2Cq_65/c_fill%2Cw_2500%2Ch_1667/w_80%2Cx_15%2Cy_15%2Cg_south_west%2Cl_Klook_water_br_trans_yhcmh3/activities/c2fppp1jufxssljbvavc/One-daytourofWuzhen%2CZhejiang%2BXitangNanxunAncientTown%28roundtripfromHangzhouShanghai%2Bdoor-to-doorpick-up%2Bintangibleculturalheritageexperience%2Bin-depthtouroftwoancienttownsinJiangnan%2Bmultipleroutesavailable%29-KlookUnitedKingdom.jpg', 
+                desc: '중국 저장성에 위치한 7세기에 건설된 역사 깊은 수향 마을입니다. 고택, 돌다리, 좁은 수로와 운하가 어우러져 \'동양의 베네치아\'라 불리며, 맑은 강물과 전통 가옥이 이어진 고즈넉한 풍경이 특징입니다.\n\n낮에는 돌다리와 물길을 따라 걷거나 전통 찻집에서 여유를 즐길 수 있고, 밤에는 등불과 조명이 운하에 반사되며 몽환적이고 로맨틱한 야경을 연출하여 사진 여행지로도 인기가 높습니다.',
+                videoId: 'CjBNXkUjQjE', // Beautiful Wuzhen Water Town (4K Cinematic) - Embed Safe
+                thumb: 'https://img.youtube.com/vi/CjBNXkUjQjE/maxresdefault.jpg'
+            },
+            'suzhou': {
+                title: '소주 (Suzhou)',
+                img: 'https://www.chinaholiday.com/Photos/541625/7232206.jpg', 
+                desc: '"운하와 정원, 고택과 물의 도시"로 유명하며, 중국 내에서도 전통 건축과 수향 문화가 가장 잘 보존된 도시입니다.\n\n운하와 고대 수로, 석교를 따라 옛 거리 풍경이 이어지며, 특히 호구탑과 산당가에서는 강남 특유의 정취를 느낄 수 있습니다. 도시 곳곳의 고택과 전통 정원이 현대 도시와 어우러져 있어 여행의 폭이 넓습니다.',
+                videoId: 'mnX2z5aEwMs', // [교체완료] Suzhou China 4K Cinematic (재생 확인됨)
+                thumb: 'https://img.youtube.com/vi/mnX2z5aEwMs/maxresdefault.jpg' 
+            },
+            'waitan': {
+                title: '와이탄 (The Bund)',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/The_Bund_2.jpg', 
+                desc: '상하이 황푸강 서안의 역사 지구로, 유럽식 고전 건축물이 늘어선 워터프런트 산책로입니다. 일제/식민지 시대 이후 갖춰진 신고전주의, 고딕 등 다양한 양식의 건축물이 이어져 있어 마치 유럽을 걷는 듯한 분위기를 자아냅니다.\n\n강 건너편 푸동 지역의 현대적인 마천루(동방명주 등)와 마주보고 있어, 상해의 과거와 현재가 한눈에 들어오는 \'상하이의 얼굴\'과도 같은 곳입니다.',
+                videoId: 'Tr9nsosBjRw', // Shanghai 4K Drone - Embed Safe
+                thumb: 'https://img.youtube.com/vi/Tr9nsosBjRw/maxresdefault.jpg'
+            },
+            'zhujiajiao': {
+                title: '주가각 (Zhujiajiao)',
+                img: 'https://cdn.crowdpic.net/detail-thumb/thumb_d_C4DB46B6FBE19C399AF867351CFF2697.jpg',
+                desc: '상하이 인근의 대표적인 수향 고촌입니다. 물길(운하), 옛 건축, 돌다리와 좁은 골목 등 옛 정취가 그대로 살아있는 풍경이 특징입니다.\n\n관광객을 위한 카페, 찻집, 전통 음식점 등이 어우러져 있어 "역사 + 체험 + 여유"를 한 번에 경험할 수 있는 공간으로, 반나절 코스로 다녀오기 가장 좋은 수향마을 중 하나입니다.',
+                videoId: 'tDlq7uNc1SA', // Zhujiajiao boat ride - Embed Safe
+                thumb: 'https://img.youtube.com/vi/tDlq7uNc1SA/maxresdefault.jpg'
+            },
+            'tianzifang': {
+                title: '티엔즈팡 (Tianzifang)',
+                img: 'https://static.toiimg.com/photo/44848806.cms', 
+                desc: '상하이 프랑스 조계지 지역의 구 주거지를 문화 예술 거리로 재생한 지역입니다. 좁은 골목과 옛 산업 창고가 공예품 가게, 카페, 갤러리 등으로 변신했습니다.\n\n전통 \'시쿠먼\' 양식의 건축을 유지하면서도 현대적 감각의 상점이 공존하여, 옛 상하이와 현대 예술의 믹스를 느낄 수 있습니다. 쇼핑이나 대형 관광지와는 다른 아기자기한 매력을 찾는 분들께 추천합니다.'
+            },
+            'panlong': {
+                title: '판룽티엔디 (Panlong Tiandi)',
+                img: 'https://www.sasaki.com/wp-content/uploads/2020/09/8-Panlong-Historic-Core-1000x548.jpg',
+                desc: '전통 수향마을의 정서와 느낌을 차용하면서도, 현대적인 복합문화 공간으로 재탄생한 핫플레이스입니다.\n\n깔끔하게 정돈된 수로와 돌다리, 그리고 강남 전통 양식 건축과 현대적 인테리어의 조화 덕분에 "전통 × 감성 × 현대"가 완벽하게 어우러집니다. 특히 야경이 아름답고 세련된 카페와 레스토랑이 많아 여유로운 시간을 보내기에 최적입니다.'
+            },
+            'meishang': {
+                title: '복원 메이상 리조트',
+                img: 'https://ak-d.tripcdn.com/images/1mc6y12000bmaqt9rAAD1_R_960_660_R5_D.jpg', 
+                desc: '"고진(수향마을) + 리조트"의 복합 숙소로, 전통 고진의 분위기를 살리면서 현대적 호텔 편의시설을 제공합니다.\n\n호텔 본관은 전통 문양 \'만자(卍)\'를 모티브로 설계되었으며, "선(禪)" 문화를 테마로 한 인테리어가 특징입니다. 투숙객은 고진 관광지구에 무제한 출입이 가능하여, 관광과 휴양을 동시에 만족할 수 있는 최고의 숙소입니다.'
+            },
+            'ocean': {
+                title: '상해 오션 호텔',
+                img: 'https://images.trvl-media.com/lodging/1000000/570000/564000/563959/w276h393x4y0-eddc44ec.jpg?impolicy=resizecrop&ra=fill&rh=575&rw=575', 
+                desc: '상하이 북외탄 인근에 위치한 호텔로, 공항 및 주요 관광지 접근성이 매우 뛰어난 도심 숙소입니다.\n\n깔끔한 객실과 실내 수영장, 헬스장 등 다양한 편의시설을 갖추고 있으며, 야간 상하이 관광 후 편안하게 휴식을 취하기에 안성맞춤입니다.'
+            },
+            'xiaolongbao': {
+                title: '샤오롱바오 (小籠包)',
+                img: 'https://rachelgouk.com/wp-content/uploads/2023/05/jia-jia-tang-best-xiaolongbao-shanghai-1-2.jpg', 
+                desc: '속에 육즙이 가득한 얇은 피의 만두로, 찜통에 쪄서 나오는 상하이 대표 딤섬입니다.\n\n상하이 방문자 대부분이 "반드시 먹어봐야 할 음식"으로 꼽으며, 만두피를 살짝 찢어 육즙을 먼저 맛본 후 즐기는 것이 정석입니다.'
+            },
+            'shengjianbao': {
+                title: '성젠바오 (生煎包)',
+                img: 'https://www.thechinajourney.com/wp-content/uploads/2025/05/Pan-Fried-Shengjian-Bao-in-Shanghai-%E2%80%93-Crispy-bottomed-pork-buns-topped-with-scallions-and-sesame-seeds-served-fresh-on-a-white-plate-in-Shanghai.webp', 
+                desc: '찜 대신 팬에 바닥을 바삭하게 구운 만두로, 바닥은 바삭하고 윗부분은 촉촉하며 속에는 육즙이 가득합니다.\n\n주로 아침 식사나 간단한 거리 간식으로 즐겨 먹으며, 현지인들의 일상 속에 깊이 자리 잡은 소울푸드입니다.'
+            },
+            'hongshaorou': {
+                title: '홍샤오러우 (红烧肉)',
+                img: 'https://hillsshanghai.com/cdn/shop/articles/0c3928f1680d60e026a370cb006d7c41_bd744e18-dfc1-4d61-b950-8ce1d019a9cf.jpg?v=1720705645', 
+                desc: '돼지고기 삼겹살을 간장, 설탕, 향신료 등에 넣고 붉은 빛이 돌 때까지 천천히 조려낸 요리입니다.\n\n입안에서 녹는 듯한 부드러운 식감과 달콤하고 짭짤한 양념의 조화가 일품이며, 밥과 함께 먹으면 최고의 한 끼가 됩니다.'
+            },
+            'noodles': {
+                title: '총유반면 (파기름 국수)',
+                img: 'https://lh4.googleusercontent.com/2p2Dk61OQVCcgexmAJr5fvtHlmmitG1-tvkJWtRhRKX3VRuwwDLqcY5iVbh2mSKtT-vHixoGDgPDtB594yps8I7q5X32q9JxN0t7MYSXZbwPBO3ddpv2ZlwhwgrGaf9OAbFYyDbT', 
+                desc: '파기름을 두르고 간장 소스로 비벼 먹는 단순하지만 깊은 맛의 면 요리입니다.\n\n상하이 로컬 면 요리의 진수를 보여주는 메뉴로, 향긋한 파 향과 짭조름한 맛이 어우러져 부담 없이 즐기기 좋습니다.'
+            }
+        };
+
+        function openModal(id) {
+            const data = modalData[id];
+            if (!data) return;
+            
+            // 1. 이미지 및 텍스트 설정
+            document.getElementById('modalImg').src = data.img;
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalDesc').innerText = data.desc;
+            
+            // 2. 비디오 처리 로직
+            const videoContainer = document.getElementById('videoContainer');
+            videoContainer.innerHTML = ''; // 초기화
+
+            if (data.videoId) {
+                // 썸네일과 재생 버튼을 포함한 div 생성
+                const thumbnailDiv = document.createElement('div');
+                thumbnailDiv.className = 'video-thumbnail';
+                thumbnailDiv.style.backgroundImage = `url('${data.thumb}')`;
+                thumbnailDiv.innerHTML = '<div class="play-button"></div>';
+                
+                // 클릭 시 아이프레임으로 교체하는 이벤트 리스너
+                // PC 재생 오류 해결을 위해 Autoplay + Mute + Playsinline + Rel=0 추가
+                thumbnailDiv.onclick = function() {
+                    const iframe = document.createElement('iframe');
+                    iframe.setAttribute('src', `https://www.youtube.com/embed/${data.videoId}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1`);
+                    iframe.setAttribute('frameborder', '0');
+                    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                    iframe.setAttribute('allowfullscreen', 'true');
+                    videoContainer.innerHTML = ''; // 썸네일 제거
+                    videoContainer.appendChild(iframe); // 아이프레임 추가
+                };
+                
+                videoContainer.appendChild(thumbnailDiv);
+                videoContainer.style.display = 'block';
+            } else {
+                videoContainer.style.display = 'none';
+            }
+            
+            // 3. 모달 애니메이션
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('modalContentWrapper');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('modalContentWrapper');
+            const videoContainer = document.getElementById('videoContainer');
+            
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                videoContainer.innerHTML = ''; // 닫을 때 영상 제거 (소리 끄기)
+            }, 300);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
