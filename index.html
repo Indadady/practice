@@ -142,12 +142,10 @@
             background-color: #ff0000;
         }
 
-        /* Logo Blending Fix */
+        /* Logo Blending Fix - 배경 투명화 */
         .logo-blend {
-            /* 로고의 흰색 배경을 투명하게 만들고 글자만 남기는 혼합 모드 */
+            /* 로고 이미지의 흰색 배경을 투명하게 처리하여 네비게이션 바와 일체감 형성 */
             mix-blend-mode: multiply;
-            /* 흰색이 완벽한 흰색이 아닐 경우를 대비해 대비를 높여 박스 자국 제거 */
-            filter: contrast(1.1) brightness(1.05);
         }
 
         /* Custom Scrollbar */
@@ -170,11 +168,10 @@
 <body class="bg-white text-gray-800">
 
     <!-- Navigation -->
-    <!-- 로고 배경이 투명해보이도록 bg-white로 고정 (반투명 제거) -->
     <nav class="fixed w-full z-50 bg-white shadow-sm transition-all duration-300" id="navbar">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="#" class="flex items-center">
-                <!-- 우리들여행사 로고: CSS 클래스 logo-blend 적용 -->
+                <!-- 우리들여행사 로고: 배경 투명화 클래스(logo-blend) 적용 -->
                 <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain logo-blend">
             </a>
             
@@ -474,7 +471,7 @@
                 <div class="mb-6 md:mb-0">
                     <!-- 우리들여행사 로고 (강원경 대표님) -->
                    <!-- mix-blend-multiply 클래스를 추가하여 로고의 흰색 배경을 투명하게 처리 -->
-                   <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain mb-4 mix-blend-multiply">
+                   <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain mb-4 logo-blend">
                    <p class="text-xs text-gray-500">(주)우리들여행 | 대표: 강원경 | 제주특별자치도 서귀포시 일주동로 8568, 2층 202호</p>
                 </div>
                 <div class="text-xs text-center md:text-right text-gray-500">
@@ -526,28 +523,30 @@
                 img: 'https://res.klook.com/images/fl_lossy.progressive%2Cq_65/c_fill%2Cw_2500%2Ch_1667/w_80%2Cx_15%2Cy_15%2Cg_south_west%2Cl_Klook_water_br_trans_yhcmh3/activities/c2fppp1jufxssljbvavc/One-daytourofWuzhen%2CZhejiang%2BXitangNanxunAncientTown%28roundtripfromHangzhouShanghai%2Bdoor-to-doorpick-up%2Bintangibleculturalheritageexperience%2Bin-depthtouroftwoancienttownsinJiangnan%2Bmultipleroutesavailable%29-KlookUnitedKingdom.jpg', 
                 desc: '중국 저장성에 위치한 7세기에 건설된 역사 깊은 수향 마을입니다. 고택, 돌다리, 좁은 수로와 운하가 어우러져 \'동양의 베네치아\'라 불리며, 맑은 강물과 전통 가옥이 이어진 고즈넉한 풍경이 특징입니다.\n\n낮에는 돌다리와 물길을 따라 걷거나 전통 찻집에서 여유를 즐길 수 있고, 밤에는 등불과 조명이 운하에 반사되며 몽환적이고 로맨틱한 야경을 연출하여 사진 여행지로도 인기가 높습니다.',
                 videoId: '9pS-r7L7q20', // China, Wuzhen Water Town in 4K - 60FPS (High quality, likely embeddable)
-                thumb: 'https://img.youtube.com/vi/9pS-r7L7q20/maxresdefault.jpg'
+                // THUMBNAIL FIX: maxresdefault가 없는 경우를 대비해 hqdefault 사용 (가장 안전)
+                thumb: 'https://img.youtube.com/vi/9pS-r7L7q20/hqdefault.jpg'
             },
             'suzhou': {
                 title: '소주 (Suzhou)',
                 img: 'https://www.chinaholiday.com/Photos/541625/7232206.jpg', 
                 desc: '"운하와 정원, 고택과 물의 도시"로 유명하며, 중국 내에서도 전통 건축과 수향 문화가 가장 잘 보존된 도시입니다.\n\n운하와 고대 수로, 석교를 따라 옛 거리 풍경이 이어지며, 특히 호구탑과 산당가에서는 강남 특유의 정취를 느낄 수 있습니다. 도시 곳곳의 고택과 전통 정원이 현대 도시와 어우러져 있어 여행의 폭이 넓습니다.',
                 videoId: 'HuJ1-3gC1cw', // Beautiful Suzhou (4K) (Replaced based on user feedback)
-                thumb: 'https://img.youtube.com/vi/HuJ1-3gC1cw/maxresdefault.jpg' 
+                // THUMBNAIL FIX: hqdefault 사용 (안전한 썸네일 경로)
+                thumb: 'https://img.youtube.com/vi/HuJ1-3gC1cw/hqdefault.jpg' 
             },
             'waitan': {
                 title: '와이탄 (The Bund)',
                 img: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/The_Bund_2.jpg', 
                 desc: '상하이 황푸강 서안의 역사 지구로, 유럽식 고전 건축물이 늘어선 워터프런트 산책로입니다. 일제/식민지 시대 이후 갖춰진 신고전주의, 고딕 등 다양한 양식의 건축물이 이어져 있어 마치 유럽을 걷는 듯한 분위기를 자아냅니다.\n\n강 건너편 푸동 지역의 현대적인 마천루(동방명주 등)와 마주보고 있어, 상해의 과거와 현재가 한눈에 들어오는 \'상하이의 얼굴\'과도 같은 곳입니다.',
                 videoId: 'Tr9nsosBjRw', // Shanghai 4K Drone - Embed Safe
-                thumb: 'https://img.youtube.com/vi/Tr9nsosBjRw/maxresdefault.jpg'
+                thumb: 'https://img.youtube.com/vi/Tr9nsosBjRw/hqdefault.jpg'
             },
             'zhujiajiao': {
                 title: '주가각 (Zhujiajiao)',
                 img: 'https://cdn.crowdpic.net/detail-thumb/thumb_d_C4DB46B6FBE19C399AF867351CFF2697.jpg',
                 desc: '상하이 인근의 대표적인 수향 고촌입니다. 물길(운하), 옛 건축, 돌다리와 좁은 골목 등 옛 정취가 그대로 살아있는 풍경이 특징입니다.\n\n관광객을 위한 카페, 찻집, 전통 음식점 등이 어우러져 있어 "역사 + 체험 + 여유"를 한 번에 경험할 수 있는 공간으로, 반나절 코스로 다녀오기 가장 좋은 수향마을 중 하나입니다.',
                 videoId: 'tDlq7uNc1SA', // Zhujiajiao boat ride - Embed Safe
-                thumb: 'https://img.youtube.com/vi/tDlq7uNc1SA/maxresdefault.jpg'
+                thumb: 'https://img.youtube.com/vi/tDlq7uNc1SA/hqdefault.jpg'
             },
             'tianzifang': {
                 title: '티엔즈팡 (Tianzifang)',
@@ -608,7 +607,9 @@
                 // 썸네일과 재생 버튼을 포함한 div 생성
                 const thumbnailDiv = document.createElement('div');
                 thumbnailDiv.className = 'video-thumbnail';
+                // THUMBNAIL ERROR FIX: 이미지가 로드되지 않을 경우를 대비한 스타일 조정
                 thumbnailDiv.style.backgroundImage = `url('${data.thumb}')`;
+                thumbnailDiv.style.backgroundColor = '#000'; // 이미지가 없을 때 검은 배경
                 thumbnailDiv.innerHTML = '<div class="play-button"></div>';
                 
                 // 클릭 시 아이프레임으로 교체하는 이벤트 리스너
