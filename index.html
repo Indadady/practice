@@ -142,6 +142,14 @@
             background-color: #ff0000;
         }
 
+        /* Logo Blending Fix */
+        .logo-blend {
+            /* 로고의 흰색 배경을 투명하게 만들고 글자만 남기는 혼합 모드 */
+            mix-blend-mode: multiply;
+            /* 흰색이 완벽한 흰색이 아닐 경우를 대비해 대비를 높여 박스 자국 제거 */
+            filter: contrast(1.1) brightness(1.05);
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -162,11 +170,12 @@
 <body class="bg-white text-gray-800">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300" id="navbar">
+    <!-- 로고 배경이 투명해보이도록 bg-white로 고정 (반투명 제거) -->
+    <nav class="fixed w-full z-50 bg-white shadow-sm transition-all duration-300" id="navbar">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
             <a href="#" class="flex items-center">
-                <!-- 우리들여행사 로고 (강원경 대표님) -->
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain">
+                <!-- 우리들여행사 로고: CSS 클래스 logo-blend 적용 -->
+                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain logo-blend">
             </a>
             
             <div class="hidden md:flex space-x-6 font-medium text-gray-700 text-sm lg:text-base">
@@ -464,7 +473,8 @@
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="mb-6 md:mb-0">
                     <!-- 우리들여행사 로고 (강원경 대표님) -->
-                   <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain mb-4">
+                   <!-- mix-blend-multiply 클래스를 추가하여 로고의 흰색 배경을 투명하게 처리 -->
+                   <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain mb-4 mix-blend-multiply">
                    <p class="text-xs text-gray-500">(주)우리들여행 | 대표: 강원경 | 제주특별자치도 서귀포시 일주동로 8568, 2층 202호</p>
                 </div>
                 <div class="text-xs text-center md:text-right text-gray-500">
@@ -515,15 +525,15 @@
                 title: '복원 고진 (Wuzhen)',
                 img: 'https://res.klook.com/images/fl_lossy.progressive%2Cq_65/c_fill%2Cw_2500%2Ch_1667/w_80%2Cx_15%2Cy_15%2Cg_south_west%2Cl_Klook_water_br_trans_yhcmh3/activities/c2fppp1jufxssljbvavc/One-daytourofWuzhen%2CZhejiang%2BXitangNanxunAncientTown%28roundtripfromHangzhouShanghai%2Bdoor-to-doorpick-up%2Bintangibleculturalheritageexperience%2Bin-depthtouroftwoancienttownsinJiangnan%2Bmultipleroutesavailable%29-KlookUnitedKingdom.jpg', 
                 desc: '중국 저장성에 위치한 7세기에 건설된 역사 깊은 수향 마을입니다. 고택, 돌다리, 좁은 수로와 운하가 어우러져 \'동양의 베네치아\'라 불리며, 맑은 강물과 전통 가옥이 이어진 고즈넉한 풍경이 특징입니다.\n\n낮에는 돌다리와 물길을 따라 걷거나 전통 찻집에서 여유를 즐길 수 있고, 밤에는 등불과 조명이 운하에 반사되며 몽환적이고 로맨틱한 야경을 연출하여 사진 여행지로도 인기가 높습니다.',
-                videoId: 'CjBNXkUjQjE', // Beautiful Wuzhen Water Town (4K Cinematic) - Embed Safe
-                thumb: 'https://img.youtube.com/vi/CjBNXkUjQjE/maxresdefault.jpg'
+                videoId: '9pS-r7L7q20', // China, Wuzhen Water Town in 4K - 60FPS (High quality, likely embeddable)
+                thumb: 'https://img.youtube.com/vi/9pS-r7L7q20/maxresdefault.jpg'
             },
             'suzhou': {
                 title: '소주 (Suzhou)',
                 img: 'https://www.chinaholiday.com/Photos/541625/7232206.jpg', 
                 desc: '"운하와 정원, 고택과 물의 도시"로 유명하며, 중국 내에서도 전통 건축과 수향 문화가 가장 잘 보존된 도시입니다.\n\n운하와 고대 수로, 석교를 따라 옛 거리 풍경이 이어지며, 특히 호구탑과 산당가에서는 강남 특유의 정취를 느낄 수 있습니다. 도시 곳곳의 고택과 전통 정원이 현대 도시와 어우러져 있어 여행의 폭이 넓습니다.',
-                videoId: 'mnX2z5aEwMs', // [교체완료] Suzhou China 4K Cinematic (재생 확인됨)
-                thumb: 'https://img.youtube.com/vi/mnX2z5aEwMs/maxresdefault.jpg' 
+                videoId: 'HuJ1-3gC1cw', // Beautiful Suzhou (4K) (Replaced based on user feedback)
+                thumb: 'https://img.youtube.com/vi/HuJ1-3gC1cw/maxresdefault.jpg' 
             },
             'waitan': {
                 title: '와이탄 (The Bund)',
