@@ -45,27 +45,24 @@
             -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
         }
 
-        /* --- [PDF 생성용 문서 서식 스타일] --- */
-        /* 평소에는 보이지 않지만 렌더링 시에는 보이게 처리 */
-        #print-template {
-            display: none; /* 템플릿 원본은 숨김 */
-        }
+        /* --- [PDF 템플릿 스타일] --- */
+        /* 원본 템플릿은 숨김 */
+        #print-template { display: none; }
 
-        /* 실제 렌더링 될 때 동적으로 생성되는 컨테이너 스타일 */
-        .print-render-container {
-            width: 210mm; /* A4 width */
+        /* 복제되어 렌더링될 때의 스타일 */
+        .pdf-clone-container {
+            /* 중요: display: block이어야 렌더링됨. 화면 밖으로 보내서 숨김 */
+            position: fixed;
+            left: -10000px;
+            top: 0;
+            width: 210mm; /* A4 Width */
             min-height: 297mm;
             background: white;
             padding: 20mm;
             color: #333;
             line-height: 1.6;
             box-sizing: border-box;
-            font-size: 11pt;
-            /* 화면 뒤로 숨기기 (렌더링을 위해 display:block 상태여야 함) */
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -9999; 
+            z-index: 9999; /* 최상위지만 화면 밖 */
         }
         
         /* 문서 전용 타이포그래피 */
@@ -100,8 +97,7 @@
     <div id="loadingOverlay">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white mb-4"></div>
         <p class="text-lg font-bold">📄 공식 문서(PDF) 생성 중...</p>
-        <p class="text-sm text-slate-300 mt-2">화면에는 보이지 않는 서식을 캡처하고 있습니다.</p>
-        <p class="text-xs text-slate-400 mt-1">(약 3~5초 소요)</p>
+        <p class="text-sm text-slate-300 mt-2">서버에서 이미지를 불러오고 있습니다.</p>
     </div>
 
     <!-- Floating Action Button -->
@@ -115,6 +111,7 @@
     <nav class="bg-white/90 backdrop-blur-md fixed w-full z-50 border-b border-slate-100">
         <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
             <a href="#" class="flex items-center gap-2">
+                <!-- 웹용 로고 (CORS 중요) -->
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="투어메이커 로고" class="h-8 md:h-10" crossorigin="anonymous">
                 <span class="font-bold text-lg md:text-xl text-slate-900 hidden xs:block">(주)투어메이커</span>
             </a>
@@ -189,6 +186,7 @@
         <footer class="bg-slate-900 text-white py-12 px-4 text-center mt-12">
             <h2 class="text-2xl font-bold mb-4">여행 기획, 데이터 전문가와 상의하세요</h2>
             <div class="flex justify-center mb-6">
+                <!-- 웹용 푸터 로고 (CORS 중요) -->
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="로고" class="h-12 w-auto opacity-80" crossorigin="anonymous">
             </div>
             <p class="text-slate-500 text-xs">&copy; 2024-2025 Tourmaker Corp.</p>
@@ -202,7 +200,7 @@
     <div id="print-template">
         <div class="doc-header">
             <div>
-                <!-- 크로스오리진 설정 필수 -->
+                <!-- 문서용 로고: crossorigin="anonymous" 필수 -->
                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" style="height: 40px; margin-bottom: 5px;" crossorigin="anonymous">
                 <div class="doc-title">회사 소개서</div>
             </div>
@@ -339,44 +337,65 @@
             tbody.innerHTML = html;
         }
 
-        // 3. 고스트 PDF 생성 함수 (완전체)
-        function generateGhostPDF() {
+        // 3. 고스트 PDF 생성 함수 (서버 배포용 최적화)
+        async function generateGhostPDF() {
             const overlay = document.getElementById('loadingOverlay');
             overlay.style.display = 'flex';
 
-            // 1. 템플릿의 내용을 복제하여 "렌더링용 컨테이너" 생성
+            // 1. 템플릿의 내용을 복제하여 화면 밖(off-screen)에 "보이는" 상태로 렌더링
+            // html2canvas는 display:none을 캡처하지 못하므로, fixed position으로 화면 밖으로 보냄
             const template = document.getElementById('print-template');
-            const clone = document.createElement('div');
-            clone.innerHTML = template.innerHTML;
-            clone.className = 'print-render-container'; // CSS에서 스타일 및 숨김 처리
+            const clone = template.cloneNode(true);
             
-            // 2. Body에 붙임 (보이진 않지만 DOM에는 존재해야 캡처 가능)
+            clone.id = 'pdf-render-clone';
+            clone.className = 'pdf-clone-container'; // CSS에서 스타일(white bg, padding) 및 위치(-10000px left) 정의
+            clone.style.display = 'block'; // 강제 보이기
+            
             document.body.appendChild(clone);
 
-            // 3. 옵션 설정
+            // 2. 이미지 로딩 대기 (로고 깨짐 방지 핵심)
+            // 복제된 컨테이너 안의 모든 이미지가 로드될 때까지 기다림
+            const images = clone.querySelectorAll('img');
+            const imagePromises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve; // 에러가 나도 진행
+                });
+            });
+            await Promise.all(imagePromises);
+
+            // 3. 약간의 렌더링 딜레이 (브라우저가 그릴 시간 확보)
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // 4. 옵션 설정
             const opt = {
                 margin:       0,
                 filename:     '투어메이커_공식_회사소개서.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { 
                     scale: 2, 
-                    useCORS: true, // 이미지 로딩 필수
+                    useCORS: true, // CORS 허용 필수
                     scrollY: 0,
-                    logging: true
+                    logging: true,
+                    windowWidth: 800 // 강제 너비 설정
                 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // 4. 생성 및 다운로드
+            // 5. 생성 및 다운로드
             html2pdf().set(opt).from(clone).save().then(() => {
                 // 완료 후 청소
                 document.body.removeChild(clone);
                 overlay.style.display = 'none';
             }).catch(err => {
                 console.error("PDF 생성 오류:", err);
-                document.body.removeChild(clone);
+                // 에러 발생 시에도 클론 삭제
+                if(document.body.contains(clone)) {
+                    document.body.removeChild(clone);
+                }
                 overlay.style.display = 'none';
-                alert('문서 생성 중 오류가 발생했습니다.\n서버(GitHub 등) 환경에서 실행해주세요.');
+                alert('문서 생성 중 오류가 발생했습니다. 브라우저 콘솔을 확인해주세요.');
             });
         }
 
