@@ -3,657 +3,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>우리들여행사 - 효돈동 역대주민자치위원장님 VIP 투어</title>
+    <title>(주)투어메이커 - 스마트 회사소개서</title>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
+    <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- AOS Animation Library -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- PDF Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            overflow-x: hidden;
-            word-break: keep-all;
-        }
-        .font-serif {
-            font-family: 'Noto Serif KR', serif;
-        }
-        .hero-bg {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://content.paulreiffer.com/wp-content/uploads/2015/09/Lujiazui-Shanghai-Pudong-Skyline-Sunset-Oriental-Pearl-Tower-China-City-Cityscape-Flare-Landscape-Paul-Reiffer-Photographer.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        .text-shadow {
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-        }
-        .section-title {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 2rem;
-        }
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background-color: #ef4444;
-        }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; overflow-x: hidden; }
         
-        /* Card Interactive Effects */
-        .spot-card, .food-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
+        /* --- [화면용 스타일] --- */
+        .hero-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            position: relative; overflow: hidden;
         }
-        .spot-card:hover, .food-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        .hero-bg::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;
+            opacity: 0.1; mix-blend-mode: overlay;
         }
-        .spot-card:active, .food-card:active {
-            transform: scale(0.98);
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .card-shadow:hover { transform: translateY(-5px); }
+        .tab-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .gradient-border {
+            position: relative; background: #fff; padding: 3px; border-radius: 1rem;
+        }
+        .gradient-border::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 1rem; padding: 2px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
         }
 
-        /* Touch Hint Badge */
-        .touch-hint {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            z-index: 10;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        /* --- [PDF 생성용 문서 서식 스타일] --- */
+        /* 평소에는 보이지 않지만 렌더링 시에는 보이게 처리 */
+        #print-template {
+            display: none; /* 템플릿 원본은 숨김 */
         }
 
-        /* Modal */
-        .modal-container {
-            transition: all 0.3s ease-in-out;
-        }
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 ratio */
-            height: 0;
-            overflow: hidden;
-            border-radius: 0.5rem;
-            margin-top: 1.5rem;
-            display: none; /* Hidden by default */
-            background-color: #000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .video-wrapper iframe, 
-        .video-thumbnail {
+        /* 실제 렌더링 될 때 동적으로 생성되는 컨테이너 스타일 */
+        .print-render-container {
+            width: 210mm; /* A4 width */
+            min-height: 297mm;
+            background: white;
+            padding: 20mm;
+            color: #333;
+            line-height: 1.6;
+            box-sizing: border-box;
+            font-size: 11pt;
+            /* 화면 뒤로 숨기기 (렌더링을 위해 display:block 상태여야 함) */
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-            background-size: cover;
-            background-position: center;
+            z-index: -9999; 
         }
-        .play-button {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 0, 0, 0.9); /* YouTube Red */
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-        }
-        .play-button::after {
-            content: '';
-            width: 0; 
-            height: 0; 
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 16px solid white;
-            margin-left: 4px;
-        }
-        .video-thumbnail:hover .play-button {
-            transform: scale(1.1);
-            background-color: #ff0000;
-        }
-
-        /* Logo Blending Fix - 배경 투명화 */
-        .logo-blend {
-            /* 로고 이미지의 흰색 배경을 투명하게 처리하여 네비게이션 바와 일체감 형성 */
-            mix-blend-mode: multiply;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
         
-        /* Floating Button Animation */
-        @keyframes pulse-ring {
-            0% { transform: scale(0.33); }
-            80%, 100% { opacity: 0; }
-        }
-        .pulse-ring::before {
-            content: ''; position: absolute; left: 0; right: 0; top: 0; bottom: 0;
-            background-color: #ef4444; border-radius: 50%; z-index: -1;
-            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-        }
+        /* 문서 전용 타이포그래피 */
+        .doc-header { border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .doc-title { font-size: 26px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; }
+        .doc-meta { font-size: 11px; color: #64748b; text-align: right; line-height: 1.4; }
+        
+        .doc-section { margin-bottom: 35px; page-break-inside: avoid; }
+        .doc-h2 { font-size: 16px; font-weight: 700; color: #1e293b; border-left: 5px solid #2563eb; padding-left: 12px; margin-bottom: 15px; margin-top: 25px; background: #f8fafc; padding-top: 5px; padding-bottom: 5px;}
+        .doc-p { font-size: 13px; color: #475569; margin-bottom: 10px; text-align: justify; line-height: 1.8; }
+        .doc-ul { list-style-type: disc; margin-left: 20px; font-size: 13px; color: #475569; line-height: 1.8; }
+        .doc-ul li { margin-bottom: 5px; }
+        
+        .doc-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; border-top: 2px solid #334155; }
+        .doc-table th { background: #f1f5f9; border-bottom: 1px solid #cbd5e1; padding: 10px 8px; text-align: center; font-weight: 700; color: #334155; }
+        .doc-table td { border-bottom: 1px solid #e2e8f0; padding: 10px 8px; vertical-align: middle; }
+        .doc-table tr:last-child td { border-bottom: 1px solid #94a3b8; }
+        
+        .doc-footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #94a3b8; text-align: center; page-break-before: auto; }
+
+        /* 플로팅 버튼 */
+        .fab-container { position: fixed; bottom: 30px; right: 30px; z-index: 999; }
+        .fab-btn { width: 60px; height: 60px; border-radius: 50%; background-color: #2563eb; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); cursor: pointer; transition: all 0.3s; border: none; font-size: 24px; }
+        .fab-btn:hover { transform: scale(1.1); background-color: #1d4ed8; }
+        
+        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; flex-direction: column; color: white; backdrop-filter: blur(5px); }
     </style>
 </head>
-<body class="bg-white text-gray-800">
+<body class="text-slate-800">
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-white shadow-sm transition-all duration-300" id="navbar">
-        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <a href="#" class="flex items-center">
-                <!-- 우리들여행사 로고: 배경 투명화 클래스(logo-blend) 적용 -->
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain logo-blend">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white mb-4"></div>
+        <p class="text-lg font-bold">📄 공식 문서(PDF) 생성 중...</p>
+        <p class="text-sm text-slate-300 mt-2">화면에는 보이지 않는 서식을 캡처하고 있습니다.</p>
+        <p class="text-xs text-slate-400 mt-1">(약 3~5초 소요)</p>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab-container">
+        <button class="fab-btn" onclick="generateGhostPDF()" title="회사소개서 PDF 다운로드">
+            <i class="fas fa-file-pdf"></i>
+        </button>
+    </div>
+
+    <!-- Navigation (Web View) -->
+    <nav class="bg-white/90 backdrop-blur-md fixed w-full z-50 border-b border-slate-100">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-2">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="투어메이커 로고" class="h-8 md:h-10" crossorigin="anonymous">
+                <span class="font-bold text-lg md:text-xl text-slate-900 hidden xs:block">(주)투어메이커</span>
             </a>
-            
-            <div class="hidden md:flex space-x-6 font-medium text-gray-700 text-sm lg:text-base">
-                <a href="#about" class="hover:text-red-500 transition">핵심 포인트</a>
-                <a href="#day1" class="hover:text-red-500 transition">1일차</a>
-                <a href="#day2" class="hover:text-red-500 transition">2일차</a>
-                <a href="#day3" class="hover:text-red-500 transition">3일차</a>
-                <a href="#hotel" class="hover:text-red-500 transition">호텔/식사</a>
-                <a href="tel:010-4025-9889" class="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition shadow-lg flex items-center gap-2">
-                    <i class="fas fa-phone-alt"></i> VIP 상담
-                </a>
-            </div>
-
-            <div class="md:hidden flex items-center gap-4">
-                <a href="tel:010-4025-9889" class="text-red-600 text-2xl animate-pulse"><i class="fas fa-phone-square-alt"></i></a>
-                <button class="text-gray-700" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"><i class="fas fa-bars text-2xl"></i></button>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
-            <div class="flex flex-col p-4 space-y-3">
-                <a href="#about" class="block text-gray-700">핵심 포인트</a>
-                <a href="#day1" class="block text-gray-700">1일차 일정</a>
-                <a href="#day2" class="block text-gray-700">2일차 일정</a>
-                <a href="#day3" class="block text-gray-700">3일차 일정</a>
-                <a href="#hotel" class="block text-gray-700">호텔 및 식사</a>
-                <a href="tel:010-4025-9889" class="block text-red-600 font-bold bg-red-50 p-2 rounded text-center"><i class="fas fa-phone mr-2"></i> 강원경 대표 직통전화</a>
-            </div>
+            <a href="tel:010-9443-7881" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-blue-700 transition flex items-center gap-2">
+                <i class="fas fa-phone-alt"></i> 상담 문의
+            </a>
         </div>
     </nav>
 
-    <a href="tel:010-4025-9889" class="fixed bottom-6 right-6 z-40 bg-red-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-red-700 transition pulse-ring md:hidden">
-        <i class="fas fa-phone-alt text-2xl"></i>
-    </a>
+    <!-- [Web View Content] -->
+    <div id="web-view">
+        <header class="hero-bg text-white pt-24 pb-16 px-4 md:pt-32 md:pb-24">
+            <div class="max-w-4xl mx-auto text-center animate-fade-in">
+                <div class="inline-block bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1 mb-4 text-blue-300 text-xs md:text-sm font-semibold tracking-wider">SMART TOUR SOLUTION</div>
+                <h1 class="text-3xl md:text-5xl font-black mb-4 leading-tight">여행, <span class="text-blue-400">데이터</span>를 만나<br>혁신이 되다</h1>
+                <p class="text-slate-300 text-sm md:text-lg max-w-2xl mx-auto leading-relaxed mb-8">AI 기술 연수부터 지역 특화 벤치마킹까지,<br>(주)투어메이커가 공공/교육기관의 목적 달성을 위한 최적의 솔루션을 제공합니다.</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto text-center mt-8">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/10"><div class="text-2xl font-bold text-blue-400">50+</div><div class="text-xs text-slate-300">공공/대학 용역</div></div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/10"><div class="text-2xl font-bold text-blue-400">Expert</div><div class="text-xs text-slate-300">데이터기반 기획</div></div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/10"><div class="text-2xl font-bold text-blue-400">Local</div><div class="text-xs text-slate-300">지역 밀착</div></div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/10"><div class="text-2xl font-bold text-blue-400">Global</div><div class="text-xs text-slate-300">해외 기술 연수</div></div>
+                </div>
+            </div>
+        </header>
 
-    <!-- Hero -->
-    <header class="hero-bg h-screen flex items-center justify-center text-center px-4 relative">
-        <div class="text-white z-10" data-aos="fade-up">
-            <div class="inline-block border border-yellow-400 rounded-full px-4 py-1 mb-4 bg-black/30 backdrop-blur-sm">
-                <span class="text-yellow-400 font-bold tracking-wider text-sm md:text-base">VIP SPECIAL INVITATION</span>
-            </div>
-            <h2 class="text-xl md:text-3xl font-light mb-2 text-white font-serif">효돈동 역대주민자치위원장님을 위한</h2>
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-shadow leading-tight font-serif">
-                상해, 가흥, 복원, 소주<br><span class="text-red-500">고품격 3일</span> 여행
-            </h1>
-            <p class="text-base md:text-xl font-light mb-8 max-w-2xl mx-auto opacity-90 text-shadow">
-                지역 발전을 위해 헌신하신 위원장님들의 노고에 감사드리며,<br>오직 위원장님들만을 위해 준비한 최고의 예우와 품격으로 모시겠습니다.
-            </p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/30">
-                    <span class="block text-sm text-gray-200">출발일</span><span class="font-bold text-lg">2026. 01. 27 (화)</span>
-                </div>
-                <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/30">
-                    <span class="block text-sm text-gray-200">항공편</span><span class="font-bold text-lg">춘추항공 (제주 직항)</span>
-                </div>
-            </div>
-            <div class="mt-12 animate-bounce">
-                <a href="#about" class="text-white text-3xl opacity-80 hover:opacity-100 transition"><i class="fas fa-chevron-down"></i></a>
-            </div>
-        </div>
-    </header>
-
-    <!-- About -->
-    <section id="about" class="py-20 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 section-title">Travel Highlights</h2>
-                <p class="text-gray-600">위원장님들의 편안하고 특별한 여행을 위해 준비했습니다.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-16 h-16 mx-auto bg-red-50 rounded-full flex items-center justify-center mb-6 text-red-600"><i class="fas fa-ban text-2xl"></i></div>
-                    <h3 class="text-xl font-bold mb-3">3 NO 정책</h3>
-                    <p class="text-gray-500 text-sm">NO 쇼핑, NO 옵션<br>현지 추가 비용 부담 없는<br>깔끔하고 투명한 여행</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center mb-6 text-blue-600"><i class="fas fa-camera text-2xl"></i></div>
-                    <h3 class="text-xl font-bold mb-3">완벽한 포토 스팟</h3>
-                    <p class="text-gray-500 text-sm">수향마을의 낭만적인 야경과<br>상해의 현대적 스카이라인 조망</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition" data-aos="fade-up" data-aos-delay="300">
-                    <div class="w-16 h-16 mx-auto bg-yellow-50 rounded-full flex items-center justify-center mb-6 text-yellow-600"><i class="fas fa-hotel text-2xl"></i></div>
-                    <h3 class="text-xl font-bold mb-3">전 일정 5성급 호텔</h3>
-                    <p class="text-gray-500 text-sm">메이상 리조트 & 오션 호텔<br>최고급 숙소에서 즐기는 편안한 휴식</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Day 1 -->
-    <section id="day1" class="py-20 bg-white border-b">
-        <div class="container mx-auto px-6">
-            <div class="flex items-end mb-12" data-aos="fade-right">
-                <div class="text-6xl font-black text-red-100 -mb-4 -ml-2 absolute z-0 select-none">01</div>
-                <div class="relative z-10">
-                    <span class="text-red-500 font-bold tracking-widest text-sm">DAY 1</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-1">역사의 발자취와 수향마을</h2>
-                    <p class="text-gray-500 mt-2 text-sm">제주 ➔ 상해 ➔ 가흥(김구 피난처) ➔ 복원(야경 뱃놀이)</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('kimgoo')" data-aos="fade-up">
-                    <div class="touch-hint"><i class="fas fa-images"></i> 추가 사진</div>
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="https://www.korea.kr/newsWeb/resources/attaches/2019.04/01/1%280%29.JPG" alt="김구 피난처" class="w-full h-full object-cover" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Kim_Koo_Museum.JPG/640px-Kim_Koo_Museum.JPG'">
-                        <div class="absolute top-4 left-4 bg-gray-700 text-white text-xs font-bold px-3 py-1 rounded-full">HISTORY</div>
-                    </div>
-                    <div class="p-6 spot-content">
-                        <h3 class="text-xl font-bold mb-2">가흥 김구 선생 피난처</h3>
-                        <p class="text-gray-600 text-sm line-clamp-3">1932년 윤봉길 의사 의거 후, 김구 선생이 일제의 감시를 피해 머물렀던 역사적 현장입니다.</p>
+        <section class="py-12 px-4 max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl p-6 md:p-8 card-shadow border-l-4 border-blue-600 mb-8">
+                <div class="flex flex-col md:flex-row gap-6 items-start">
+                    <div class="flex-1">
+                        <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="fas fa-user-tie text-blue-600"></i> CEO Message</h2>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">"기존 여행사가 '감성'을 팔 때, 투어메이커는 '전문성'과 '신뢰'를 제안합니다."</p>
+                        <p class="text-slate-700 text-sm md:text-base leading-relaxed">안녕하세요, 대표이사 <strong>이재명</strong>입니다. 저는 강원대학교 데이터사이언스 대학원 과정을 통해 습득한 <strong>데이터 분석 역량</strong>을 여행업에 접목했습니다. 단순한 관광이 아닌, <span class="bg-yellow-100 px-1 font-semibold">기관의 목적(벤치마킹, 교육, 연수)을 정확히 달성하는 성과 중심의 기획</span>을 약속드립니다.</p>
                     </div>
                 </div>
-                <div class="spot-card rounded-xl overflow-hidden lg:col-span-2" onclick="openModal('wuzhen')" data-aos="fade-up" data-aos-delay="100">
-                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 홍보 영상 보기</div>
-                    <div class="flex flex-col md:flex-row h-full">
-                        <div class="md:w-1/2 relative h-64 md:h-auto">
-                             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjOk2fxpXwf34zaKtBxspnCtnXZ1Z2pVivWalLO04GXULulV2Ur2m1Jcp6XbtBa42iWU1UyO09ywIUGp8TLU_3aiJ1mqfeKpwLrNpPoRSzEpn4e2vXzpdn-rBRG3Fcgp9_nd0nCZvF8S-gS/s1600/wuzhen-water-town-15.jpg" alt="Wuzhen" class="w-full h-full object-cover">
-                        </div>
-                        <div class="md:w-1/2 p-8 flex flex-col justify-center">
-                            <h3 class="text-2xl font-bold mb-3">복원 고진 (Wuzhen)</h3>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-4">7세기에 건설된 역사 깊은 '수향(水鄉)' 마을. 낮의 고즈넉함과 밤의 화려한 야경이 공존하는 최고의 명소입니다.</p>
-                            <div class="bg-purple-50 p-4 rounded-lg"><span class="font-bold text-purple-700 text-sm">✨ 추천 포인트</span><p class="text-xs text-gray-600">수향 + 전통 + 사진 명소 + 낮·밤 반전 매력</p></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Day 2 -->
-    <section id="day2" class="py-20 bg-gray-50 border-b">
-        <div class="container mx-auto px-6">
-            <div class="flex items-end mb-12" data-aos="fade-right">
-                <div class="text-6xl font-black text-blue-100 -mb-4 -ml-2 absolute z-0 select-none">02</div>
-                <div class="relative z-10">
-                    <span class="text-blue-500 font-bold tracking-widest text-sm">DAY 2</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-1">물의 도시와 상해의 야경</h2>
-                    <p class="text-gray-500 mt-2 text-sm">소주 이동 ➔ 호구탑/산당가 ➔ 상해 이동 ➔ 와이탄/남경로</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="spot-card rounded-xl overflow-hidden shadow-sm" onclick="openModal('suzhou')" data-aos="fade-up">
-                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 홍보 영상</div>
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="https://www.asiaodysseytravel.com/images/china-tours/group-tours/suzhou-lingering-garden-700-1.jpg" alt="Suzhou" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6 spot-content">
-                        <h3 class="text-xl font-bold mb-2">소주 (Suzhou)</h3>
-                        <p class="text-gray-600 text-sm mb-4">운하와 정원, 고택이 어우러진 도시. 호구탑과 산당가에서 중국 전통의 미를 느껴보세요.</p>
-                        <div class="mt-4 bg-green-50 p-3 rounded-lg text-xs text-gray-600"><strong>✨ 추천 포인트:</strong> 운하+전통+도시 감성의 조화</div>
-                    </div>
-                </div>
-                <div class="spot-card rounded-xl overflow-hidden shadow-sm" onclick="openModal('waitan')" data-aos="fade-up" data-aos-delay="100">
-                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 4K 영상</div>
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="https://ak-d.tripcdn.com/images/1mi59224x8xehgwd66EE1_W_400_0_R5_Q90.jpg?proc=source%2Ftrip" alt="The Bund" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6 spot-content">
-                        <h3 class="text-xl font-bold mb-2">와이탄 (The Bund)</h3>
-                        <p class="text-gray-600 text-sm mb-4">황푸강변의 유럽식 건축물과 푸동의 마천루가 빚어내는 상해 최고의 야경 명소입니다.</p>
-                        <div class="mt-4 bg-yellow-50 p-3 rounded-lg text-xs text-gray-600"><strong>✨ 추천 포인트:</strong> 황홀한 야경의 진수</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Day 3 -->
-    <section id="day3" class="py-20 bg-white border-b">
-        <div class="container mx-auto px-6">
-            <div class="flex items-end mb-12" data-aos="fade-right">
-                <div class="text-6xl font-black text-green-100 -mb-4 -ml-2 absolute z-0 select-none">03</div>
-                <div class="relative z-10">
-                    <span class="text-green-600 font-bold tracking-widest text-sm">DAY 3</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-1">상해의 과거와 현재</h2>
-                    <p class="text-gray-500 mt-2 text-sm">주가각(수향마을) ➔ 티엔즈팡 ➔ 판룽티엔디 ➔ 공항 이동</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('zhujiajiao')" data-aos="fade-up">
-                    <div class="touch-hint bg-red-600/80"><i class="fab fa-youtube"></i> 뱃놀이 영상</div>
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="https://cdn.crowdpic.net/detail-thumb/thumb_d_C4DB46B6FBE19C399AF867351CFF2697.jpg" alt="Zhujiajiao" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6 spot-content">
-                        <h3 class="text-xl font-bold mb-2">주가각 (Zhujiajiao)</h3>
-                        <p class="text-gray-600 text-sm mb-4">상해 인근의 대표 수향 고촌. 좁은 골목과 운하, 돌다리가 어우러진 힐링 명소입니다.</p>
-                    </div>
-                </div>
-                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('tianzifang')" data-aos="fade-up" data-aos-delay="100">
-                    <div class="touch-hint"><i class="fas fa-images"></i> 추가 사진</div>
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="https://ak-d.tripcdn.com/images/100e1a0000019795o9EB0_Z_640_10000_R5.jpg_.webp?proc=autoorient&proc=source%2Ftrip" alt="Tianzifang" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6 spot-content">
-                        <h3 class="text-xl font-bold mb-2">티엔즈팡 (Tianzifang)</h3>
-                        <p class="text-gray-600 text-sm mb-4">좁은 골목에 공방과 갤러리가 모인 예술 거리. 옛 상하이와 현대 예술의 조화를 느껴보세요.</p>
-                    </div>
-                </div>
-                <div class="spot-card rounded-xl overflow-hidden" onclick="openModal('panlong')" data-aos="fade-up" data-aos-delay="200">
-                    <div class="touch-hint"><i class="fas fa-images"></i> 추가 사진</div>
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="https://www.sasaki.com/wp-content/uploads/2020/09/8-Panlong-Historic-Core-1000x548.jpg" alt="Panlong Tiandi" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6 spot-content">
-                        <h3 class="text-xl font-bold mb-2">판룽티엔디</h3>
-                        <p class="text-gray-600 text-sm mb-4">전통 수향마을을 현대적 복합문화공간으로 재해석한 최신 핫플레이스입니다.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Hotel & Food -->
-    <section id="hotel" class="py-20 bg-gray-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <span class="text-red-500 font-bold tracking-wider uppercase text-sm">ACCOMMODATION & DINING</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-2">편안한 휴식과 맛있는 식사</h2>
             </div>
             
-            <!-- Hotels -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-                <div class="spot-card rounded-xl overflow-hidden shadow-lg border border-gray-100 flex flex-col md:flex-row" onclick="openModal('meishang')" data-aos="fade-up">
-                    <div class="touch-hint"><i class="fas fa-images"></i> 상세 사진</div>
-                    <div class="md:w-1/2 h-64 md:h-auto relative">
-                        <img src="https://ak-d.tripcdn.com/images/1mc4f12000lkamd2o4923_W_750_375_R5.webp" alt="Meishang Resort" class="w-full h-full object-cover">
-                    </div>
-                    <div class="md:w-1/2 p-8 flex flex-col justify-center">
-                        <span class="text-sm text-gray-400 mb-1">DAY 1</span>
-                        <h3 class="text-2xl font-bold mb-2">복원 메이상 리조트</h3>
-                        <p class="text-red-500 font-bold text-sm mb-4">★★★★★ (5성급)</p>
-                        <p class="text-gray-600 text-sm mb-4">고진의 분위기와 현대적 편의시설이 조화된 럭셔리 리조트.</p>
-                        <div class="text-xs text-purple-600 bg-purple-50 p-2 rounded inline-block"><strong>혜택:</strong> 투숙객 고진 관광지구 무제한 출입</div>
-                    </div>
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-xl card-shadow text-center group hover:bg-blue-600 transition-colors duration-300">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl group-hover:bg-white group-hover:text-blue-600"><i class="fas fa-rocket"></i></div>
+                    <h3 class="font-bold text-lg mb-2 group-hover:text-white">압도적 실행력</h3>
+                    <p class="text-slate-500 text-sm group-hover:text-blue-100">법인 설립 1년 내 50건 이상의 공공/대학 용역 완수.</p>
                 </div>
-                <div class="spot-card rounded-xl overflow-hidden shadow-lg border border-gray-100 flex flex-col md:flex-row" onclick="openModal('ocean')" data-aos="fade-up" data-aos-delay="100">
-                    <div class="touch-hint"><i class="fas fa-images"></i> 상세 사진</div>
-                    <div class="md:w-1/2 h-64 md:h-auto relative">
-                        <img src="https://images.trvl-media.com/lodging/1000000/570000/564000/563959/w276h393x4y0-eddc44ec.jpg?impolicy=resizecrop&ra=fill&rh=575&rw=575" alt="Ocean Hotel" class="w-full h-full object-cover">
-                    </div>
-                    <div class="md:w-1/2 p-8 flex flex-col justify-center">
-                        <span class="text-sm text-gray-400 mb-1">DAY 2</span>
-                        <h3 class="text-2xl font-bold mb-2">상해 오션 호텔</h3>
-                        <p class="text-red-500 font-bold text-sm mb-4">★★★★★ (5성급)</p>
-                        <p class="text-gray-600 text-sm mb-4">상해 북외탄 위치, 공항 및 주요 관광지 접근성 최상.</p>
-                    </div>
+                <div class="bg-white p-6 rounded-xl card-shadow text-center group hover:bg-blue-600 transition-colors duration-300">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl group-hover:bg-white group-hover:text-blue-600"><i class="fas fa-brain"></i></div>
+                    <h3 class="font-bold text-lg mb-2 group-hover:text-white">데이터 기반 기획</h3>
+                    <p class="text-slate-500 text-sm group-hover:text-blue-100">AI 연수, 도시재생 등 특수 목적(SIT) 전문 기획.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl card-shadow text-center group hover:bg-blue-600 transition-colors duration-300">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl group-hover:bg-white group-hover:text-blue-600"><i class="fas fa-handshake"></i></div>
+                    <h3 class="font-bold text-lg mb-2 group-hover:text-white">지역 전문성</h3>
+                    <p class="text-slate-500 text-sm group-hover:text-blue-100">강원랜드, 정선군청 등 탄탄한 로컬 네트워크.</p>
                 </div>
             </div>
 
-            <!-- Gastronomy -->
-            <div class="text-center mb-12" data-aos="fade-up">
-                <h3 class="text-2xl font-bold text-gray-800">상하이 미식 가이드</h3>
-                <p class="text-gray-500 mt-2">사진을 클릭하면 더 자세한 설명이 나옵니다.</p>
+            <div id="portfolio-web" class="bg-slate-50 py-12 px-4 rounded-2xl">
+                 <div class="text-center mb-8">
+                    <span class="text-blue-600 font-bold text-sm tracking-widest uppercase">Track Record</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mt-2">주요 수행 실적</h2>
+                </div>
+                <div class="flex overflow-x-auto scrollbar-hide gap-2 mb-6 justify-center">
+                    <button onclick="filterWeb('all')" class="tab-btn active px-4 py-2 rounded-full border text-sm">전체</button>
+                    <button onclick="filterWeb('global')" class="tab-btn px-4 py-2 rounded-full border text-sm">글로벌</button>
+                    <button onclick="filterWeb('public')" class="tab-btn px-4 py-2 rounded-full border text-sm">공공</button>
+                    <button onclick="filterWeb('school')" class="tab-btn px-4 py-2 rounded-full border text-sm">교육</button>
+                </div>
+                <div id="web-portfolio-list" class="space-y-3">
+                    <!-- JS로 렌더링 -->
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="food-card group aspect-[4/5]" onclick="openModal('xiaolongbao')" data-aos="fade-up" data-aos-delay="200">
-                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
-                    <img src="https://previews.123rf.com/images/nungning20/nungning202202/nungning20220200150/182109254-xiao-long-bao-small-chinese-steamed-bun-filling-with-minced-pork-on-black-plate-eating-by-use.jpg" alt="Xiaolongbao" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
-                        <h4 class="text-white text-xl font-bold">샤오롱바오</h4>
-                        <p class="text-gray-300 text-sm mt-2 opacity-100">육즙 가득한 상하이 대표 딤섬</p>
-                    </div>
-                </div>
-                <div class="food-card group aspect-[4/5]" onclick="openModal('shengjianbao')" data-aos="fade-up" data-aos-delay="300">
-                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
-                    <img src="https://rachelgouk.com/wp-content/uploads/2023/05/shu-cai-ji-sheng-jian-bao-shanghai-54.jpg" alt="Shengjianbao" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
-                        <h4 class="text-white text-xl font-bold">성젠바오</h4>
-                        <p class="text-gray-300 text-sm mt-2 opacity-100">바닥은 바삭, 속은 촉촉한 만두</p>
-                    </div>
-                </div>
-                <div class="food-card group aspect-[4/5]" onclick="openModal('hongshaorou')" data-aos="fade-up" data-aos-delay="400">
-                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
-                    <img src="https://thewoksoflife.com/wp-content/uploads/2013/07/hongshao-rou-1.jpg" alt="Hong Shao Rou" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
-                        <h4 class="text-white text-xl font-bold">홍샤오러우</h4>
-                        <p class="text-gray-300 text-sm mt-2 opacity-100">입에서 녹는 붉은 삼겹살 조림</p>
-                    </div>
-                </div>
-                <div class="food-card group aspect-[4/5]" onclick="openModal('noodles')" data-aos="fade-up" data-aos-delay="500">
-                    <div class="touch-hint"><i class="fas fa-hand-pointer mr-1"></i>상세</div>
-                    <img src="https://thewoksoflife.com/wp-content/uploads/2019/06/scallion-oil-noodles-15.jpg" alt="Noodles" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-6">
-                        <h4 class="text-white text-xl font-bold">총유반면</h4>
-                        <p class="text-gray-300 text-sm mt-2 opacity-100">향긋한 파기름 비빔면</p>
-                    </div>
-                </div>
+        </section>
+
+        <footer class="bg-slate-900 text-white py-12 px-4 text-center mt-12">
+            <h2 class="text-2xl font-bold mb-4">여행 기획, 데이터 전문가와 상의하세요</h2>
+            <div class="flex justify-center mb-6">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="로고" class="h-12 w-auto opacity-80" crossorigin="anonymous">
+            </div>
+            <p class="text-slate-500 text-xs">&copy; 2024-2025 Tourmaker Corp.</p>
+        </footer>
+    </div>
+
+
+    <!-- ================================================================================= -->
+    <!-- [Template] - PDF 생성용 원본 HTML (화면엔 display:none 상태) -->
+    <!-- ================================================================================= -->
+    <div id="print-template">
+        <div class="doc-header">
+            <div>
+                <!-- 크로스오리진 설정 필수 -->
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" style="height: 40px; margin-bottom: 5px;" crossorigin="anonymous">
+                <div class="doc-title">회사 소개서</div>
+            </div>
+            <div class="doc-meta">
+                <strong>(주)투어메이커 | TOURMAKER Corp.</strong><br>
+                Smart Tour Solution Provider<br>
+                Data-Driven Travel Planning
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-white text-gray-600 py-10 border-t border-gray-200">
-        <div class="container mx-auto px-6 text-center md:text-left">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-6 md:mb-0">
-                    <!-- 우리들여행사 로고 (강원경 대표님) -->
-                   <!-- mix-blend-multiply 클래스를 추가하여 로고의 흰색 배경을 투명하게 처리 -->
-                   <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi3laHRTulJJPuOYDeWrU1eSiB_RJNo8KCEyG1xsse5xRfMyiR9sE3jg-pFZNBFfGjNqZFafkGOske5x4u2Xu5EeYKLvb1oPTJynlLbfJcRlxQqDySSRXAyGtpv-oegm5EeQj0ULYnWHdVynGGe1JzWb4IaUT0yEbAuFaxfZbGtnZqfMeX3-BBHxziqTDM=s16000" alt="우리들여행사 Logo" class="h-10 md:h-12 object-contain mb-4 logo-blend">
-                   <p class="text-xs text-gray-500">(주)우리들여행 | 대표: 강원경 | 제주특별자치도 서귀포시 일주동로 8568, 2층 202호</p>
-                </div>
-                <div class="text-xs text-center md:text-right text-gray-500">
-                    <p class="mb-2">* 상기 일정 및 식사는 현지 사정에 의해 다소 변경될 수 있습니다.</p>
-                    <p>&copy; 2026 Urideul Tour Agency. All rights reserved.</p>
-                </div>
-            </div>
+        <!-- 1. 기업 개요 -->
+        <div class="doc-section">
+            <div class="doc-h2">1. 기업 개요 (About Us)</div>
+            <p class="doc-p">
+                (주)투어메이커는 <strong>데이터 기반의 고객 분석</strong>과 지역 특화 콘텐츠를 결합한 차세대 여행 솔루션 기업입니다. 
+                단순한 여행 알선을 넘어, 공공기관 및 교육기관의 특수 목적(벤치마킹, 연수, 답사)을 달성하기 위한 
+                최적의 경험을 기획(Making)합니다. 강원도 정선과 태백을 거점으로, 로컬의 가치를 글로벌 스탠다드로 연결합니다.
+            </p>
+            <table class="doc-table">
+                <tr>
+                    <th width="18%">대표이사</th>
+                    <td width="32%">이재명</td>
+                    <th width="18%">설립일</th>
+                    <td width="32%">2024. 04. 23</td>
+                </tr>
+                <tr>
+                    <th>본사</th>
+                    <td>강원도 정선군 정선읍</td>
+                    <th>지사</th>
+                    <td>강원도 태백시</td>
+                </tr>
+                <tr>
+                    <th>핵심역량</th>
+                    <td colspan="3">데이터 기반 기획, 공공기관 행정 지원, 글로벌/로컬 네트워크</td>
+                </tr>
+                <tr>
+                    <th>주요클라이언트</th>
+                    <td colspan="3">강원대학교, KAIST, 강원랜드, 정선군청, 교육지원청 등</td>
+                </tr>
+            </table>
         </div>
-    </footer>
 
-    <!-- Modal Structure -->
-    <div id="detailModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl z-10 overflow-hidden transform transition-all scale-95 opacity-0 modal-container" id="modalContentWrapper">
-            <div class="relative">
-                <img id="modalImg" src="" alt="Detail" class="w-full h-64 md:h-96 object-cover">
-                <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/80 transition z-20">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="p-6 md:p-8 max-h-[60vh] overflow-y-auto">
-                <h3 id="modalTitle" class="text-2xl font-bold mb-3 text-gray-900"></h3>
-                <div class="w-12 h-1 bg-red-500 mb-4"></div>
-                <p id="modalDesc" class="text-gray-600 leading-relaxed whitespace-pre-line"></p>
-                
-                <!-- Youtube Video Container -->
-                <div id="videoContainer" class="video-wrapper">
-                    <!-- Iframe will be injected here -->
-                </div>
-            </div>
+        <!-- 2. 핵심 경쟁력 -->
+        <div class="doc-section">
+            <div class="doc-h2">2. 핵심 경쟁력 (Competitiveness)</div>
+            <ul class="doc-ul">
+                <li><strong>압도적 실행력:</strong> 법인 설립 1년 내 50건 이상의 공공/대학 용역 완수 및 행정 절차 완벽 지원</li>
+                <li><strong>데이터 기반 기획:</strong> 강원대 데이터사이언스 대학원 역량을 접목하여 타겟 고객 니즈 정밀 분석</li>
+                <li><strong>지역 전문성:</strong> 강원랜드, 정선군청 등 탄탄한 현지 파트너십을 통한 독점적 프로그램 운영</li>
+            </ul>
+        </div>
+
+        <!-- 3. 주요 실적 (테이블 형태) -->
+        <div class="doc-section">
+            <div class="doc-h2">3. 주요 수행 실적 (Track Record)</div>
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th width="15%">시기</th>
+                        <th width="15%">분야</th>
+                        <th width="30%">사업명</th>
+                        <th width="40%">주요 내용</th>
+                    </tr>
+                </thead>
+                <tbody id="print-portfolio-tbody">
+                    <!-- JS로 데이터 바인딩 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="doc-footer">
+            <strong>(주)투어메이커</strong> | Business No. 473-81-03183<br>
+            대표: 이재명 | 전화: 010-9443-7881 | 이메일: contact@tourmaker.kr<br>
+            강원도 정선군 정선읍 봉양3길 22-10 3층
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ once: true, offset: 50, duration: 800 });
+        const portfolioData = [
+            { category: 'global', date: '2025.01', title: '데이터보안·활용 혁신융합 해외 기술연수', desc: '싱가포르 / 5개 대학 연합(강원대, 아주대 등) 프로그램 운영' },
+            { category: 'global', date: '2025.09', title: '강원대학교 데이터사이언스학과 단기 연수', desc: '일본 / AI융합 전공 심화 연수 및 기업 탐방' },
+            { category: 'global', date: '2024.10', title: 'KAIST x NYU 교환학생 한국문화체험', desc: '한국 / 글로벌 명문대 학생 대상 로컬 문화 체험 기획' },
+            { category: 'public', date: '2025.05', title: '정선군청 모범공무원 선진지 견학', desc: '중국 / 난징, 구강 지역 행정 우수 사례 벤치마킹' },
+            { category: 'public', date: '2024.06', title: '정선군청 모범공무원 북해도 연수', desc: '일본 / 해외 우수 관광 자원 및 행정 사례 조사' },
+            { category: 'school', date: '2025.10', title: '정선고등학교 제주 테마 학습', desc: '제주 / 학생 안전 최우선 기획 및 현장 운영' },
+            { category: 'school', date: '2024.09', title: '태백 황지고등학교 제주도 수학여행', desc: '제주 / 대규모 학생 수송 및 숙박 안전 관리' },
+            { category: 'corp', date: '2025.02', title: 'HCI KOREA 2025 학술대회 지원', desc: '정선 / 국내 최대 학술대회 MICE 운영 지원' },
+            { category: 'corp', date: '2024.11', title: '강원랜드 협력사 우수직원 연수', desc: '마카오 / 복합리조트 벤치마킹 및 서비스 교육' },
+            { category: 'corp', date: '2024.09', title: '정선아리랑 문화재단 역량강화 워크숍', desc: '정선 / 조직 활성화를 위한 팀빌딩 프로그램' },
+        ];
 
-        // Data for Modals with PROFESSIONALLY CURATED VIDEOS (Embed-Safe, Cinematic)
-        // 이재명 대표님 요청: 소주 영상 교체 + 4K 고화질 영상으로 엄선 (2026 VIP 투어용)
-        const modalData = {
-            'kimgoo': {
-                title: '가흥 김구 선생 피난처',
-                img: 'https://contents.history.go.kr/data/img/mp/imsi/thumb/mp_001_0050_0030_0020_0040.jpg', 
-                desc: '이 피난처는 1932년 4월 윤봉길 의사 의거 이후, 일제의 대대적인 체포 작전을 피해 김구 선생과 임정 요인들이 피신했던 역사적인 장소입니다.\n\n원래 청나라 말기에 지어진 목조+벽돌 가옥으로, 김구 선생은 이곳 2층 침실에 머물렀습니다. 내부에는 비상시를 대비한 비밀 통로가 있었으며, 일제 경찰의 급습 시 뒷문으로 바로 아래층 호수(남호)의 쪽배를 타고 탈출할 수 있도록 설계되었습니다.\n\n단순한 은신처가 아닌, 목숨을 걸고 조국의 독립을 위해 활동했던 중대한 거점으로서 그 의미가 깊습니다.'
-            },
-            'wuzhen': {
-                title: '복원 고진 (Wuzhen)',
-                img: 'https://res.klook.com/images/fl_lossy.progressive%2Cq_65/c_fill%2Cw_2500%2Ch_1667/w_80%2Cx_15%2Cy_15%2Cg_south_west%2Cl_Klook_water_br_trans_yhcmh3/activities/c2fppp1jufxssljbvavc/One-daytourofWuzhen%2CZhejiang%2BXitangNanxunAncientTown%28roundtripfromHangzhouShanghai%2Bdoor-to-doorpick-up%2Bintangibleculturalheritageexperience%2Bin-depthtouroftwoancienttownsinJiangnan%2Bmultipleroutesavailable%29-KlookUnitedKingdom.jpg', 
-                desc: '중국 저장성에 위치한 7세기에 건설된 역사 깊은 수향 마을입니다. 고택, 돌다리, 좁은 수로와 운하가 어우러져 \'동양의 베네치아\'라 불리며, 맑은 강물과 전통 가옥이 이어진 고즈넉한 풍경이 특징입니다.\n\n낮에는 돌다리와 물길을 따라 걷거나 전통 찻집에서 여유를 즐길 수 있고, 밤에는 등불과 조명이 운하에 반사되며 몽환적이고 로맨틱한 야경을 연출하여 사진 여행지로도 인기가 높습니다.',
-                videoId: 'h0vuLfErKH4', // [New] Wuzhen Timeless Beauty 2024 (Replaced for better embedding)
-                // THUMBNAIL FIX: 유튜브 자동 썸네일 대신 '고정된 고화질 이미지' 사용
-                thumb: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjOk2fxpXwf34zaKtBxspnCtnXZ1Z2pVivWalLO04GXULulV2Ur2m1Jcp6XbtBa42iWU1UyO09ywIUGp8TLU_3aiJ1mqfeKpwLrNpPoRSzEpn4e2vXzpdn-rBRG3Fcgp9_nd0nCZvF8S-gS/s1600/wuzhen-water-town-15.jpg'
-            },
-            'suzhou': {
-                title: '소주 (Suzhou)',
-                img: 'https://www.chinaholiday.com/Photos/541625/7232206.jpg', 
-                desc: '"운하와 정원, 고택과 물의 도시"로 유명하며, 중국 내에서도 전통 건축과 수향 문화가 가장 잘 보존된 도시입니다.\n\n운하와 고대 수로, 석교를 따라 옛 거리 풍경이 이어지며, 특히 호구탑과 산당가에서는 강남 특유의 정취를 느낄 수 있습니다. 도시 곳곳의 고택과 전통 정원이 현대 도시와 어우러져 있어 여행의 폭이 넓습니다.',
-                videoId: 'Uk4xf6bspGM', // [New] Suzhou 4K Drone 2024 (Replaced for better embedding)
-                // THUMBNAIL FIX: 유튜브 자동 썸네일 대신 '고정된 고화질 이미지' 사용
-                thumb: 'https://www.asiaodysseytravel.com/images/china-tours/group-tours/suzhou-lingering-garden-700-1.jpg' 
-            },
-            'waitan': {
-                title: '와이탄 (The Bund)',
-                img: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/The_Bund_2.jpg', 
-                desc: '상하이 황푸강 서안의 역사 지구로, 유럽식 고전 건축물이 늘어선 워터프런트 산책로입니다. 일제/식민지 시대 이후 갖춰진 신고전주의, 고딕 등 다양한 양식의 건축물이 이어져 있어 마치 유럽을 걷는 듯한 분위기를 자아냅니다.\n\n강 건너편 푸동 지역의 현대적인 마천루(동방명주 등)와 마주보고 있어, 상해의 과거와 현재가 한눈에 들어오는 \'상하이의 얼굴\'과도 같은 곳입니다.',
-                videoId: 'Tr9nsosBjRw', // Shanghai 4K Drone - Embed Safe
-                // THUMBNAIL FIX: 이 영상은 썸네일이 잘 나오지만 통일성을 위해 고정 이미지 사용 권장 (현재는 유튜브 썸네일 유지)
-                thumb: 'https://img.youtube.com/vi/Tr9nsosBjRw/hqdefault.jpg'
-            },
-            'zhujiajiao': {
-                title: '주가각 (Zhujiajiao)',
-                img: 'https://cdn.crowdpic.net/detail-thumb/thumb_d_C4DB46B6FBE19C399AF867351CFF2697.jpg',
-                desc: '상하이 인근의 대표적인 수향 고촌입니다. 물길(운하), 옛 건축, 돌다리와 좁은 골목 등 옛 정취가 그대로 살아있는 풍경이 특징입니다.\n\n관광객을 위한 카페, 찻집, 전통 음식점 등이 어우러져 있어 "역사 + 체험 + 여유"를 한 번에 경험할 수 있는 공간으로, 반나절 코스로 다녀오기 가장 좋은 수향마을 중 하나입니다.',
-                videoId: 'tDlq7uNc1SA', // Zhujiajiao boat ride - Embed Safe
-                thumb: 'https://img.youtube.com/vi/tDlq7uNc1SA/hqdefault.jpg'
-            },
-            'tianzifang': {
-                title: '티엔즈팡 (Tianzifang)',
-                img: 'https://static.toiimg.com/photo/44848806.cms', 
-                desc: '상하이 프랑스 조계지 지역의 구 주거지를 문화 예술 거리로 재생한 지역입니다. 좁은 골목과 옛 산업 창고가 공예품 가게, 카페, 갤러리 등으로 변신했습니다.\n\n전통 \'시쿠먼\' 양식의 건축을 유지하면서도 현대적 감각의 상점이 공존하여, 옛 상하이와 현대 예술의 믹스를 느낄 수 있습니다. 쇼핑이나 대형 관광지와는 다른 아기자기한 매력을 찾는 분들께 추천합니다.'
-            },
-            'panlong': {
-                title: '판룽티엔디 (Panlong Tiandi)',
-                img: 'https://www.sasaki.com/wp-content/uploads/2020/09/8-Panlong-Historic-Core-1000x548.jpg',
-                desc: '전통 수향마을의 정서와 느낌을 차용하면서도, 현대적인 복합문화 공간으로 재탄생한 핫플레이스입니다.\n\n깔끔하게 정돈된 수로와 돌다리, 그리고 강남 전통 양식 건축과 현대적 인테리어의 조화 덕분에 "전통 × 감성 × 현대"가 완벽하게 어우러집니다. 특히 야경이 아름답고 세련된 카페와 레스토랑이 많아 여유로운 시간을 보내기에 최적입니다.'
-            },
-            'meishang': {
-                title: '복원 메이상 리조트',
-                img: 'https://ak-d.tripcdn.com/images/1mc6y12000bmaqt9rAAD1_R_960_660_R5_D.jpg', 
-                desc: '"고진(수향마을) + 리조트"의 복합 숙소로, 전통 고진의 분위기를 살리면서 현대적 호텔 편의시설을 제공합니다.\n\n호텔 본관은 전통 문양 \'만자(卍)\'를 모티브로 설계되었으며, "선(禪)" 문화를 테마로 한 인테리어가 특징입니다. 투숙객은 고진 관광지구에 무제한 출입이 가능하여, 관광과 휴양을 동시에 만족할 수 있는 최고의 숙소입니다.'
-            },
-            'ocean': {
-                title: '상해 오션 호텔',
-                img: 'https://images.trvl-media.com/lodging/1000000/570000/564000/563959/w276h393x4y0-eddc44ec.jpg?impolicy=resizecrop&ra=fill&rh=575&rw=575', 
-                desc: '상하이 북외탄 인근에 위치한 호텔로, 공항 및 주요 관광지 접근성이 매우 뛰어난 도심 숙소입니다.\n\n깔끔한 객실과 실내 수영장, 헬스장 등 다양한 편의시설을 갖추고 있으며, 야간 상하이 관광 후 편안하게 휴식을 취하기에 안성맞춤입니다.'
-            },
-            'xiaolongbao': {
-                title: '샤오롱바오 (小籠包)',
-                img: 'https://rachelgouk.com/wp-content/uploads/2023/05/jia-jia-tang-best-xiaolongbao-shanghai-1-2.jpg', 
-                desc: '속에 육즙이 가득한 얇은 피의 만두로, 찜통에 쪄서 나오는 상하이 대표 딤섬입니다.\n\n상하이 방문자 대부분이 "반드시 먹어봐야 할 음식"으로 꼽으며, 만두피를 살짝 찢어 육즙을 먼저 맛본 후 즐기는 것이 정석입니다.'
-            },
-            'shengjianbao': {
-                title: '성젠바오 (生煎包)',
-                img: 'https://www.thechinajourney.com/wp-content/uploads/2025/05/Pan-Fried-Shengjian-Bao-in-Shanghai-%E2%80%93-Crispy-bottomed-pork-buns-topped-with-scallions-and-sesame-seeds-served-fresh-on-a-white-plate-in-Shanghai.webp', 
-                desc: '찜 대신 팬에 바닥을 바삭하게 구운 만두로, 바닥은 바삭하고 윗부분은 촉촉하며 속에는 육즙이 가득합니다.\n\n주로 아침 식사나 간단한 거리 간식으로 즐겨 먹으며, 현지인들의 일상 속에 깊이 자리 잡은 소울푸드입니다.'
-            },
-            'hongshaorou': {
-                title: '홍샤오러우 (红烧肉)',
-                img: 'https://hillsshanghai.com/cdn/shop/articles/0c3928f1680d60e026a370cb006d7c41_bd744e18-dfc1-4d61-b950-8ce1d019a9cf.jpg?v=1720705645', 
-                desc: '돼지고기 삼겹살을 간장, 설탕, 향신료 등에 넣고 붉은 빛이 돌 때까지 천천히 조려낸 요리입니다.\n\n입안에서 녹는 듯한 부드러운 식감과 달콤하고 짭짤한 양념의 조화가 일품이며, 밥과 함께 먹으면 최고의 한 끼가 됩니다.'
-            },
-            'noodles': {
-                title: '총유반면 (파기름 국수)',
-                img: 'https://lh4.googleusercontent.com/2p2Dk61OQVCcgexmAJr5fvtHlmmitG1-tvkJWtRhRKX3VRuwwDLqcY5iVbh2mSKtT-vHixoGDgPDtB594yps8I7q5X32q9JxN0t7MYSXZbwPBO3ddpv2ZlwhwgrGaf9OAbFYyDbT', 
-                desc: '파기름을 두르고 간장 소스로 비벼 먹는 단순하지만 깊은 맛의 면 요리입니다.\n\n상하이 로컬 면 요리의 진수를 보여주는 메뉴로, 향긋한 파 향과 짭조름한 맛이 어우러져 부담 없이 즐기기 좋습니다.'
-            }
-        };
-
-        function openModal(id) {
-            const data = modalData[id];
-            if (!data) return;
+        // 1. 웹 화면 렌더링
+        function renderWebPortfolio(filter) {
+            const container = document.getElementById('web-portfolio-list');
+            container.innerHTML = '';
+            const filtered = filter === 'all' ? portfolioData : portfolioData.filter(i => i.category === filter);
             
-            // 1. 이미지 및 텍스트 설정
-            document.getElementById('modalImg').src = data.img;
-            document.getElementById('modalTitle').innerText = data.title;
-            document.getElementById('modalDesc').innerText = data.desc;
-            
-            // 2. 비디오 처리 로직
-            const videoContainer = document.getElementById('videoContainer');
-            videoContainer.innerHTML = ''; // 초기화
-
-            if (data.videoId) {
-                // 썸네일과 재생 버튼을 포함한 div 생성
-                const thumbnailDiv = document.createElement('div');
-                thumbnailDiv.className = 'video-thumbnail';
-                // THUMBNAIL ERROR FIX: 이미지가 로드되지 않을 경우를 대비한 스타일 조정
-                thumbnailDiv.style.backgroundImage = `url('${data.thumb}')`;
-                thumbnailDiv.style.backgroundColor = '#000'; // 이미지가 없을 때 검은 배경
-                thumbnailDiv.innerHTML = '<div class="play-button"></div>';
-                
-                // 클릭 시 아이프레임으로 교체하는 이벤트 리스너
-                // PC 재생 오류 해결을 위해 Autoplay + Mute + Playsinline + Rel=0 추가
-                thumbnailDiv.onclick = function() {
-                    const iframe = document.createElement('iframe');
-                    iframe.setAttribute('src', `https://www.youtube.com/embed/${data.videoId}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1`);
-                    iframe.setAttribute('frameborder', '0');
-                    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-                    iframe.setAttribute('allowfullscreen', 'true');
-                    videoContainer.innerHTML = ''; // 썸네일 제거
-                    videoContainer.appendChild(iframe); // 아이프레임 추가
-                };
-                
-                videoContainer.appendChild(thumbnailDiv);
-                videoContainer.style.display = 'block';
-            } else {
-                videoContainer.style.display = 'none';
-            }
-            
-            // 3. 모달 애니메이션
-            const modal = document.getElementById('detailModal');
-            const content = document.getElementById('modalContentWrapper');
-            
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
+            filtered.forEach(item => {
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-lg border border-slate-200 flex flex-col md:flex-row gap-2 md:items-center">
+                        <span class="text-xs font-bold bg-slate-100 px-2 py-1 rounded w-fit">${item.date}</span>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-800 text-sm">${item.title}</h4>
+                            <p class="text-xs text-slate-500">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        function filterWeb(cat) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'bg-blue-600', 'text-white'));
+            event.target.classList.add('active', 'bg-blue-600', 'text-white');
+            renderWebPortfolio(cat);
         }
 
-        function closeModal() {
-            const modal = document.getElementById('detailModal');
-            const content = document.getElementById('modalContentWrapper');
-            const videoContainer = document.getElementById('videoContainer');
-            
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                videoContainer.innerHTML = ''; // 닫을 때 영상 제거 (소리 끄기)
-            }, 300);
+        // 2. 문서(PDF)용 데이터 렌더링
+        function renderPrintPortfolio() {
+            const tbody = document.getElementById('print-portfolio-tbody');
+            let html = '';
+            portfolioData.forEach(item => {
+                let catName = item.category === 'global' ? '글로벌' :
+                              item.category === 'public' ? '공공' :
+                              item.category === 'school' ? '교육' : '기업';
+                html += `
+                    <tr>
+                        <td style="text-align: center;">${item.date}</td>
+                        <td style="text-align: center;">${catName}</td>
+                        <td style="font-weight: bold;">${item.title}</td>
+                        <td>${item.desc}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
         }
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
-        });
+        // 3. 고스트 PDF 생성 함수 (완전체)
+        function generateGhostPDF() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.display = 'flex';
+
+            // 1. 템플릿의 내용을 복제하여 "렌더링용 컨테이너" 생성
+            const template = document.getElementById('print-template');
+            const clone = document.createElement('div');
+            clone.innerHTML = template.innerHTML;
+            clone.className = 'print-render-container'; // CSS에서 스타일 및 숨김 처리
+            
+            // 2. Body에 붙임 (보이진 않지만 DOM에는 존재해야 캡처 가능)
+            document.body.appendChild(clone);
+
+            // 3. 옵션 설정
+            const opt = {
+                margin:       0,
+                filename:     '투어메이커_공식_회사소개서.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, // 이미지 로딩 필수
+                    scrollY: 0,
+                    logging: true
+                },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // 4. 생성 및 다운로드
+            html2pdf().set(opt).from(clone).save().then(() => {
+                // 완료 후 청소
+                document.body.removeChild(clone);
+                overlay.style.display = 'none';
+            }).catch(err => {
+                console.error("PDF 생성 오류:", err);
+                document.body.removeChild(clone);
+                overlay.style.display = 'none';
+                alert('문서 생성 중 오류가 발생했습니다.\n서버(GitHub 등) 환경에서 실행해주세요.');
+            });
+        }
+
+        // 초기화
+        renderWebPortfolio('all');
+        renderPrintPortfolio();
+
     </script>
 </body>
 </html>
