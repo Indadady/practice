@@ -65,7 +65,7 @@
                         <a href="#home"       class="nav-link px-3 py-2 border-b-2 border-transparent active">소개</a>
                         <a href="#highlight"  class="nav-link px-3 py-2 border-b-2 border-transparent">핵심 탐방</a>
                         <a href="#university" class="nav-link px-3 py-2 border-b-2 border-transparent">대학&기업</a>
-                        <a href="#cities"     class="nav-link px-3 py-2 border-b-2 border-transparent text-indigo-600 font-bold">도시 정보</a>
+                        <a href="#cities"     class="nav-link px-3 py-2 border-b-2 border-transparent text-indigo-600 font-bold">도시영상</a>
                         <a href="#timeline"   class="nav-link px-3 py-2 border-b-2 border-transparent">일정</a>
                         <a href="#pretravel"  class="nav-link px-3 py-2 border-b-2 border-transparent text-red-600 font-bold">출발/미팅</a>
                     </div>
@@ -284,7 +284,7 @@
             </div>
         </section>
 
-        <!-- Cities Video & Info Section (Rich Content) -->
+        <!-- Cities Video & Info Section -->
         <section id="cities" class="py-20 bg-slate-50 border-t">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-12">
@@ -470,16 +470,21 @@
                             <li>공항 수하물 위탁 시 여권+탑승권 제시</li>
                         </ol>
                     </div>
-                    <!-- Arrival Card -->
+                    <!-- Arrival Card (Updated for Electronic) -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold mb-3 flex items-center text-red-900">
-                            🛂 중국 입국신고서 작성
+                            🛂 전자 입국신고서 (필수)
                         </h3>
-                        <p class="text-sm text-slate-600 mb-2"><strong>무비자 입국</strong>이라도 신고서는 필수입니다.</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
-                            <li><strong>필수 항목:</strong> 여권번호, 체류기간, 호텔 주소, 연락처</li>
-                            <li><strong>작성:</strong> 기내 배부 카드 또는 일부 공항 온라인 QR 작성 가능</li>
-                            <li>입국 심사 시 여권과 함께 제출</li>
+                        <p class="text-sm text-slate-600 mb-2"><strong>모든 외국인 승객</strong>은 사전 작성이 원칙입니다.</p>
+                        <ul class="list-disc list-inside text-sm text-slate-700 space-y-2">
+                            <li><strong>시행:</strong> 항저우 포함 전면 확대 시행 중</li>
+                            <li><strong>방법:</strong> 출발 전 모바일 링크로 사전 작성 권장</li>
+                            <li><strong>혜택:</strong> 도착 후 입국 수속 대기 시간 단축</li>
+                            <li class="pt-1">
+                                <a href="https://s.nia.gov.cn/ArrivalCardFillingPhone/" target="_blank" class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded text-xs font-bold hover:bg-red-200 transition-colors">
+                                    🔗 작성 페이지 바로가기 (공식)
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <!-- Weather -->
@@ -728,7 +733,7 @@
             const checklistContainer = document.getElementById('checklist-container');
             const checklistItems = [
                 { id: 'passport', text: '여권 (유효기간 6개월 이상 필수)' },
-                { id: 'arrival_card', text: '입국신고서 안내 숙지 (기내·온라인 작성)' },
+                { id: 'arrival_card', text: '전자 입국신고서 사전 작성 (필수)' },
                 { id: 'ticket', text: '항공권 (E-티켓 / 모바일 탑승권)' },
                 { id: 'pay_app', text: '알리페이/위챗페이 설치 및 카드 등록' },
                 { id: 'cash', text: '소액 위안화 현금 (비상용)' },
