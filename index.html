@@ -65,7 +65,7 @@
                         <a href="#home"       class="nav-link px-3 py-2 border-b-2 border-transparent active">소개</a>
                         <a href="#highlight"  class="nav-link px-3 py-2 border-b-2 border-transparent">핵심 탐방</a>
                         <a href="#university" class="nav-link px-3 py-2 border-b-2 border-transparent">대학&기업</a>
-                        <a href="#cities"     class="nav-link px-3 py-2 border-b-2 border-transparent text-indigo-600 font-bold">도시영상</a>
+                        <a href="#cities"     class="nav-link px-3 py-2 border-b-2 border-transparent text-indigo-600 font-bold">도시 정보</a>
                         <a href="#timeline"   class="nav-link px-3 py-2 border-b-2 border-transparent">일정</a>
                         <a href="#pretravel"  class="nav-link px-3 py-2 border-b-2 border-transparent text-red-600 font-bold">출발/미팅</a>
                     </div>
@@ -157,7 +157,7 @@
             </div>
         </section>
 
-        <!-- Donghua University Section (Detailed) -->
+        <!-- Donghua University Section -->
         <section id="university" class="py-20 bg-slate-50">
             <div class="container mx-auto px-4">
                 <div class="max-w-6xl mx-auto">
@@ -183,7 +183,6 @@
                                     <li><strong>규모:</strong> 유학생 1,400명 이상의 다국적 교육기관</li>
                                 </ul>
                             </div>
-                            <!-- 3 Charm Points -->
                             <ul class="space-y-4">
                                 <li class="flex items-start">
                                     <span class="flex-shrink-0 w-8 h-8 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center font-bold mr-3">1</span>
@@ -204,7 +203,7 @@
             </div>
         </section>
 
-        <!-- Corporate Visits Section (Detailed) -->
+        <!-- Corporate Visits Section -->
         <section id="companies" class="py-20 bg-white">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-16">
@@ -285,53 +284,107 @@
             </div>
         </section>
 
-        <!-- Cities Video Section (Improved with Thumbnails) -->
+        <!-- Cities Video & Info Section (Rich Content) -->
         <section id="cities" class="py-20 bg-slate-50 border-t">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-12">
                     <span class="text-blue-600 font-bold tracking-wider uppercase">City Preview</span>
                     <h2 class="text-3xl md:text-4xl font-bold mt-2">탐방 도시 미리보기</h2>
-                    <p class="text-slate-500 mt-2">상해의 미래와 항저우의 낭만, 영상으로 먼저 만나보세요.</p>
+                    <p class="text-slate-500 mt-2">영상과 사진으로 만나는 상하이와 항저우</p>
                 </div>
                 
-                <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                    <!-- Shanghai Video Card -->
-                    <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-200">
-                        <!-- Thumbnail Wrapper -->
-                        <div class="relative aspect-video rounded-xl overflow-hidden bg-slate-900 mb-4 cursor-pointer group" onclick="playVideo(this, 'Ly6Botr2638')">
-                            <img src="https://img.youtube.com/vi/Ly6Botr2638/maxresdefault.jpg" alt="Shanghai Video Thumbnail" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
-                            <div class="absolute inset-0 flex items-center justify-center play-overlay">
-                                <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white play-icon">
-                                    <span class="text-white text-3xl ml-1">▶</span>
+                <div class="max-w-6xl mx-auto space-y-20">
+                    <!-- Shanghai Block -->
+                    <div class="grid lg:grid-cols-2 gap-10 items-center">
+                        <div class="order-2 lg:order-1">
+                            <div class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold mb-4">Shanghai</div>
+                            <h3 class="text-3xl font-bold text-slate-900 mb-6">상하이 (Shanghai) <span class="text-lg font-normal text-gray-500">| 미래를 만나다</span></h3>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <h4 class="font-bold text-lg mb-2 text-slate-800">📜 역사와 성장</h4>
+                                    <p class="text-slate-600 text-sm leading-relaxed">
+                                        작은 어촌에서 시작해 19세기 개항 후 서구 문물이 유입되며 금융·상업의 허브로 급성장했습니다.
+                                        와이탄의 고풍스러운 건축물과 푸동의 최첨단 마천루가 마주 보는 독특한 스카이라인을 자랑합니다.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <h4 class="font-bold text-lg mb-2 text-slate-800">🎭 문화적 특징 (해파이)</h4>
+                                    <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                        <li><strong>건축:</strong> 동서양 건축 양식의 조화 (와이탄 vs 푸동)</li>
+                                        <li><strong>미식:</strong> 샤오롱바오, 생지엔 등 다채로운 딤섬 문화</li>
+                                        <li><strong>언어:</strong> 독특한 상하이 방언과 국제적 분위기 공존</li>
+                                    </ul>
+                                </div>
+                                <div class="flex gap-4">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Shanghai_skyline_from_the_bund.jpg" alt="상하이 스카이라인" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
+                                    <img src="https://www.classicist.org/assets/images/articles/_pagebody/Figure-1-street-view-of-the-bund.jpg" alt="와이탄 거리" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
                                 </div>
                             </div>
-                            <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
-                                <p class="text-white font-bold text-lg">SHANGHAI: Future City</p>
-                            </div>
                         </div>
-                        <div class="px-2">
-                            <h3 class="text-xl font-bold text-slate-900 mb-2">상하이 (Shanghai) - 미래를 만나다</h3>
-                            <p class="text-sm text-slate-600">동서양의 조화, 와이탄의 야경과 푸동의 마천루가 공존하는 국제 금융/상업 허브입니다.</p>
+                        <div class="order-1 lg:order-2">
+                            <!-- Shanghai Video -->
+                            <div class="bg-white p-3 rounded-2xl shadow-xl border border-slate-200">
+                                <div class="relative aspect-video rounded-xl overflow-hidden bg-slate-900 cursor-pointer group" onclick="playVideo(this, 'Ly6Botr2638')">
+                                    <img src="https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Shanghai Video Thumbnail" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
+                                    <div class="absolute inset-0 flex items-center justify-center play-overlay">
+                                        <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white play-icon">
+                                            <span class="text-white text-4xl ml-2">▶</span>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/90 to-transparent">
+                                        <p class="text-white font-bold text-xl">SHANGHAI: Cinematic 4K</p>
+                                        <p class="text-slate-300 text-sm mt-1">상해의 과거와 현재를 영상으로 확인하세요</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Hangzhou Video Card -->
-                    <div class="bg-white p-4 rounded-2xl shadow-lg border border-slate-200">
-                        <!-- Thumbnail Wrapper -->
-                        <div class="relative aspect-video rounded-xl overflow-hidden bg-slate-900 mb-4 cursor-pointer group" onclick="playVideo(this, 'gBLWtXkXHoo')">
-                            <img src="https://img.youtube.com/vi/gBLWtXkXHoo/maxresdefault.jpg" alt="Hangzhou Video Thumbnail" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
-                            <div class="absolute inset-0 flex items-center justify-center play-overlay">
-                                <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white play-icon">
-                                    <span class="text-white text-3xl ml-1">▶</span>
+
+                    <!-- Hangzhou Block -->
+                    <div class="grid lg:grid-cols-2 gap-10 items-center">
+                        <div class="order-1">
+                            <!-- Hangzhou Video -->
+                            <div class="bg-white p-3 rounded-2xl shadow-xl border border-slate-200">
+                                <div class="relative aspect-video rounded-xl overflow-hidden bg-slate-900 cursor-pointer group" onclick="playVideo(this, 'gBLWtXkXHoo')">
+                                    <img src="https://img.youtube.com/vi/gBLWtXkXHoo/maxresdefault.jpg" alt="Hangzhou Video Thumbnail" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
+                                    <div class="absolute inset-0 flex items-center justify-center play-overlay">
+                                        <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white play-icon">
+                                            <span class="text-white text-4xl ml-2">▶</span>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/90 to-transparent">
+                                        <p class="text-white font-bold text-xl">HANGZHOU: Heaven on Earth</p>
+                                        <p class="text-slate-300 text-sm mt-1">혁신과 자연이 공존하는 알리바바의 도시</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent">
-                                <p class="text-white font-bold text-lg">HANGZHOU: Innovation & Nature</p>
-                            </div>
                         </div>
-                        <div class="px-2">
-                            <h3 class="text-xl font-bold text-slate-900 mb-2">항저우 (Hangzhou) - 혁신과 전통</h3>
-                            <p class="text-sm text-slate-600">알리바바의 본거지이자 유네스코 세계유산 서호(West Lake)가 있는 스마트 생태 도시입니다.</p>
+                        <div class="order-2">
+                            <div class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold mb-4">Hangzhou</div>
+                            <h3 class="text-3xl font-bold text-slate-900 mb-6">항저우 (Hangzhou) <span class="text-lg font-normal text-gray-500">| 혁신과 전통</span></h3>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <h4 class="font-bold text-lg mb-2 text-slate-800">📜 유서 깊은 역사</h4>
+                                    <p class="text-slate-600 text-sm leading-relaxed">
+                                        남송(南宋) 시대의 수도이자 신석기 양저우 문화의 발상지입니다. 
+                                        최근에는 알리바바 본사가 위치한 '중국 전자상거래와 기술 혁신의 심장부'로 재탄생했습니다.
+                                    </p>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <h4 class="font-bold text-lg mb-2 text-slate-800">🎭 자연과 도시의 융합</h4>
+                                    <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
+                                        <li><strong>서호(West Lake):</strong> 유네스코 세계유산으로 지정된 절경</li>
+                                        <li><strong>특산물:</strong> 용정차(녹차)와 비단(실크)의 본고장</li>
+                                        <li><strong>혁신:</strong> 모바일 결제와 스마트 시티 기술의 선도 도시</li>
+                                    </ul>
+                                </div>
+                                <div class="flex gap-4">
+                                    <img src="https://res.klook.com/images/fl_lossy.progressive%2Cq_65/c_fill%2Cw_1295%2Ch_720/w_80%2Cx_15%2Cy_15%2Cg_south_west%2Cl_Klook_water_br_trans_yhcmh3/activities/c1b0c94b-Grand-Canal-and-Culture-of-Hangzhou/GrandCanalandCultureofHangzhou.jpg" alt="항주 운하" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
+                                    <img src="https://www.alexisjetsets.com/wp-content/uploads/2019/06/hangzhou-west-lake-alexisjetsets-13-e1560138753302.jpg" alt="항주 서호" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -404,8 +457,7 @@
                 </div>
 
                 <div class="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    
-                    <!-- 1. Korean Air Check-in -->
+                    <!-- Check-in -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold mb-3 flex items-center text-blue-900">
                             ✈️ 대한항공 모바일 체크인
@@ -418,8 +470,7 @@
                             <li>공항 수하물 위탁 시 여권+탑승권 제시</li>
                         </ol>
                     </div>
-
-                    <!-- 2. Arrival Card -->
+                    <!-- Arrival Card -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold mb-3 flex items-center text-red-900">
                             🛂 중국 입국신고서 작성
@@ -431,8 +482,7 @@
                             <li>입국 심사 시 여권과 함께 제출</li>
                         </ul>
                     </div>
-
-                    <!-- 3. Weather & Clothes -->
+                    <!-- Weather -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold mb-3 flex items-center text-slate-800">
                             🧥 1월 날씨 & 옷차림
@@ -444,8 +494,7 @@
                             <li>실내는 난방 차이가 크므로 <strong>레이어드 복장</strong> 권장</li>
                         </ul>
                     </div>
-
-                    <!-- 4. Payment & Data -->
+                    <!-- Payment -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold mb-3 flex items-center text-green-800">
                             💳 결제 & 통신 가이드
@@ -457,8 +506,7 @@
                             <li><strong>통신:</strong> eSIM/로밍/유심 (학교 안내 따름)</li>
                         </ul>
                     </div>
-
-                    <!-- 5. Safety & Manners -->
+                    <!-- Safety -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold mb-3 flex items-center text-orange-800">
                             ⚠️ 안전 수칙 & 현지 매너
@@ -470,8 +518,7 @@
                             <li>정치/민감 이슈 언급 및 비하 발언 삼가</li>
                         </ul>
                     </div>
-
-                    <!-- 6. Recommended Apps -->
+                    <!-- Apps -->
                     <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold mb-3 flex items-center text-indigo-800">
                             📱 필수 설치 앱 (추천)
@@ -495,7 +542,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -542,10 +588,15 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-12 text-center border-t border-slate-800">
-        <div class="container mx-auto px-4">
-            <p class="mb-4 font-medium text-slate-300">성공적인 탐방이 되도록 투어메이커가 최선을 다해 지원하겠습니다.</p>
-            <p class="text-sm">&copy; 2026 Tourmaker. All Rights Reserved.</p>
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="container mx-auto px-4 text-center">
+            <!-- New Tourmaker Logo -->
+            <div class="mb-6 flex justify-center">
+                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEi0YSsOZ847rEAjEI5w8uFj7k66WmuO18z2dZuvC5dR80SjnRbjOSrWRmqAP3CrBLPQgWQloK8Ic9n15Kjj879TNlCy8dGxyArnbDnorHB9VhqP-9dqOAb0Dnb0TOf67vZ94O-z_NQ0KUCqv7Ig-SEEWE4yESfTvJXwTgSn5wj03vT048UiCyMyl-hF-6w" alt="Tourmaker Footer Logo" class="h-10 md:h-12 w-auto opacity-80 hover:opacity-100 transition-opacity">
+            </div>
+            
+            <p class="mb-2 font-medium text-slate-300">성공적인 탐방이 되도록 투어메이커가 최선을 다해 지원하겠습니다.</p>
+            <p class="text-sm text-slate-600">&copy; 2026 Tourmaker. All Rights Reserved.</p>
         </div>
     </footer>
 
