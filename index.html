@@ -7,7 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; color: #1e293b; }
         
@@ -47,6 +48,21 @@
         .group:hover .play-icon {
             transform: scale(1.2);
         }
+
+        /* Yellow Note Pad Style */
+        .notepad {
+            background-color: #fef9c3; /* Yellow-100 */
+            background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 100% 2rem;
+            line-height: 2rem;
+            font-family: 'Noto Sans KR', sans-serif; /* 가독성을 위해 고딕 유지, 필요시 'Nanum Pen Script' */
+            border-left: 4px solid #ef4444;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+        }
+        .notepad:focus {
+            outline: none;
+            background-color: #fef08a; /* Yellow-200 on focus */
+        }
     </style>
 </head>
 <body class="antialiased bg-slate-50">
@@ -55,28 +71,48 @@
     <header class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Tourmaker Logo -->
-                <div class="flex-shrink-0 flex items-center gap-2">
-                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" alt="Tourmaker Logo" class="h-8 w-auto">
-                    <span class="hidden md:inline text-xs text-slate-500 font-medium tracking-tighter">2026 Global Pathfinder</span>
+                <!-- Tourmaker Logo & D-Day -->
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker Logo" class="h-8 w-auto">
+                    <!-- D-Day Counter Badge -->
+                    <div id="d-day-badge" class="bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md animate-pulse">
+                        Calculating...
+                    </div>
                 </div>
+                
+                <!-- Mobile Menu Button (Hamburger) - Simple Implementation -->
+                <div class="md:hidden">
+                    <a href="#mynote" class="text-yellow-600 font-bold text-sm mr-2"><i class="fa-solid fa-pen-to-square"></i> MY노트</a>
+                </div>
+
+                <!-- Desktop Nav -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4 text-sm font-medium">
-                        <a href="#home"       class="nav-link px-3 py-2 border-b-2 border-transparent active">소개</a>
-                        <a href="#highlight"  class="nav-link px-3 py-2 border-b-2 border-transparent">핵심 탐방</a>
-                        <a href="#university" class="nav-link px-3 py-2 border-b-2 border-transparent">대학&기업</a>
-                        <a href="#cities"     class="nav-link px-3 py-2 border-b-2 border-transparent text-indigo-600 font-bold">도시영상</a>
-                        <a href="#timeline"   class="nav-link px-3 py-2 border-b-2 border-transparent">일정</a>
-                        <a href="#pretravel"  class="nav-link px-3 py-2 border-b-2 border-transparent text-red-600 font-bold">출발/미팅</a>
+                        <a href="#home"        class="nav-link px-3 py-2 border-b-2 border-transparent active">소개</a>
+                        <a href="#highlight"   class="nav-link px-3 py-2 border-b-2 border-transparent">핵심 탐방</a>
+                        <a href="#timeline"    class="nav-link px-3 py-2 border-b-2 border-transparent">일정</a>
+                        <a href="#checklist"   class="nav-link px-3 py-2 border-b-2 border-transparent">준비물</a>
+                        <a href="#mynote"      class="nav-link px-3 py-2 border-b-2 border-transparent text-yellow-600 font-bold"><i class="fa-solid fa-pen-to-square"></i> MY 노트</a>
                     </div>
                 </div>
             </div>
         </nav>
+        <!-- Mobile Secondary Nav (Horizontal Scroll) -->
+        <div class="md:hidden overflow-x-auto whitespace-nowrap bg-slate-50 border-b border-slate-200">
+            <div class="flex px-4 py-2 space-x-4 text-xs font-medium text-slate-600">
+                <a href="#home" class="block">홈</a>
+                <a href="#highlight" class="block">핵심</a>
+                <a href="#timeline" class="block">일정</a>
+                <a href="#pretravel" class="block text-red-600 font-bold">출발/미팅</a>
+                <a href="#checklist" class="block">준비물</a>
+                <a href="#mynote" class="block text-yellow-600 font-bold">★MY노트</a>
+            </div>
+        </div>
     </header>
 
     <main>
         <!-- Hero Section -->
-        <section id="home" class="hero-bg-tech text-white text-center flex items-center justify-center min-h-screen -mt-16 relative">
+        <section id="home" class="hero-bg-tech text-white text-center flex items-center justify-center min-h-[85vh] relative">
             <div class="container mx-auto px-4 z-10">
                 <p class="text-xl font-semibold text-yellow-400 mb-2">2026 강원대학교 글로벌 패스파인더</p>
                 <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight drop-shadow-lg">
@@ -157,14 +193,13 @@
             </div>
         </section>
 
-        <!-- Donghua University Section -->
+        <!-- Donghua University Section (Concise) -->
         <section id="university" class="py-20 bg-slate-50">
             <div class="container mx-auto px-4">
                 <div class="max-w-6xl mx-auto">
                     <div class="mb-12 text-center md:text-left">
                         <div class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold mb-2">Academic Visit</div>
                         <h2 class="text-3xl md:text-4xl font-bold text-slate-900">상해 동화대학교 (Donghua University)</h2>
-                        <p class="text-lg text-slate-600 mt-2">글로벌 교육 허브이자 미래 융합 인재의 요람</p>
                     </div>
 
                     <div class="grid lg:grid-cols-2 gap-10 items-center">
@@ -177,106 +212,10 @@
                             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6">
                                 <h3 class="text-xl font-bold mb-4 text-blue-900 border-b pb-2">📌 대학 주요 정보</h3>
                                 <ul class="space-y-3 text-slate-700">
-                                    <li><strong>위치:</strong> 중국 상하이 장닝구 (시내 중심 접근성 우수)</li>
-                                    <li><strong>설립:</strong> 1951년 (교육부 직속 중점 대학)</li>
+                                    <li><strong>위치:</strong> 중국 상하이 장닝구</li>
                                     <li><strong>특성화:</strong> 패션디자인(QS Top 30), 경영학, AI 융합</li>
                                     <li><strong>규모:</strong> 유학생 1,400명 이상의 다국적 교육기관</li>
                                 </ul>
-                            </div>
-                            <ul class="space-y-4">
-                                <li class="flex items-start">
-                                    <span class="flex-shrink-0 w-8 h-8 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center font-bold mr-3">1</span>
-                                    <div><strong class="block text-slate-900">대표 글로벌 교육 허브</strong><span class="text-sm text-slate-600">영어 전용 강의 및 글로벌 커리큘럼 운영 현장 확인</span></div>
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="flex-shrink-0 w-8 h-8 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center font-bold mr-3">2</span>
-                                    <div><strong class="block text-slate-900">최첨단 캠퍼스 인프라</strong><span class="text-sm text-slate-600">현대적 강의동, 글로벌 라운지 등 스마트 학습 공간 체험</span></div>
-                                </li>
-                                <li class="flex items-start">
-                                    <span class="flex-shrink-0 w-8 h-8 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center font-bold mr-3">3</span>
-                                    <div><strong class="block text-slate-900">미래 융합 교육의 산실</strong><span class="text-sm text-slate-600">AI, 경영, 디자인이 결합된 창의적 교육 방향성 파악</span></div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Corporate Visits Section -->
-        <section id="companies" class="py-20 bg-white">
-            <div class="container mx-auto px-4">
-                <div class="text-center mb-16">
-                    <span class="text-indigo-600 font-bold tracking-wider uppercase">Industrial Insight</span>
-                    <h2 class="text-3xl md:text-4xl font-bold mt-2">방문 기업 및 전문가 특강</h2>
-                    <p class="text-slate-500 mt-4">중국 현지에서 활약 중인 IT/SW 전문 기업을 방문하여 생생한 현장 경험을 듣습니다.</p>
-                </div>
-
-                <div class="grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-                    <!-- Company 1: ZioYou -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all">
-                        <div class="relative h-56 bg-indigo-900 overflow-hidden group">
-                            <img src="https://zioyouit.com/wp-content/uploads/2024/04/gw_mainvis.png" alt="ZioYou Dashboard" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent w-full p-6">
-                                <h3 class="text-2xl font-bold text-white">ZioYou Software <span class="text-sm font-normal text-indigo-300 ml-2">| 상해지오유소프트웨어</span></h3>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <div class="mb-6">
-                                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded">Enterprise Solution</span>
-                                <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded">Global HR/OA</span>
-                            </div>
-                            <p class="text-slate-600 mb-6 text-sm leading-relaxed">
-                                현대자동차, LS네트웍스, SKC 등 글로벌 대기업이 선택한 <strong>OA 및 e-HR 솔루션 전문 기업</strong>입니다. 한국 기업의 중국 진출 시 필수적인 인사/협업 프로세스를 지원하며, 모바일 스마트워크 환경을 선도하고 있습니다.
-                            </p>
-                            
-                            <!-- Special Lecture Info -->
-                            <div class="bg-white p-5 rounded-xl border border-indigo-100 shadow-sm">
-                                <div class="flex items-center mb-2">
-                                    <span class="text-2xl mr-2">🎙️</span>
-                                    <h4 class="font-bold text-indigo-900">전문가 특강 01</h4>
-                                </div>
-                                <p class="text-sm font-bold text-slate-800">주제: 중국 IT 개론 및 시장의 특이점</p>
-                                <p class="text-sm text-slate-500 mt-1">연사: 신판수 대표 (지오유 소프트웨어)</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Company 2: AiyoNet -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all">
-                        <div class="relative h-56 bg-slate-800 overflow-hidden group">
-                            <div class="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
-                                <div class="text-center">
-                                    <h3 class="text-3xl font-black text-white tracking-widest">AIYONET</h3>
-                                    <p class="text-slate-400 text-sm mt-2">Shanghai Aiyo Network Technology</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-8">
-                            <div class="mb-6">
-                                <span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">Cloud & Security</span>
-                                <span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">IDC Infrastructure</span>
-                            </div>
-                            <p class="text-slate-600 mb-6 text-sm leading-relaxed">
-                                2005년 설립 이래 15년간 <strong>서버/클라우드 호스팅 및 보안 컨설팅</strong>을 제공해온 인프라 전문 기업입니다. 알리바바 클라우드 파트너이자 한국무역협회, 베이직하우스 등의 보안/네트워크를 책임지고 있습니다.
-                            </p>
-                            
-                            <div class="mb-6">
-                                <p class="text-xs font-bold text-slate-400 uppercase mb-2">Major Clients</p>
-                                <div class="flex flex-wrap gap-2">
-                                    <span class="px-2 py-1 bg-white border rounded text-xs text-slate-600">CESCO</span>
-                                    <span class="px-2 py-1 bg-white border rounded text-xs text-slate-600">Basic House</span>
-                                    <span class="px-2 py-1 bg-white border rounded text-xs text-slate-600">Shinhan Bank</span>
-                                </div>
-                            </div>
-
-                            <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
-                                <div class="flex items-center mb-2">
-                                    <span class="text-2xl mr-2">📡</span>
-                                    <h4 class="font-bold text-blue-900">전문가 특강 02</h4>
-                                </div>
-                                <p class="text-sm font-bold text-slate-800">주제: 중국 AI 인프라와 GPU 트렌드</p>
-                                <p class="text-sm text-slate-500 mt-1">연사: 신동욱 대표 (아이요넷)</p>
                             </div>
                         </div>
                     </div>
@@ -290,7 +229,6 @@
                 <div class="text-center mb-12">
                     <span class="text-blue-600 font-bold tracking-wider uppercase">City Preview</span>
                     <h2 class="text-3xl md:text-4xl font-bold mt-2">탐방 도시 미리보기</h2>
-                    <p class="text-slate-500 mt-2">영상과 사진으로 만나는 상하이와 항저우</p>
                 </div>
                 
                 <div class="max-w-6xl mx-auto space-y-20">
@@ -298,29 +236,8 @@
                     <div class="grid lg:grid-cols-2 gap-10 items-center">
                         <div class="order-2 lg:order-1">
                             <div class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold mb-4">Shanghai</div>
-                            <h3 class="text-3xl font-bold text-slate-900 mb-6">상하이 (Shanghai) <span class="text-lg font-normal text-gray-500">| 미래를 만나다</span></h3>
-                            
-                            <div class="space-y-6">
-                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                    <h4 class="font-bold text-lg mb-2 text-slate-800">📜 역사와 성장</h4>
-                                    <p class="text-slate-600 text-sm leading-relaxed">
-                                        작은 어촌에서 시작해 19세기 개항 후 서구 문물이 유입되며 금융·상업의 허브로 급성장했습니다.
-                                        와이탄의 고풍스러운 건축물과 푸동의 최첨단 마천루가 마주 보는 독특한 스카이라인을 자랑합니다.
-                                    </p>
-                                </div>
-                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                    <h4 class="font-bold text-lg mb-2 text-slate-800">🎭 문화적 특징 (해파이)</h4>
-                                    <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                        <li><strong>건축:</strong> 동서양 건축 양식의 조화 (와이탄 vs 푸동)</li>
-                                        <li><strong>미식:</strong> 샤오롱바오, 생지엔 등 다채로운 딤섬 문화</li>
-                                        <li><strong>언어:</strong> 독특한 상하이 방언과 국제적 분위기 공존</li>
-                                    </ul>
-                                </div>
-                                <div class="flex gap-4">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Shanghai_skyline_from_the_bund.jpg" alt="상하이 스카이라인" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
-                                    <img src="https://www.classicist.org/assets/images/articles/_pagebody/Figure-1-street-view-of-the-bund.jpg" alt="와이탄 거리" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
-                                </div>
-                            </div>
+                            <h3 class="text-3xl font-bold text-slate-900 mb-6">상하이 (Shanghai)</h3>
+                            <p class="text-slate-600 mb-6">와이탄의 고풍스러운 건축물과 푸동의 최첨단 마천루가 공존하는 금융과 상업의 중심지입니다.</p>
                         </div>
                         <div class="order-1 lg:order-2">
                             <!-- Shanghai Video -->
@@ -334,7 +251,6 @@
                                     </div>
                                     <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/90 to-transparent">
                                         <p class="text-white font-bold text-xl">SHANGHAI: Cinematic 4K</p>
-                                        <p class="text-slate-300 text-sm mt-1">상해의 과거와 현재를 영상으로 확인하세요</p>
                                     </div>
                                 </div>
                             </div>
@@ -355,36 +271,14 @@
                                     </div>
                                     <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/90 to-transparent">
                                         <p class="text-white font-bold text-xl">HANGZHOU: Heaven on Earth</p>
-                                        <p class="text-slate-300 text-sm mt-1">혁신과 자연이 공존하는 알리바바의 도시</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="order-2">
                             <div class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold mb-4">Hangzhou</div>
-                            <h3 class="text-3xl font-bold text-slate-900 mb-6">항저우 (Hangzhou) <span class="text-lg font-normal text-gray-500">| 혁신과 전통</span></h3>
-                            
-                            <div class="space-y-6">
-                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                    <h4 class="font-bold text-lg mb-2 text-slate-800">📜 유서 깊은 역사</h4>
-                                    <p class="text-slate-600 text-sm leading-relaxed">
-                                        남송(南宋) 시대의 수도이자 신석기 양저우 문화의 발상지입니다. 
-                                        최근에는 알리바바 본사가 위치한 '중국 전자상거래와 기술 혁신의 심장부'로 재탄생했습니다.
-                                    </p>
-                                </div>
-                                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                                    <h4 class="font-bold text-lg mb-2 text-slate-800">🎭 자연과 도시의 융합</h4>
-                                    <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-                                        <li><strong>서호(West Lake):</strong> 유네스코 세계유산으로 지정된 절경</li>
-                                        <li><strong>특산물:</strong> 용정차(녹차)와 비단(실크)의 본고장</li>
-                                        <li><strong>혁신:</strong> 모바일 결제와 스마트 시티 기술의 선도 도시</li>
-                                    </ul>
-                                </div>
-                                <div class="flex gap-4">
-                                    <img src="https://res.klook.com/images/fl_lossy.progressive%2Cq_65/c_fill%2Cw_1295%2Ch_720/w_80%2Cx_15%2Cy_15%2Cg_south_west%2Cl_Klook_water_br_trans_yhcmh3/activities/c1b0c94b-Grand-Canal-and-Culture-of-Hangzhou/GrandCanalandCultureofHangzhou.jpg" alt="항주 운하" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
-                                    <img src="https://www.alexisjetsets.com/wp-content/uploads/2019/06/hangzhou-west-lake-alexisjetsets-13-e1560138753302.jpg" alt="항주 서호" class="w-1/2 h-32 object-cover rounded-lg shadow-sm hover-zoom">
-                                </div>
-                            </div>
+                            <h3 class="text-3xl font-bold text-slate-900 mb-6">항저우 (Hangzhou)</h3>
+                            <p class="text-slate-600 mb-6">알리바바의 본거지이자 유네스코 세계유산 서호(West Lake)가 있는 혁신과 전통의 도시입니다.</p>
                         </div>
                     </div>
                 </div>
@@ -395,7 +289,7 @@
         <section id="timeline" class="py-20 bg-white">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-2">4박 5일 공식 일정</h2>
-                <p class="text-center text-slate-500 text-sm mb-10">※ 상기 일정은 항공 및 현지 사정에 의하여 다소 변경될 수 있습니다.</p>
+                <p class="text-center text-slate-500 text-sm mb-10">※ 현지 사정에 의하여 변경될 수 있습니다.</p>
                 
                 <!-- Tab Navigation -->
                 <div class="max-w-5xl mx-auto bg-slate-50 rounded-t-2xl shadow-sm border-b overflow-hidden flex flex-wrap">
@@ -415,15 +309,14 @@
             </div>
         </section>
 
-        <!-- Pre-Travel Guide (Expanded) -->
+        <!-- Pre-Travel Guide -->
         <section id="pretravel" class="py-20 bg-slate-50">
             <div class="container mx-auto px-4">
                 <div class="max-w-5xl mx-auto mb-12 text-center">
                     <h2 class="text-3xl md:text-4xl font-bold mb-3">출발 가이드 & 공항 안내</h2>
-                    <p class="text-slate-600">성공적인 탐방을 위한 필수 정보를 확인하세요.</p>
                 </div>
 
-                <!-- Airport Meeting Card (High Priority) -->
+                <!-- Airport Meeting Card -->
                 <div class="max-w-4xl mx-auto bg-red-50 border-2 border-red-200 rounded-2xl p-8 mb-12 shadow-lg flex flex-col md:flex-row gap-8">
                     <div class="flex-shrink-0 flex items-start justify-center md:justify-start">
                         <div class="bg-red-100 p-4 rounded-full">
@@ -435,7 +328,6 @@
                         <p class="text-slate-700 mb-6 text-center md:text-left">비행기 출발 3시간 전 미팅입니다. 늦지 않게 도착해주세요.</p>
                         
                         <div class="grid md:grid-cols-2 gap-6">
-                            <!-- Meeting Info -->
                             <div class="space-y-4">
                                 <div class="bg-white p-4 rounded-lg border border-red-100 shadow-sm">
                                     <p class="text-xs text-slate-500 font-bold uppercase">Meeting Time</p>
@@ -446,104 +338,8 @@
                                     <p class="text-lg font-bold text-slate-800">인천공항 T2 <span class="text-red-600">C카운터 앞 도너츠 가게</span></p>
                                 </div>
                             </div>
-                            
-                            <!-- Meeting Point Photo -->
                             <div class="bg-white p-2 rounded-lg border border-red-100 shadow-sm">
-                                <p class="text-xs text-slate-500 font-bold uppercase mb-2 pl-2">Photo View</p>
-                                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgpzSAnQWf5T8_84QSdgGYqxqJjEcdziiFjrPSZ8K0cThZtnM0oARbs3aDAcPTPIvrzGiB7LzYsiQ9F667J4dnDo580NK_cuezP1r66oiEpR9pUWR8tz2fRMomaWHiPOQMy0LRoJvEGb5KexvIQaPGP19_iqF20jitYysLCjIVdaJUHHEVbm3ekMYmDodA" alt="미팅 장소: 인천공항 T2 C카운터 앞 도너츠가게" class="w-full h-32 object-cover rounded hover-zoom">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Check-in -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-bold mb-3 flex items-center text-blue-900">
-                            ✈️ 대한항공 모바일 체크인
-                        </h3>
-                        <ol class="list-decimal list-inside text-sm text-slate-700 space-y-2">
-                            <li>대한항공 앱/웹 접속 후 <strong>[체크인]</strong> 선택</li>
-                            <li>예약번호/성함/출발일로 일정 조회</li>
-                            <li>여권 정보 확인 및 좌석 선택</li>
-                            <li><strong>모바일 탑승권 발급</strong> (캡처/저장 필수)</li>
-                            <li>공항 수하물 위탁 시 여권+탑승권 제시</li>
-                        </ol>
-                    </div>
-                    <!-- Arrival Card (Updated for Electronic) -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-bold mb-3 flex items-center text-red-900">
-                            🛂 전자 입국신고서 (필수)
-                        </h3>
-                        <p class="text-sm text-slate-600 mb-2"><strong>모든 외국인 승객</strong>은 사전 작성이 원칙입니다.</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 space-y-2">
-                            <li><strong>시행:</strong> 항저우 포함 전면 확대 시행 중</li>
-                            <li><strong>방법:</strong> 출발 전 모바일 링크로 사전 작성 권장</li>
-                            <li><strong>혜택:</strong> 도착 후 입국 수속 대기 시간 단축</li>
-                            <li class="pt-1">
-                                <a href="https://s.nia.gov.cn/ArrivalCardFillingPhone/" target="_blank" class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded text-xs font-bold hover:bg-red-200 transition-colors">
-                                    🔗 작성 페이지 바로가기 (공식)
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- Weather -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-bold mb-3 flex items-center text-slate-800">
-                            🧥 1월 날씨 & 옷차림
-                        </h3>
-                        <p class="text-sm text-slate-600 mb-2">한국의 초겨울~한겨울 날씨 (3℃ ~ 10℃)</p>
-                        <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
-                            <li>습도가 높아 체감 온도는 더 쌀쌀함</li>
-                            <li><strong>추천:</strong> 패딩/두툼한 코트, 목도리, 따뜻한 양말</li>
-                            <li>실내는 난방 차이가 크므로 <strong>레이어드 복장</strong> 권장</li>
-                        </ul>
-                    </div>
-                    <!-- Payment -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-bold mb-3 flex items-center text-green-800">
-                            💳 결제 & 통신 가이드
-                        </h3>
-                        <ul class="list-disc list-inside text-sm text-slate-700 space-y-2">
-                            <li><strong>결제:</strong> 알리페이/위챗페이 필수 (카드 미리 등록)</li>
-                            <li>편의점, 택시 등 대부분 모바일 결제</li>
-                            <li>비상용 실물 카드(Visa/Master) 1장 준비</li>
-                            <li><strong>통신:</strong> eSIM/로밍/유심 (학교 안내 따름)</li>
-                        </ul>
-                    </div>
-                    <!-- Safety -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-bold mb-3 flex items-center text-orange-800">
-                            ⚠️ 안전 수칙 & 현지 매너
-                        </h3>
-                        <ul class="list-disc list-inside text-sm text-slate-700 space-y-2">
-                            <li><strong>2인 1조 이동:</strong> 단독 행동 자제</li>
-                            <li><strong>시간 엄수:</strong> 단체 일정 지연 방지</li>
-                            <li><strong>촬영 주의:</strong> 공장/보안 시설 촬영 금지</li>
-                            <li>정치/민감 이슈 언급 및 비하 발언 삼가</li>
-                        </ul>
-                    </div>
-                    <!-- Apps -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow">
-                        <h3 class="text-lg font-bold mb-3 flex items-center text-indigo-800">
-                            📱 필수 설치 앱 (추천)
-                        </h3>
-                        <div class="grid grid-cols-2 gap-2 text-sm">
-                            <div class="bg-slate-50 p-2 rounded border text-center">
-                                <span class="block font-bold">Alipay</span>
-                                <span class="text-xs text-slate-500">결제</span>
-                            </div>
-                            <div class="bg-slate-50 p-2 rounded border text-center">
-                                <span class="block font-bold">WeChat</span>
-                                <span class="text-xs text-slate-500">메신저</span>
-                            </div>
-                            <div class="bg-slate-50 p-2 rounded border text-center">
-                                <span class="block font-bold">고덕지도</span>
-                                <span class="text-xs text-slate-500">지도(Amap)</span>
-                            </div>
-                            <div class="bg-slate-50 p-2 rounded border text-center">
-                                <span class="block font-bold">Papago</span>
-                                <span class="text-xs text-slate-500">번역</span>
+                                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEgpzSAnQWf5T8_84QSdgGYqxqJjEcdziiFjrPSZ8K0cThZtnM0oARbs3aDAcPTPIvrzGiB7LzYsiQ9F667J4dnDo580NK_cuezP1r66oiEpR9pUWR8tz2fRMomaWHiPOQMy0LRoJvEGb5KexvIQaPGP19_iqF20jitYysLCjIVdaJUHHEVbm3ekMYmDodA" alt="미팅 장소" class="w-full h-32 object-cover rounded hover-zoom">
                             </div>
                         </div>
                     </div>
@@ -551,19 +347,45 @@
             </div>
         </section>
 
-        <!-- Checklist Section -->
-        <section id="checklist" class="py-20 bg-white">
+        <!-- Personal Assistant Section (Checklist & Memo) -->
+        <section id="personal-assistant" class="py-20 bg-white">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">준비물 체크리스트</h2>
-                <p class="text-center text-slate-600 mb-12">빠진 물건이 없는지 출국 전 마지막으로 확인하세요.</p>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-10"><i class="fa-solid fa-user-astronaut text-indigo-600"></i> 나만의 여행 비서</h2>
                 
-                <div class="max-w-3xl mx-auto bg-slate-50 p-8 rounded-2xl shadow-lg border border-slate-200">
-                    <div id="checklist-container" class="space-y-3">
-                        <!-- JS generates items -->
+                <div class="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+                    
+                    <!-- 1. Smart Checklist -->
+                    <div id="checklist" class="bg-slate-50 p-6 rounded-2xl shadow-lg border border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-green-600"></i> 준비물 체크리스트
+                        </h3>
+                        <p class="text-sm text-slate-500 mb-6">체크박스를 누르면 자동 저장됩니다.</p>
+                        
+                        <div id="checklist-container" class="space-y-3 h-[400px] overflow-y-auto pr-2">
+                            <!-- JS generates items -->
+                        </div>
+                        <div class="mt-6 text-center">
+                            <button onclick="resetChecklist()" class="text-xs text-slate-400 underline hover:text-slate-600">체크리스트 초기화</button>
+                        </div>
                     </div>
-                    <div class="mt-6 text-center">
-                        <button onclick="resetChecklist()" class="text-xs text-slate-400 underline hover:text-slate-600">체크리스트 초기화</button>
+
+                    <!-- 2. My Yellow Note -->
+                    <div id="mynote" class="flex flex-col">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 px-2">
+                            <i class="fa-solid fa-pen-to-square text-yellow-600"></i> MY 노트
+                        </h3>
+                        <div class="relative flex-grow">
+                            <!-- Yellow Pad Note -->
+                            <textarea id="travel-memo" 
+                                class="notepad w-full h-[480px] p-6 text-lg text-slate-800 resize-none rounded-lg"
+                                placeholder="여권번호, 바우처 번호, 현지 연락처 등을 적어두세요.&#10;인터넷이 안 터져도 내용은 저장되어 있습니다."></textarea>
+                            
+                            <div id="save-status" class="absolute bottom-4 right-4 text-xs text-slate-500 bg-white/50 px-2 py-1 rounded">
+                                자동 저장 대기중...
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </section>
@@ -575,16 +397,17 @@
                 <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-lg shadow-sm">
                         <h4 class="font-bold text-red-600 mb-2">현지 긴급</h4>
-                        <p class="text-slate-700">경찰 110 / 소방 119 / 구급 120</p>
+                        <p class="text-slate-700">경찰 110 / 소방 119</p>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-sm border-2 border-yellow-400 flex flex-col items-center justify-center">
                         <h4 class="font-bold text-slate-900 mb-2">투어메이커 담당자</h4>
-                        <p class="font-medium text-slate-700">총괄: 조혁 이사 (010-4249-4026)</p>
-                        <p class="font-medium text-slate-700">인솔: 이재명 (010-9443-7881)</p>
+                        <p class="font-medium text-slate-700">총괄: 조혁 이사</p>
+                        <a href="tel:01042494026" class="text-sm text-blue-600">010-4249-4026</a>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-sm">
                         <h4 class="font-bold text-blue-600 mb-2">영사관</h4>
-                        <p class="text-slate-700">상하이 총영사관: +86-21-6295-5000</p>
+                        <p class="text-slate-700">상하이 총영사관</p>
+                        <a href="tel:+862162955000" class="text-sm text-blue-600">+86-21-6295-5000</a>
                     </div>
                 </div>
             </div>
@@ -624,7 +447,51 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             
-            // 1. Navigation Active Scroll Spy
+            // ---------------------------------------------------------
+            // 0. D-Day Counter Logic
+            // ---------------------------------------------------------
+            const dDayBadge = document.getElementById('d-day-badge');
+            const targetDate = new Date('2026-01-12T00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            const days = Math.ceil(distance / (1000 * 60 * 60 * 24));
+            
+            if (days > 0) {
+                dDayBadge.innerText = `D-${days}`;
+            } else if (days === 0) {
+                dDayBadge.innerText = `D-Day (여행 1일차)`;
+                dDayBadge.classList.replace('bg-indigo-600', 'bg-red-600');
+            } else {
+                // 여행 중 (days가 음수)
+                const tripDay = Math.abs(days) + 1;
+                dDayBadge.innerText = `여행 ${tripDay}일차`;
+                dDayBadge.classList.replace('bg-indigo-600', 'bg-green-600');
+            }
+
+            // ---------------------------------------------------------
+            // 1. My Yellow Note (Auto-save)
+            // ---------------------------------------------------------
+            const memoArea = document.getElementById('travel-memo');
+            const saveStatus = document.getElementById('save-status');
+            
+            // Load saved memo
+            const savedMemo = localStorage.getItem('tourmaker_memo_v1');
+            if (savedMemo) {
+                memoArea.value = savedMemo;
+            }
+
+            // Save on input (with small debounce/immediate feedback)
+            memoArea.addEventListener('input', function() {
+                localStorage.setItem('tourmaker_memo_v1', this.value);
+                saveStatus.innerText = "저장됨 " + new Date().toLocaleTimeString();
+                saveStatus.classList.add('text-green-600');
+                setTimeout(() => saveStatus.classList.remove('text-green-600'), 1000);
+            });
+
+            // ---------------------------------------------------------
+            // 2. Navigation Active Scroll Spy
+            // ---------------------------------------------------------
             const sections = document.querySelectorAll('section');
             const navLinks = document.querySelectorAll('.nav-link');
             
@@ -639,10 +506,12 @@
                         });
                     }
                 });
-            }, { threshold: 0.25 });
+            }, { threshold: 0.15 });
             sections.forEach(section => observer.observe(section));
             
-            // 2. Schedule Data
+            // ---------------------------------------------------------
+            // 3. Schedule Data
+            // ---------------------------------------------------------
             const scheduleData = {
                 day1: {
                     title: 'DAY 1: 1월 12일 (월) - 출국 및 항주 AI 체험',
@@ -697,7 +566,7 @@
                 }
             };
 
-            // 3. Render Schedule Tabs
+            // 4. Render Schedule Tabs
             const tabsContainer = document.getElementById('tabs-content');
             const tabButtons = document.querySelectorAll('.tab-btn');
 
@@ -729,19 +598,22 @@
             // Initial Render
             renderTabContent('day1');
 
-            // 4. Checklist Logic
+            // ---------------------------------------------------------
+            // 5. Checklist Logic (Smart Save)
+            // ---------------------------------------------------------
             const checklistContainer = document.getElementById('checklist-container');
             const checklistItems = [
-                { id: 'passport', text: '여권 (유효기간 6개월 이상 필수)' },
-                { id: 'arrival_card', text: '전자 입국신고서 사전 작성 (필수)' },
-                { id: 'ticket', text: '항공권 (E-티켓 / 모바일 탑승권)' },
-                { id: 'pay_app', text: '알리페이/위챗페이 설치 및 카드 등록' },
-                { id: 'cash', text: '소액 위안화 현금 (비상용)' },
-                { id: 'adapter', text: '멀티 어댑터(돼지코) & 멀티탭' },
-                { id: 'battery', text: '보조배터리 및 충전 케이블' },
-                { id: 'meds', text: '개인 상비약 (두통/소화제/지사제 등)' },
-                { id: 'clothes', text: '방한복(패딩/코트) & 여벌 옷' },
-                { id: 'stationery', text: '필기구 및 노트 또는 태블릿' }
+                { id: 'passport', text: '여권 (유효기간 6개월 이상)' },
+                { id: 'arrival_card', text: '전자 입국신고서 작성 (필수)' },
+                { id: 'ticket', text: '항공권 (E-티켓 캡처)' },
+                { id: 'pay_app', text: '알리페이/위챗페이 등록 완료' },
+                { id: 'cash', text: '비상금 (위안화 현금)' },
+                { id: 'adapter', text: '멀티 어댑터(돼지코)' },
+                { id: 'battery', text: '보조배터리 (기내 반입)' },
+                { id: 'meds', text: '개인 상비약 (소화제 등)' },
+                { id: 'esim', text: '데이터 로밍/eSIM 신청' },
+                { id: 'clothes', text: '계절별 의류 (패딩/코트)' },
+                { id: 'toiletries', text: '세면도구 (칫솔/치약)' }
             ];
 
             checklistItems.forEach(item => {
@@ -754,15 +626,18 @@
                 checklistContainer.appendChild(div);
                 
                 const checkbox = div.querySelector('input');
-                checkbox.checked = localStorage.getItem('tourmaker_check_' + item.id) === 'true';
-                checkbox.addEventListener('change', (e) => localStorage.setItem('tourmaker_check_' + item.id, e.target.checked));
+                // Use a unique key for version 2
+                checkbox.checked = localStorage.getItem('tourmaker_check_v2_' + item.id) === 'true';
+                checkbox.addEventListener('change', (e) => localStorage.setItem('tourmaker_check_v2_' + item.id, e.target.checked));
             });
 
             window.resetChecklist = function() {
-                checklistItems.forEach(item => {
-                    localStorage.removeItem('tourmaker_check_' + item.id);
-                    document.getElementById(item.id).checked = false;
-                });
+                if(confirm('체크리스트를 초기화 하시겠습니까?')) {
+                    checklistItems.forEach(item => {
+                        localStorage.removeItem('tourmaker_check_v2_' + item.id);
+                        document.getElementById(item.id).checked = false;
+                    });
+                }
             }
         });
     </script>
