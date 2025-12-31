@@ -126,6 +126,7 @@
     <!-- 🎬 Intro Motion Logo Overlay -->
     <div id="intro-overlay">
         <!-- 깃허브에 업로드한 파일명과 정확히 일치해야 합니다 (대소문자 구분) -->
+        <!-- muted autoplay playsinline 필수: 모바일 자동재생 정책 준수 -->
         <video id="intro-video" muted playsinline autoplay>
             <source src="./모션로고_투어메이커.mp4" type="video/mp4">
             <!-- 브라우저 호환성을 위해 소스 추가 가능 -->
@@ -517,19 +518,22 @@
     </div>
 
     <script>
-        // 🎬 Intro Control Script
+        // 🎬 Intro Control Script (속도 2배속 적용)
         window.addEventListener('load', function() {
             const introOverlay = document.getElementById('intro-overlay');
             const introVideo = document.getElementById('intro-video');
 
             if (introVideo && introOverlay) {
+                // ⚡️[핵심 수정] 영상 재생 속도를 2배로 설정 (7초 -> 3.5초)
+                introVideo.playbackRate = 2.0;
+
                 // 영상이 끝나면 인트로 제거 (video ended event)
                 introVideo.addEventListener('ended', function() {
                     fadeOutIntro();
                 });
 
-                // 혹시 모를 상황 대비: 5초 후 강제 종료 (안전장치)
-                setTimeout(fadeOutIntro, 5000);
+                // [안전장치 수정] 기존 5초 -> 3.5초로 단축 (혹시 영상 이벤트가 안 터질 경우 대비)
+                setTimeout(fadeOutIntro, 3500);
 
                 function fadeOutIntro() {
                     introOverlay.style.opacity = '0';
