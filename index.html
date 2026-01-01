@@ -60,12 +60,12 @@
             transition: transform 0.3s ease; 
         }
 
-        /* 📱 [수정됨] 모바일 전용 로고 확대 코드 */
+        /* 📱 [재수정됨] 모바일 전용 로고 더 크게 확대 */
         @media (max-width: 768px) {
             #intro-video {
-                max-width: 95%; /* 모바일에서는 가로폭 제한을 거의 꽉 채움 */
-                width: 90%;     /* 강제로 너비 확보 */
-                transform: scale(1.25); /* 1.25배 확대 (너무 크면 1.1로 줄이세요) */
+                max-width: 100%; /* 기존 95% -> 100%로 제한 해제 */
+                width: 100%;     /* 가로폭 꽉 채움 */
+                transform: scale(1.4); /* 기존 1.25 -> 1.4배로 더 확대 */
             }
         }
         
