@@ -48,13 +48,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.6s ease-out; /* 페이드아웃 속도도 0.8s -> 0.6s로 더 빠르게 */
+            transition: opacity 0.6s ease-out;
         }
+        
         #intro-video {
-            max-width: 80%; /* 모바일 대응 */
+            max-width: 80%;
             max-height: 80vh;
-            width: 600px; /* PC 적정 사이즈 */
+            width: 600px; /* PC 기본 사이즈 */
             object-fit: contain;
+            /* 부드러운 전환 효과 */
+            transition: transform 0.3s ease; 
+        }
+
+        /* 📱 [수정됨] 모바일 전용 로고 확대 코드 */
+        @media (max-width: 768px) {
+            #intro-video {
+                max-width: 95%; /* 모바일에서는 가로폭 제한을 거의 꽉 채움 */
+                width: 90%;     /* 강제로 너비 확보 */
+                transform: scale(1.25); /* 1.25배 확대 (너무 크면 1.1로 줄이세요) */
+            }
         }
         
         .hero-bg {
