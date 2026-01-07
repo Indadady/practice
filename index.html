@@ -36,14 +36,14 @@
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; color: #334155; }
         section { scroll-margin-top: 80px; }
         
-        /* Intro Motion Logo Styles */
+        /* Intro Motion Logo Styles - 배경색 및 블렌딩 모드 수정 */
         #intro-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #F0F0F0; /* 🎨 [핵심 수정] 모션 로고 영상의 배경색과 일치 (연한 회색) */
+            background-color: #f0f0f0; /* 🎨 [수정] 영상 배경과 유사한 연한 회색 적용 */
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -57,7 +57,7 @@
             width: 600px; /* PC 기본 사이즈 */
             object-fit: contain;
             transition: transform 0.3s ease;
-            mix-blend-mode: multiply; /* 💡 팁: 배경색이 미세하게 달라도 영상 배경을 투명하게 섞어주는 효과 */
+            mix-blend-mode: multiply; /* 💡 [핵심] 영상의 밝은 배경을 투명하게 처리하여 경계선 제거 */
         }
 
         /* 📱 모바일 전용 로고 확대 */
