@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>투어메이커 - 세계 여행 마스터 (Hell Biz Edition)</title>
-    
     <!-- 🚨 Google Analytics (GA4) - Tourmaker 통합 관리 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
     <script>
@@ -16,668 +12,697 @@
     </script>
     <!-- // Google Analytics 끝 -->
 
-    <!-- Tailwind CSS -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>(주)투어메이커 - 데이터로 만드는 혁신적 여행</title>
+
+    <!-- SEO -->
+    <meta name="description" content="S2B 학교장터 및 나라장터 등록업체. 공공기관 연수부터 가족여행, 소규모 프라이빗 투어까지. 데이터 사이언스 기반의 정교한 기획력을 경험하세요." />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="(주)투어메이커 - 데이터로 만드는 혁신적 여행" />
+    <meta property="og:description" content="VIP를 위한 단 하나의 맞춤형 여정, 투어메이커의 기획력이면 가능합니다." />
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" />
+
+    <!-- Tailwind + Fonts + Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
     <style>
-        body { font-family: 'Noto Sans KR', sans-serif; }
-        #map { height: 350px; width: 100%; border-radius: 0.5rem; z-index: 1; }
+        :root { --brand-blue: #1e40af; --brand-accent: #f59e0b; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; color: #334155; }
+        section { scroll-margin-top: 80px; }
         
-        .quiz-img { 
-            height: 280px; 
-            width: 100%; 
-            object-fit: contain;
-            border-radius: 0.5rem;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
+        /* Intro Motion Logo Styles - 화이트 배경 적용 */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff; /* ✨ 요청하신 흰색 배경 적용 */
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s ease-out;
         }
-
-        .logo-img {
-            max-height: 180px;
+        
+        #intro-video {
             max-width: 80%;
+            max-height: 80vh;
+            width: 600px; /* PC 기본 사이즈 */
             object-fit: contain;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease; 
         }
-        
-        .correct-anim { animation: bounce 0.5s; }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.85); }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        
-        .option-btn { min-height: 60px; }
 
-        .brand-card {
-            font-family: 'Roboto Slab', serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid #dee2e6;
-            color: #343a40;
-            display: inline-flex;
+        /* 📱 모바일 전용 로고 확대 */
+        @media (max-width: 768px) {
+            #intro-video {
+                max-width: 100%; 
+                width: 100%;      
+                transform: scale(1.6);
+            }
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 58, 138, 0.8) 100%), url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: all 0.3s ease; }
+        .card-shadow:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        
+        .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .faq-input:checked ~ .faq-content { max-height: 500px; }
+        .faq-input:checked ~ label .arrow { transform: rotate(180deg); }
+        
+        .animate-fade-up { animation: fadeUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* Video Player Enhancement */
+        .video-container {
+            position: relative;
+            background-color: #1a1a1a;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            cursor: pointer;
+        }
+        .video-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: transform 0.5s ease, opacity 0.3s;
+        }
+        .video-container:hover .video-thumbnail {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.8rem 1.2rem;
-            margin: 0.3rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            font-size: 1.0rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: transform 0.2s;
+            color: white;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .video-container:hover .play-btn {
+            background: white;
+            color: #1e40af;
+            transform: translate(-50%, -50%) scale(1.1);
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex flex-col items-center">
 
-    <!-- 헤더 -->
-    <header class="w-full bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" 
-                 alt="Tourmaker Logo" class="h-10 w-auto object-contain">
-            <div class="flex flex-col">
-                <h1 class="text-lg sm:text-xl font-bold text-slate-800 leading-tight">World Biz <span class="text-red-600">HELL</span></h1>
-                <span class="text-xs text-slate-500">Analyst Edition</span>
+<body class="overflow-x-hidden">
+
+    <!-- 🎬 Intro Motion Logo Overlay -->
+    <div id="intro-overlay">
+        <!-- 깃허브 경로 확인 필요 -->
+        <video id="intro-video" muted playsinline autoplay>
+            <source src="./모션로고_투어메이커.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-md fixed w-full z-50 border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker Logo" class="h-8 md:h-10 w-auto object-contain" />
+            </a>
+            <div class="flex items-center gap-6">
+                <div class="hidden lg:flex gap-6 text-sm font-bold text-slate-600">
+                    <a href="#about" class="hover:text-blue-600 transition">소개</a>
+                    <a href="#flagship" class="hover:text-blue-600 transition">글로벌연수</a>
+                    <a href="#specialty" class="hover:text-blue-600 transition">맞춤/가족여행</a>
+                    <a href="#portfolio" class="hover:text-blue-600 transition">수행실적</a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="tel:0335622551" class="hidden md:flex items-center gap-2 text-blue-700 font-bold text-sm bg-blue-50 px-3 py-2 rounded-lg border border-blue-100">
+                        <i class="fas fa-phone-alt"></i> 033-562-2551
+                    </a>
+                    <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-sm">
+                        <i class="fas fa-comment"></i> <span class="hidden sm:inline">상담톡</span>
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="flex items-center gap-4">
-            <div class="text-slate-600 font-medium">
-                LV.<span id="level-display" class="font-bold text-slate-800">1</span>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-bg text-white pt-40 pb-24 px-4 min-h-screen flex items-center justify-center text-center relative">
+        <div class="max-w-5xl mx-auto animate-fade-up">
+            <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-5 py-2 mb-8 text-yellow-400 text-xs font-bold tracking-widest backdrop-blur-sm">
+                <i class="fas fa-shield-check text-[10px]"></i> S2B / G2B 공식 등록 종합여행사
             </div>
-            <div class="text-slate-600 font-medium">
-                Score: <span id="score" class="text-blue-600 font-bold text-lg">0</span>
+            <h1 class="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-2xl">
+                여행, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">데이터</span>를 만나<br class="hidden md:block"/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">혁신</span>이 되다
+            </h1>
+            <p class="text-slate-100 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 font-medium drop-shadow-md">
+                AI 기술 연수부터 VIP 가족 여행까지,<br>
+                (주)투어메이커는 <strong>기획력 하나로 완벽한 여행</strong>을 만듭니다.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="투어메이커_회사소개서.pdf" download="투어메이커_회사소개서.pdf" class="bg-white text-blue-900 px-10 py-5 rounded-2xl font-black transition hover:bg-blue-50 shadow-2xl flex items-center justify-center gap-3">
+                    <i class="fas fa-file-pdf"></i> 회사소개서(PDF) 다운로드
+                </a>
+                <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-10 py-5 rounded-2xl font-black transition shadow-2xl flex items-center justify-center gap-3">
+                    <i class="fas fa-comment"></i> 카톡 실시간 상담
+                </a>
+            </div>
+
+            <div class="mt-16 flex flex-wrap justify-center gap-4 md:gap-8 opacity-90 text-sm font-bold">
+                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <i class="fas fa-certificate text-yellow-400"></i> 국외/국내 여행업 등록
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <i class="fas fa-shield-alt text-green-400"></i> 서울보증보험 가입
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <i class="fas fa-landmark text-blue-300"></i> S2B / 나라장터 동시 등록
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- 메인 게임 영역 -->
-    <main class="w-full max-w-2xl p-4 flex-grow flex flex-col gap-4">
-        
-        <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 text-center relative overflow-hidden">
-            <div id="us-special-badge" class="hidden absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg animate-pulse">
-                🇺🇸 미국 특별편
-            </div>
-            <span id="quiz-type-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold text-white bg-blue-500 mb-2">Quiz</span>
-            <h2 id="question-title" class="text-xl font-black text-slate-800 mb-1">여행 준비 중...</h2>
-            <p id="question-desc" class="text-sm text-slate-500">잠시만 기다려주세요.</p>
-        </div>
-
-        <div class="bg-white p-2 rounded-lg shadow-lg border border-slate-300 relative min-h-[300px] flex items-center justify-center overflow-hidden">
-            
-            <div id="map-container" class="w-full h-full hidden">
-                <div id="map"></div>
-                <div class="absolute bottom-4 right-4 bg-white/90 px-3 py-1 rounded shadow text-xs font-bold text-slate-600 z-[1000]">
-                    <span class="inline-block w-3 h-3 rounded-full bg-green-500 opacity-50 mr-1 align-middle"></span>영역 힌트
+    <main>
+        <!-- CEO Message -->
+        <section id="about" class="py-24 px-4 bg-white relative -mt-16 z-10 rounded-t-[3rem]">
+            <div class="max-w-4xl mx-auto flex flex-col items-center">
+                <div class="w-32 h-32 rounded-3xl bg-blue-50 overflow-hidden border-4 border-white shadow-xl mb-8 transform -rotate-3 hover:rotate-0 transition-transform">
+                     <img src="https://cdn-icons-png.flaticon.com/512/4042/4042356.png" class="w-full h-full object-cover p-4 opacity-80" alt="CEO Avatar">
+                </div>
+                <div class="text-center">
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-8 leading-snug">
+                        "기존 여행사가 감성을 팔 때,<br>
+                        투어메이커는 <span class="text-blue-700">전문성</span>과 <span class="text-blue-700">신뢰</span>를 제안합니다."
+                    </h2>
+                    <div class="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 text-left">
+                        <p class="text-slate-600 leading-relaxed text-base md:text-lg">
+                            안녕하세요, <strong>대표이사 이재명</strong>입니다.<br><br>
+                            저는 강원대학교 데이터사이언스 대학원 과정을 통해 습득한 <strong>데이터 분석 역량</strong>을 여행업에 접목했습니다. 
+                            공공기관의 깐깐한 기준을 충족하는 기획력으로, 고객의 여행 목적을 정확히 달성해 드립니다.
+                        </p>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div id="flag-container" class="w-full h-full hidden flex-col items-center justify-center p-4 bg-slate-50">
-                <img id="flag-image" src="" alt="Flag" class="quiz-img">
+        <!-- Video Curation -->
+        <section id="visuals" class="py-24 px-4 bg-slate-900 text-white overflow-hidden">
+            <div class="max-w-6xl mx-auto text-center mb-16">
+                <span class="text-blue-400 font-bold text-xs tracking-widest uppercase mb-4 block">Official Curation</span>
+                <h2 class="text-3xl md:text-4xl font-black">관광청이 보증하는 완벽한 영감</h2>
+                <p class="text-slate-400 mt-4">투어메이커의 기획력과 관광청의 공신력이 만납니다.</p>
             </div>
-
-            <div id="landmark-container" class="w-full h-full hidden flex-col items-center justify-center p-2 bg-slate-100">
-                <img id="landmark-image" src="" alt="Landmark" class="quiz-img w-full object-cover rounded-lg shadow-md" style="object-fit: cover;">
-                <div class="mt-2 text-xs text-slate-400 font-medium">AI Generated Landmark (Preview)</div>
+            
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+                <!-- Singapore -->
+                <div class="group">
+                    <div class="video-container shadow-2xl" onclick="loadVideo(this, '7ipKUSzPHt8')">
+                        <img src="https://img.youtube.com/vi/7ipKUSzPHt8/hqdefault.jpg" alt="Singapore Thumbnail" class="video-thumbnail">
+                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+                    </div>
+                    <div class="px-4 mt-8">
+                        <h4 class="font-black text-xl mb-3 text-blue-400">Singapore: Passion Made Possible</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed">스마트 시티와 데이터 경제의 글로벌 허브. 투어메이커가 제안하는 기술 연수의 표본입니다.</p>
+                    </div>
+                </div>
+                <!-- Macau -->
+                <div class="group">
+                    <div class="video-container shadow-2xl" onclick="loadVideo(this, '27dEhlOYKXE')">
+                        <img src="https://img.youtube.com/vi/27dEhlOYKXE/hqdefault.jpg" alt="Macau Thumbnail" class="video-thumbnail">
+                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+                    </div>
+                    <div class="px-4 mt-8">
+                        <h4 class="font-black text-xl mb-3 text-yellow-500">Experience Macao, Unlimited</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed">복합 리조트 산업의 정수. 강원랜드 협력사 및 지자체 시찰을 위한 최적의 장소입니다.</p>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div id="text-quiz-container" class="w-full min-h-[250px] hidden flex flex-col items-center justify-center p-6 bg-gradient-to-br from-indigo-50 to-blue-50 text-center">
-                <div class="text-6xl mb-4" id="quiz-icon">👜</div>
-                <div id="text-quiz-content" class="w-full"></div>
+        <!-- Flagship Project Section -->
+        <section id="flagship" class="py-24 px-4 bg-white border-t border-slate-50">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl border border-white/5">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500 opacity-10 rounded-full blur-[100px] -mr-48 -mt-48"></div>
+                    <div class="relative z-10 flex flex-col lg:flex-row gap-16 items-center">
+                        <div class="flex-1 text-center lg:text-left">
+                            <span class="inline-block bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1 mb-6 text-blue-300 text-xs font-bold tracking-widest uppercase">Global Project</span>
+                            <h2 class="text-4xl md:text-5xl font-black mb-6 leading-tight">
+                                2026 강원대학교<br>
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300 italic">글로벌 패스파인더</span>
+                            </h2>
+                            <p class="text-slate-300 text-lg mb-8 leading-relaxed">
+                                AI 기업 탐방부터 실리콘밸리식 해커톤까지, 대학의 교육 목표를 현장에서 완벽히 구현하는 투어메이커만의 독점 기획 모델입니다.
+                            </p>
+                            <a href="https://indadady.github.io/260112_kangwon_univ/" target="_blank" class="inline-flex items-center gap-3 bg-white text-indigo-900 px-8 py-4 rounded-2xl font-black hover:bg-blue-50 transition transform hover:-translate-y-1 shadow-lg">
+                                <span>디지털 제안서 확인</span> <i class="fas fa-external-link-alt text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="w-full lg:w-5/12 max-w-sm shrink-0">
+                           <div class="relative mx-auto border-slate-800 bg-slate-800 border-[10px] rounded-[3rem] h-[550px] w-[280px] shadow-2xl overflow-hidden group">
+                                <iframe src="https://indadady.github.io/260112_kangwon_univ/" class="w-full h-full border-none pointer-events-none"></iframe>
+                                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="window.open('https://indadady.github.io/260112_kangwon_univ/')">
+                                    <span class="text-white font-bold border-2 border-white px-6 py-3 rounded-full text-sm backdrop-blur-md">Full View</span>
+                                </div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div id="logo-quiz-container" class="w-full h-full hidden flex-col items-center justify-center p-6 bg-white text-center">
-                 <div class="text-sm font-bold text-slate-500 mb-4 tracking-widest">HIDDEN CHAMPION</div>
-                 <div class="flex-grow flex items-center justify-center w-full p-4 border border-slate-100 rounded-xl bg-slate-50 shadow-inner">
-                    <img id="company-logo" src="" alt="Company Logo" class="logo-img">
-                 </div>
-                 <div class="mt-4 text-xs text-slate-400">이 로고의 기업은 어느 나라 것일까요?</div>
+        <!-- VIP & Family Tailor-made Section -->
+        <section id="specialty" class="py-24 px-4 bg-white">
+            <div class="max-w-6xl mx-auto">
+                <!-- Main VIP Part -->
+                <div class="flex flex-col md:flex-row items-center gap-16 mb-24">
+                    <div class="md:w-1/2">
+                        <span class="text-blue-600 font-bold text-xs tracking-widest uppercase mb-4 block">Premium VIP Service</span>
+                        <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-6 leading-tight">
+                            "가족과 같은 마음으로,<br>
+                            <span class="text-blue-600">VIP 맞춤형 인솔</span>을 약속합니다"
+                        </h2>
+                        <p class="text-slate-600 mb-8 leading-relaxed text-lg">
+                            투어메이커의 VIP 서비스는 정해진 일정이 없습니다. 항공부터 호텔, 현지 로컬 맛집 투어까지 <strong>고객의 의사를 100% 반영</strong>하여 설계합니다.<br><br>
+                            지난 <strong>10월 대만 행사</strong>와 같이, 현지 가이드에 의존하지 않고 대표가 직접 기획하고 인솔하는 프라이빗 여정을 제공합니다. 자유로운 현지 데이투어와 깊이 있는 로컬 경험을 원하시는 VIP 고객님들을 위해 가장 완벽한 파트너가 되어 드립니다.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3 shadow-sm">
+                                <i class="fas fa-crown text-blue-600"></i>
+                                <span class="text-sm font-bold text-slate-800">대표 직접 인솔 서비스</span>
+                            </div>
+                            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3 shadow-sm">
+                                <i class="fas fa-utensils text-blue-600"></i>
+                                <span class="text-sm font-bold text-slate-800">로컬 맛집·데이투어 1:1 매칭</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="relative">
+                            <div class="absolute -top-6 -left-6 w-32 h-32 bg-blue-100 rounded-full mix-blend-multiply opacity-70 animate-pulse"></div>
+                            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1974&auto=format&fit=crop" class="rounded-[2.5rem] shadow-2xl relative z-10 border-8 border-white" alt="VIP Experience">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [New Added] Private Group & Family Extension -->
+                <div class="relative border-t border-slate-100 pt-20">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-slate-400 font-bold text-sm tracking-widest uppercase">
+                        For Private Groups
+                    </div>
+                    
+                    <div class="text-center mb-12">
+                        <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-3">공공의 기준을 <span class="text-blue-600">개인의 여행</span>에도 적용합니다</h3>
+                        <p class="text-slate-500">학교와 관공서가 믿고 맡기는 기획력으로, 가족여행과 친목모임도 안전하고 특별하게 준비하세요.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Card 1: Family -->
+                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-lg hover:shadow-xl transition group">
+                            <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 text-2xl mb-6 group-hover:scale-110 transition">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-slate-900 mb-3">가족 & 효도 여행</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed mb-4">
+                                부모님을 위한 편안한 동선과 아이들을 위한 체험 학습. 
+                                다른 일행 눈치 볼 필요 없는 <strong>'우리 가족만의 단독 차량 투어'</strong>를 설계해 드립니다.
+                            </p>
+                            <span class="inline-block bg-yellow-50 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">#제주 #해외휴양 #단독행사</span>
+                        </div>
+
+                        <!-- Card 2: Social Club (Modified: Golf removed) -->
+                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-lg hover:shadow-xl transition group">
+                            <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-6 group-hover:scale-110 transition">
+                                <i class="fas fa-hiking"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-slate-900 mb-3">친목회 & 동호회</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed mb-4">
+                                <strong>트레킹, 미식 투어, 로컬 체험</strong> 등 모임의 성격에 딱 맞춘 테마 여행. 
+                                총무님의 정산 고민을 덜어드리는 투명한 견적과 예약 대행을 약속합니다.
+                            </p>
+                            <span class="inline-block bg-green-50 text-green-700 text-xs font-bold px-3 py-1 rounded-full">#트레킹 #동창회 #맞춤견적</span>
+                        </div>
+
+                        <!-- Card 3: Domestic/Jeju -->
+                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-lg hover:shadow-xl transition group">
+                            <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6 group-hover:scale-110 transition">
+                                <i class="fas fa-plane-departure"></i>
+                            </div>
+                            <h4 class="text-xl font-bold text-slate-900 mb-3">제주도 & 국내 패키지</h4>
+                            <p class="text-sm text-slate-500 leading-relaxed mb-4">
+                                렌터카 운전이 부담스러울 땐? 기사님이 포함된 <strong>'미니버스/쏠라티 투어'</strong>가 정답입니다.
+                                현지 맛집과 숨은 명소를 엮어 알차게 다녀오세요.
+                            </p>
+                            <span class="inline-block bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">#기사포함 #노쇼핑 #안전제일</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div id="loading" class="absolute inset-0 bg-white/95 z-20 flex flex-col items-center justify-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mb-4"></div>
-                <span class="text-blue-600 font-bold text-lg">다음 문제 로딩 중...</span>
-                <p class="text-xs text-slate-400 mt-2">히든 챔피언 기업 데이터 로딩 (3초 제한)</p>
-                <button onclick="forceStopLoading()" class="mt-4 px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded text-slate-600 text-xs font-bold">
-                    멈췄나요? 여기 클릭
-                </button>
+        <!-- Core Competitiveness -->
+        <section id="competitiveness" class="py-24 px-4 bg-slate-50">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <span class="text-blue-600 font-bold text-xs tracking-widest uppercase">Our Strength</span>
+                    <h2 class="text-3xl font-black text-slate-900 mt-4">투어메이커만의 <span class="text-blue-600">핵심 경쟁력</span></h2>
+                </div>
+                <div class="grid md:grid-cols-4 gap-6 text-center">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 card-shadow">
+                        <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6 mx-auto">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="font-black text-slate-900 mb-3 text-lg">압도적 실행력</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">단기간 내 50건 이상의 용역 완수. 공공기관 행정 요구에 유연하고 신속하게 대응합니다.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 card-shadow">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 mx-auto">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <h3 class="font-black text-slate-900 mb-3 text-lg">데이터 기반 기획</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">데이터 사이언스 역량을 바탕으로 고객 취향과 연수 목적에 최적화된 동선을 설계합니다.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 card-shadow">
+                        <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-6 mx-auto">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3 class="font-black text-slate-900 mb-3 text-lg">지역 전문성</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">강원 지역을 포함한 국내외 파트너십을 통해 독점적인 로컬 네트워크를 확보하고 있습니다.</p>
+                    </div>
+                    <div class="bg-gradient-to-b from-slate-800 to-slate-900 p-8 rounded-3xl border border-slate-700 card-shadow text-white">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-yellow-400 text-2xl mb-6 mx-auto">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="font-black text-white mb-3 text-lg">스마트 가이드북</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">모바일 일정표 및 디지털 시스템을 통해 실시간 일정 확인 및 밀착 소통이 가능합니다.</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div id="options-container" class="grid grid-cols-2 gap-3 mt-2 min-h-[150px]"></div>
+        <!-- Leadership Section -->
+        <section class="py-24 px-4 bg-white">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <span class="text-blue-600 font-bold text-xs tracking-widest uppercase">TOURMAKER LEADERSHIP</span>
+                    <h2 class="text-3xl font-black text-slate-900 mt-4 tracking-tight">책임 있는 운영으로 신뢰를 약속합니다</h2>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 group transition-all duration-300 hover:bg-blue-50 text-center">
+                        <div class="w-24 h-24 mx-auto rounded-3xl bg-white overflow-hidden mb-8 border-2 border-white shadow-md transform group-hover:rotate-6 transition">
+                             <img src="https://cdn-icons-png.flaticon.com/512/4042/4042356.png" class="w-full h-full object-cover p-3 opacity-80" alt="Leadership">
+                        </div>
+                        <span class="bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-full mb-3 inline-block uppercase">PM / Strategy</span>
+                        <h3 class="font-black text-2xl text-slate-900 mb-2">이재명 대표</h3>
+                        <p class="text-xs text-blue-600 font-bold mb-6">데이터 사이언티스트 / 총괄 기획</p>
+                        <p class="text-xs text-slate-500 leading-relaxed">VIP 맞춤 인솔 및 공공기관 정밀 일정 설계를 총괄합니다.</p>
+                    </div>
+                    <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 group transition-all duration-300 hover:bg-green-50 text-center">
+                        <div class="w-24 h-24 mx-auto rounded-3xl bg-white overflow-hidden mb-8 border-2 border-white shadow-md transform group-hover:-rotate-6 transition">
+                            <img src="https://cdn-icons-png.flaticon.com/512/4042/4042422.png" class="w-full h-full object-cover p-3 opacity-80" alt="Admin">
+                        </div>
+                        <span class="bg-green-600 text-white text-[10px] font-black px-3 py-1 rounded-full mb-3 inline-block uppercase">Admin / Finance</span>
+                        <h3 class="font-black text-2xl text-slate-900 mb-2">허나연 실장</h3>
+                        <p class="text-xs text-green-600 font-bold mb-6">계약 행정 / 예약 관리 총괄</p>
+                        <p class="text-xs text-slate-500 leading-relaxed">S2B, G2B 계약 및 투명한 행정 집행을 담당합니다.</p>
+                    </div>
+                    <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 group transition-all duration-300 hover:bg-purple-50 text-center">
+                        <div class="w-24 h-24 mx-auto rounded-3xl bg-white overflow-hidden mb-8 border-2 border-white shadow-md transform group-hover:rotate-6 transition">
+                             <img src="https://cdn-icons-png.flaticon.com/512/4042/4042356.png" class="w-full h-full object-cover p-3 opacity-80" alt="Field">
+                        </div>
+                        <span class="bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-full mb-3 inline-block uppercase">Partnership / Field</span>
+                        <h3 class="font-black text-2xl text-slate-900 mb-2">조 혁 이사</h3>
+                        <p class="text-xs text-purple-600 font-bold mb-6">대외 협력 / 현장 운영 총괄</p>
+                        <p class="text-xs text-slate-500 leading-relaxed">국내외 로컬 파트너십 구축과 현장 관리를 전담합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Portfolio List -->
+        <section id="portfolio" class="py-24 px-4 bg-slate-50">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-black text-slate-900 mb-4 italic leading-tight">주요 수행 실적<br><span class="text-blue-600 not-italic">데이터로 증명하는 압도적 결과</span></h2>
+                    <p class="text-slate-500">투어메이커의 발자취는 곧 고객의 신뢰입니다. (최근 50건 이상 완수)</p>
+                </div>
+                
+                <div class="flex justify-center flex-wrap gap-2 mb-10" id="filter-container"></div>
+                <div id="portfolio-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                
+                <div class="mt-12 text-center" id="load-more-container">
+                    <button onclick="showAllPortfolio()" class="bg-white border border-slate-200 text-slate-600 px-8 py-4 rounded-2xl font-bold hover:bg-slate-50 transition shadow-sm">
+                        실적 전체보기 (+20건 이상)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-24 px-4 bg-white border-t border-slate-50">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <span class="text-blue-600 font-bold text-xs tracking-widest uppercase">FAQ</span>
+                    <h2 class="text-3xl font-black text-slate-900 mt-4">자주 묻는 질문</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                        <input type="checkbox" id="q1" class="hidden faq-input" checked>
+                        <label for="q1" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
+                            학교장터(S2B), 나라장터(G2B) 계약이 가능한가요? <i class="fas fa-chevron-down arrow transition-transform"></i>
+                        </label>
+                        <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
+                            <div class="pb-6 border-t border-slate-100 pt-4">
+                                네, 정식 등록 업체입니다. 공공기관 및 학교 행정 절차에 특화된 정산 서류 일체를 완벽히 제공하며, 수의계약 및 경쟁 입찰 모두 신속하게 대응합니다.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                        <input type="checkbox" id="q2" class="hidden faq-input">
+                        <label for="q2" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
+                            VIP 고객을 위한 맞춤형 인솔 서비스도 제공하나요? <i class="fas fa-chevron-down arrow transition-transform"></i>
+                        </label>
+                        <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
+                            <div class="pb-6 border-t border-slate-100 pt-4">
+                                네, 가능합니다. 지난 10월 대만 행사처럼 항공, 호텔은 물론 현지 로컬 맛집 투어까지 고객의 의사를 100% 반영합니다. 현지 가이드에 의존하지 않고 대표가 직접 인솔하여 자유로운 데이투어와 프라이빗한 여정을 보장해 드립니다.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                        <input type="checkbox" id="q3" class="hidden faq-input">
+                        <label for="q3" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
+                            개인/가족 소규모 단체 예약도 가능한가요? <i class="fas fa-chevron-down arrow transition-transform"></i>
+                        </label>
+                        <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
+                            <div class="pb-6 border-t border-slate-100 pt-4">
+                                네, 투어메이커는 기관 연수뿐만 아니라 가족 여행, 동호회 투어 등 소규모 맞춤 여행도 전문으로 진행합니다. 고객님이 원하시는 테마에 맞춰 1:1 일정을 설계해 드립니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 px-4 bg-slate-50">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="bg-blue-700 rounded-[3rem] p-12 text-white shadow-2xl flex flex-col items-center relative overflow-hidden">
+                    <div class="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+                    <h2 class="text-4xl font-black mb-8 relative z-10 text-white">투어메이커와 지금 바로 상의하세요</h2>
+                    <div class="flex flex-col md:flex-row gap-6 w-full relative z-10">
+                        <a href="tel:0335622551" class="flex-1 bg-white/10 p-8 rounded-3xl border border-white/20 hover:bg-white/20 transition backdrop-blur-md group">
+                            <i class="fas fa-phone-alt text-2xl mb-4 text-blue-300 group-hover:scale-110 transition"></i>
+                            <span class="block text-xs font-black uppercase tracking-widest mb-1 opacity-70">Official Call</span>
+                            <span class="text-2xl font-black">033-562-2551</span>
+                        </a>
+                        <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" class="flex-1 bg-yellow-400 p-8 rounded-3xl hover:bg-yellow-500 transition text-slate-900 group">
+                            <i class="fas fa-comment text-2xl mb-4 group-hover:scale-110 transition text-slate-700"></i>
+                            <span class="block text-xs font-black uppercase tracking-widest mb-1 opacity-70 text-slate-700">KakaoTalk</span>
+                            <span class="text-2xl font-black">실시간 카톡 상담</span>
+                        </a>
+                    </div>
+                    <p class="mt-12 text-sm opacity-60 font-medium tracking-tight">강원특별자치도 정선군 정선읍 봉양3길 22-10 3층 | jmlojm@nate.com</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-slate-900 text-white py-16 px-4">
+            <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 opacity-50">
+                <div>
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Footer Logo" class="h-6 mb-8 grayscale brightness-200">
+                    <p class="text-xs font-bold uppercase tracking-widest mb-2">© 2025 TOURMAKER CORP. ALL RIGHTS RESERVED.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-12 text-[11px] font-medium leading-loose">
+                    <ul class="space-y-1">
+                        <li>(주)투어메이커 | 대표: 이재명</li>
+                        <li>사업자등록번호: 473-81-03183</li>
+                        <li>관광사업등록: 제2024-000001호</li>
+                        <li>이메일: jmlojm@nate.com</li>
+                    </ul>
+                    <ul class="space-y-1">
+                        <li>본사: 정선군 정선읍 봉양3길 22-10 3층</li>
+                        <li>지사: 강원특별자치도 태백시</li>
+                        <li>TEL: 033-562-2551</li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
     </main>
 
-    <!-- 비디오 모달 -->
-    <div id="video-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
-        <div class="absolute inset-0 modal-overlay backdrop-blur-sm" onclick="closeModal()"></div>
-        <div class="relative w-11/12 max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden border-4 border-white flex flex-col max-h-[90vh]">
-            <div class="bg-blue-600 text-white p-3 flex justify-between items-center shrink-0">
-                <h3 class="font-bold flex items-center gap-2">
-                    <span>🎉 정답! 투어메이커 추천 여행지</span>
-                </h3>
-                <button onclick="closeModal()" class="hover:bg-blue-700 rounded-full p-1">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <div class="video-container bg-black shrink-0">
-                <iframe id="reward-video" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            
-            <div class="p-4 text-center bg-slate-50 flex flex-col gap-3 overflow-y-auto">
-                <p class="text-slate-800 font-bold text-lg" id="modal-title">국가 이름</p>
-                <p class="text-slate-600 text-sm whitespace-pre-wrap" id="modal-desc">설명</p>
-                
-                <a id="video-fallback-link" href="#" target="_blank" class="block w-full py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg text-sm font-bold transition-colors">
-                    📺 영상이 안 나오나요? 유튜브 앱에서 보기 (클릭)
-                </a>
-
-                <button onclick="closeModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg transition-all transform hover:scale-105 mt-2">
-                    다음 문제 풀기 (Next Level) ➡
-                </button>
-            </div>
-        </div>
+    <!-- Mobile Sticky CTA -->
+    <div class="fixed bottom-6 left-4 right-4 z-[100] md:hidden flex gap-2">
+        <a href="tel:0335622551" class="flex-1 bg-blue-700 text-white py-4 rounded-2xl font-black text-center shadow-2xl border border-blue-600">사무실 전화</a>
+        <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" class="flex-1 bg-yellow-400 text-slate-900 py-4 rounded-2xl font-black text-center shadow-2xl border border-yellow-300">카톡 상담</a>
     </div>
 
-    <!-- 푸터 -->
-    <footer class="w-full bg-slate-800 text-slate-300 p-6 text-center mt-auto">
-        <p class="font-bold text-lg mb-1">Tourmaker Smart Guide</p>
-        <p class="text-sm opacity-75">Designed by <span class="text-yellow-400 font-bold">Sebastian & Sungbin</span></p>
-        <p class="text-xs mt-2 opacity-50">Since 2019 • Gangwon-do, Korea</p>
-    </footer>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
     <script>
-        // 난이도: HELL + Niche Corporate Edition
-        const countries = [
-            // --- 🇺🇸 USA: Tech Giants & Niche Auto ---
-            { 
-                name: "미국 (USA)", capital: "워싱턴 D.C.", brands: ["Apple", "Google", "Tesla", "Amazon", "Lockheed Martin"], 
-                lat: 39.8, lng: -98.5, zoom: 4, radius: 2500000, 
-                flagUrl: "https://flagcdn.com/h240/us.png", videoId: "iq5KTD0_bck",
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg", // Apple
-                    "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png", // Tesla
-                    "https://upload.wikimedia.org/wikipedia/commons/9/9c/Lockheed_Martin_Logo.svg", // Lockheed Martin
-                    // [HELL] Niche & Obscure
-                    "https://upload.wikimedia.org/wikipedia/commons/3/30/Fisker_Inc._logo.svg", // Fisker (Niche EV)
-                    "https://upload.wikimedia.org/wikipedia/commons/8/87/Karma_Automotive_logo.svg", // Karma (Niche Luxury)
-                    "https://upload.wikimedia.org/wikipedia/commons/0/0e/Rivian_logo.svg" // Rivian
-                ]
-            },
-            
-            // --- 🇯🇵 Japan: Electronics & Retail ---
-            { 
-                name: "일본 (Japan)", capital: "도쿄", brands: ["Sony", "Nintendo", "Toyota"], 
-                lat: 36.2, lng: 138.2, zoom: 5, radius: 600000, 
-                flagUrl: "https://flagcdn.com/h240/jp.png", videoId: "nhXC2YdyjvU",
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/c/c3/Sony_logo.svg", // Sony
-                    "https://upload.wikimedia.org/wikipedia/commons/0/0d/Nintendo.svg", // Nintendo
-                    "https://upload.wikimedia.org/wikipedia/commons/f/f0/Don_Quijote_Store_Logo.svg", // Don Quijote
-                ]
-            },
+        // 🎬 Intro Motion Logo Control Script (속도 2.5배속 적용)
+        window.addEventListener('load', function() {
+            const introOverlay = document.getElementById('intro-overlay');
+            const introVideo = document.getElementById('intro-video');
 
-            // --- 🇨🇳 China: Tech, EV & Niche ---
-            { 
-                name: "중국 (China)", capital: "베이징", brands: ["Alibaba", "Tencent", "Xiaomi"], 
-                lat: 35.8, lng: 104.1, zoom: 4, radius: 2000000, 
-                flagUrl: "https://flagcdn.com/h240/cn.png", videoId: "8lq3yG_Hw4E", 
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/e/e4/Alibaba_Group_logo.svg", // Alibaba
-                    "https://upload.wikimedia.org/wikipedia/commons/a/ae/Xiaomi_logo_%282021-%29.svg", // Xiaomi
-                    // [HELL] Niche Tech
-                    "https://upload.wikimedia.org/wikipedia/commons/c/cb/OnePlus_logo.svg", // OnePlus (Tech enthusiasts know)
-                    "https://upload.wikimedia.org/wikipedia/commons/a/ad/DJI_Logo.svg", // DJI (Drone)
-                    "https://upload.wikimedia.org/wikipedia/commons/e/ec/Xpeng_logo.svg", // Xpeng
-                ]
-            },
+            if (introVideo && introOverlay) {
+                // ⚡️ 영상 재생 속도를 2.5배로 빠르게 설정
+                introVideo.playbackRate = 2.5;
 
-            // --- 🇫🇮 Finland: The Fallen King ---
-            {
-                name: "핀란드 (Finland)", capital: "헬싱키", brands: ["Santa Claus", "Sauna", "Xylitol"],
-                lat: 61.9, lng: 25.7, zoom: 5, radius: 300000,
-                flagUrl: "https://flagcdn.com/h240/fi.png", videoId: "M2T1kL5T-6w",
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/0/02/Nokia_wordmark.svg", // Nokia (Old & New)
-                    "https://upload.wikimedia.org/wikipedia/commons/b/b5/Angry_Birds.svg" // Rovio (Angry Birds)
-                ]
-            },
+                // 영상이 끝나면 인트로 제거 (video ended event)
+                introVideo.addEventListener('ended', function() {
+                    fadeOutIntro();
+                });
 
-            // --- 🇵🇱 Poland: Gamer's Heart ---
-            {
-                name: "폴란드 (Poland)", capital: "바르샤바", brands: ["Chopin", "Marie Curie"],
-                lat: 51.9, lng: 19.1, zoom: 6, radius: 250000,
-                flagUrl: "https://flagcdn.com/h240/pl.png", videoId: "J5W_F9vLgXw",
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/e/e9/CD_Projekt_Red_logo.svg", // CD Projekt Red (Witcher, Cyberpunk)
-                    "https://upload.wikimedia.org/wikipedia/commons/a/ab/Allegro_pl-logo.svg" // Allegro (E-commerce)
-                ]
-            },
+                // [안전장치] 영상 로딩 문제 등에 대비해 2.5초 후 강제 종료
+                setTimeout(fadeOutIntro, 2500);
 
-            // --- 🇸🇪 Sweden: Hypercar & Furniture ---
-            {
-                name: "스웨덴 (Sweden)", capital: "스톡홀름", brands: ["IKEA", "Spotify"],
-                lat: 60.1, lng: 18.6, zoom: 5, radius: 300000,
-                flagUrl: "https://flagcdn.com/h240/se.png", videoId: "8x2L7lZJ5s8",
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/c/c5/Ikea_logo.svg", // IKEA
-                    "https://upload.wikimedia.org/wikipedia/commons/1/18/Spotify_logo_with_text.svg", // Spotify
-                    "https://upload.wikimedia.org/wikipedia/commons/4/4c/Koenigsegg_logo.svg" // Koenigsegg (Hypercar Hell Mode)
-                ]
-            },
+                function fadeOutIntro() {
+                    introOverlay.style.opacity = '0';
+                    setTimeout(function() {
+                        introOverlay.style.display = 'none';
+                    }, 600); // CSS transition time(0.6s)과 일치
+                }
+            }
+        });
 
-            // --- 🇰🇷 Korea: Semi & Auto ---
-            { 
-                name: "대한민국 (South Korea)", capital: "서울", brands: ["Samsung", "Hyundai", "LG"], 
-                lat: 36.5, lng: 127.8, zoom: 6, radius: 250000, 
-                flagUrl: "https://flagcdn.com/h240/kr.png", videoId: "3P1CnWI62Ik",
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg",
-                    "https://upload.wikimedia.org/wikipedia/commons/4/44/Hyundai_Motor_Company_logo.svg",
-                ]
-            },
+        function loadVideo(container, videoId) {
+            container.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            container.classList.remove('video-placeholder');
+            container.onclick = null;
+        }
 
-            // --- 🇩🇪 Germany: Auto ---
-            { 
-                name: "독일 (Germany)", capital: "베를린", brands: ["BMW", "Mercedes-Benz", "Adidas"], 
-                lat: 51.1, lng: 10.4, zoom: 6, radius: 350000, 
-                flagUrl: "https://flagcdn.com/h240/de.png", videoId: "8DEozJok3U8",
-                logos: [
-                    "https://upload.wikimedia.org/wikipedia/commons/4/44/BMW.svg",
-                    "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"
-                ]
-            },
-            
-            // --- Mixed Countries (Previous Data) ---
-            { name: "프랑스 (France)", capital: "파리", brands: ["Louis Vuitton", "Chanel"], lat: 46.2, lng: 2.2, zoom: 6, radius: 450000, flagUrl: "https://flagcdn.com/h240/fr.png", videoId: "-q6iol-BEEw", logos: ["https://upload.wikimedia.org/wikipedia/commons/c/c8/Louis_Vuitton_LV_logo.png"] },
-            { name: "영국 (UK)", capital: "런던", brands: ["BBC", "Dyson"], lat: 55.3, lng: -3.4, zoom: 6, radius: 300000, flagUrl: "https://flagcdn.com/h240/gb.png", videoId: "i9E_Blai8vk", logos: ["https://upload.wikimedia.org/wikipedia/commons/4/42/BBC_Logo_2021.svg"] },
-            
-            // --- US States & Tricky Locations ---
-            { name: "캘리포니아 (California)", capital: "새크라멘토", brands: ["Hollywood"], lat: 36.77, lng: -119.41, zoom: 6, radius: 250000, flagUrl: "https://upload.wikimedia.org/wikipedia/commons/0/01/Flag_of_California.svg", videoId: "NIbkqk5Lwts", isUS: true },
-            { name: "뉴욕 주 (New York)", capital: "올버니", brands: ["Wall Street"], lat: 43.29, lng: -74.21, zoom: 7, radius: 150000, flagUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_New_York.svg", videoId: "MtCMtC50gwY", isUS: true },
-            { name: "코소보 (Kosovo)", capital: "프리슈티나", brands: ["Newborn"], lat: 42.6, lng: 20.9, zoom: 8, radius: 40000, flagUrl: "https://upload.wikimedia.org/wikipedia/commons/1/1f/Flag_of_Kosovo.svg", videoId: "YFI7McdQhGc" },
-            { name: "차드 (Chad)", capital: "은자메나", brands: ["Sahara"], lat: 12.13, lng: 15.05, zoom: 6, radius: 400000, flagUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Flag_of_Chad.svg", videoId: "6g2Q3Qy4v5k" },
-            { name: "나우루 (Nauru)", capital: "야렌", brands: ["Phosphate"], lat: -0.52, lng: 166.93, zoom: 13, radius: 5000, flagUrl: "https://upload.wikimedia.org/wikipedia/commons/3/30/Flag_of_Nauru.svg", videoId: "S8_n4xG0wT4" },
+        const portfolioData = [
+            // Global
+            { category: 'global', date: '2025.01', title: '해외(싱가포르) 데이터보안·활용 혁신융합 기술연수', desc: '강원대, 아주대 등 5개 대학 연합 기획' },
+            { category: 'global', date: '2025.09', title: '강원대 데이터사이언스학과 일본 연수', desc: 'AI융합 전공 심화 및 선진지 견학' },
+            { category: 'global', date: '2025.08', title: '첨단소재·나노융합 혁신융합대학 일본 교류', desc: '중앙대, 금오공대 등 참여 연수' },
+            { category: 'global', date: '2024.10', title: 'KAIST x NYU 교환학생 한국문화체험', desc: '글로벌 명문대 학생 대상 인바운드 투어' },
+            { category: 'global', date: '2024.07', title: '강원대 지역지능화혁신 인재양성 상해 연수', desc: '중국 상해 단기 해외 기술 연수' },
+            { category: 'global', date: '2025.06', title: '아리랑문화재단 에스토니아 항공 대행', desc: '국제 문화 교류 사업 항공 지원' },
+            // Public
+            { category: 'public', date: '2025.06', title: '정선군 중국 자매도시(구강시) 방문 운영', desc: '공식 외교 행사 기획 및 운영 총괄' },
+            { category: 'public', date: '2025.05', title: '정선군청 모범공무원 해외 선진지 견학', desc: '중국 난징, 구강 행정 우수 사례 시찰' },
+            { category: 'public', date: '2024.11', title: '정선군 이장단 일본 큐슈 선진지 견학', desc: '지역 리더 역량 강화 및 벤치마킹' },
+            { category: 'public', date: '2024.09', title: '정선 시설관리공단 말레이시아 견학', desc: '쿠알라룸푸르 선진 시설 벤치마킹' },
+            { category: 'public', date: '2024.06', title: '정선군청 모범공무원 일본 북해도 연수', desc: '우수 관광자원 조사 및 시찰' },
+            { category: 'public', date: '2024.05', title: '양양전통시장 벤치마킹 대행 용역', desc: '시장 활성화 우수 사례 조사' },
+            { category: 'public', date: '2025.11', title: '정선 시장활성화 사업단 제주 견학', desc: '제주 로컬 상권 활성화 모델 시찰' },
+            // Corp
+            { category: 'corp', date: '2025.11', title: '강원랜드 협력사 우수직원 마카오 연수', desc: '마카오 복합리조트 서비스 벤치마킹' },
+            { category: 'corp', date: '2024.11', title: '강원랜드 협력사 우수직원 마카오 연수', desc: '글로벌 서비스 역량 강화 포상 휴가' },
+            { category: 'corp', date: '2025.02', title: 'HCI KOREA 2025 학술대회 지원', desc: '국제 학술 행사 MICE 운영 지원' },
+            { category: 'corp', date: '2024.11', title: '강원랜드 희망재단 일본 힐링 연수', desc: '진폐휴양프로그램 운영 대행' },
+            // School
+            { category: 'school', date: '2025.12', title: '함백고등학교 3학년 현장체험학습', desc: '졸업 전 추억 만들기 테마 여행' },
+            { category: 'school', date: '2025.10', title: '정선고등학교 제주 테마 학습', desc: '안전 최우선 대규모 학생 연수' },
+            { category: 'school', date: '2025.10', title: '함백중학교 서울역사 문화탐방', desc: '수도권 역사 의식 고취 체험' },
+            { category: 'school', date: '2024.09', title: '태백 황지고등학교 제주 수학여행', desc: '대규모 학생 안전 수송 및 운영' },
+            { category: 'school', date: '2025.09', title: '철암고등학교 제주 테마 학습', desc: '자원 탐방 및 공동체 의식 강화' },
+            { category: 'school', date: '2025.07', title: '영월 신천초등학교 필리핀 연수', desc: '글로벌 어학 및 문화 체험 위탁' }
         ];
 
-        let map;
-        let mapCircle;
-        let currentRound = 0;
-        let score = 0;
-        let currentCountry = null;
-        let currentType = ''; 
-        let isAnswered = false;
-        let safeTimer = null;
-        let prevCountryIndex = null;
-        let prevType = null;
+        let currentFilter = 'all';
+        let isShowingAll = false;
 
-        function splitNamePair(fullText) {
-            if (!fullText) return { ko: "Unknown", en: "" };
-            if (!fullText.includes('(')) return { ko: fullText.trim(), en: "" };
-            const [koPart, rest] = fullText.split('(');
-            const enPart = rest.replace(')', '').trim();
-            return { ko: koPart.trim(), en: enPart };
-        }
-
-        async function fetchWikiImage(query) {
-            try {
-                if (!query) return null;
-                const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=600&origin=*&redirects`;
-                const res = await fetch(url);
-                const data = await res.json();
-                if (!data || !data.query || !data.query.pages) return null;
-                const pages = data.query.pages;
-                const pageId = Object.keys(pages)[0];
-                if (pageId === "-1") return null; 
-                if (pages[pageId].thumbnail && pages[pageId].thumbnail.source) {
-                    return pages[pageId].thumbnail.source;
-                }
-                return null;
-            } catch (e) {
-                console.error("Wiki fetch error:", e);
-                return null;
-            }
-        }
-
-        function initMap() {
-            try {
-                map = L.map('map', {
-                    zoomControl: true, attributionControl: false,
-                    dragging: true, scrollWheelZoom: true, doubleClickZoom: true
-                }).setView([39.8, -98.5], 3); 
-
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: 'Tiles &copy; Esri', maxZoom: 17
-                }).addTo(map);
-
-                startGame();
-            } catch (error) {
-                console.error("Map initialization failed:", error);
-                document.getElementById('question-title').textContent = "오류 발생";
-                document.getElementById('question-desc').textContent = "새로고침 해주세요.";
-            }
-        }
-
-        function startGame() {
-            nextRound();
-        }
-
-        function forceStopLoading() {
-            const loader = document.getElementById('loading');
-            if (loader && !loader.classList.contains('hidden')) {
-                loader.classList.add('hidden');
-            }
-        }
-
-        function handleImageError() {
-            console.warn("Image failed, falling back to flag quiz");
-            forceStopLoading(); 
-            currentType = 'flag';
-            updateDisplayForRound(); 
-        }
-
-        function nextRound() {
-            if (safeTimer) clearTimeout(safeTimer);
-            document.getElementById('loading').classList.remove('hidden');
-            safeTimer = setTimeout(forceStopLoading, 4000); 
-
-            const modal = document.getElementById('video-modal');
-            const iframe = document.getElementById('reward-video');
-            if(iframe) iframe.src = ""; 
-            if(modal) modal.classList.add('hidden');
-
-            isAnswered = false;
-            currentRound++;
-            document.getElementById('level-display').textContent = currentRound;
+        function renderPortfolio() {
+            const list = document.getElementById('portfolio-list');
+            const filtered = currentFilter === 'all' ? portfolioData : portfolioData.filter(item => item.category === currentFilter);
+            const displayData = isShowingAll ? filtered : filtered.slice(0, 9);
             
-            const container = document.getElementById('options-container');
-            if(container) {
-                container.innerHTML = '';
-                container.classList.remove('opacity-50', 'pointer-events-none');
-            }
-            
-            if (map && mapCircle) {
-                map.removeLayer(mapCircle);
-                mapCircle = null;
-            }
-            
-            // 로고가 있는 나라면 로고 퀴즈 확률 UP
-            let newType;
-            let tempCountry;
-            
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * countries.length);
-            } while (countries.length > 1 && randomIndex === prevCountryIndex);
-            
-            tempCountry = countries[randomIndex];
-            
-            let availableTypes = ['map', 'flag', 'brand'];
-            
-            // 로고가 있으면 로고 퀴즈 비중을 극도로 높임 (테스트 목적)
-            if (tempCountry.logos && tempCountry.logos.length > 0) {
-                availableTypes.push('logo'); 
-                availableTypes.push('logo'); // x2
-                availableTypes.push('logo'); // x3 (Focus on new feature)
-            }
-            
-            if (tempCountry.capital) availableTypes.push('landmark');
+            list.innerHTML = displayData.map(item => `
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 card-shadow animate-fade-up">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase tracking-wider">${item.category}</span>
+                        <span class="text-[10px] font-bold text-slate-400">${item.date}</span>
+                    </div>
+                    <h4 class="font-black text-slate-900 text-sm md:text-base mb-2 leading-tight">${item.title}</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed line-clamp-2">${item.desc}</p>
+                </div>
+            `).join('');
 
-            do {
-                newType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-            } while (availableTypes.length > 1 && newType === prevType);
-
-            currentType = newType;
-            prevType = newType;
-            prevCountryIndex = randomIndex;
-            currentCountry = tempCountry;
-
-            try {
-                updateDisplayForRound();
-            } catch (error) {
-                currentType = 'flag';
-                updateDisplayForRound();
-            }
-
-            createOptions();
-
-            setTimeout(() => {
-                forceStopLoading();
-            }, 4000);
-        }
-
-        function updateDisplayForRound() {
-            const titleEl = document.getElementById('question-title');
-            const descEl = document.getElementById('question-desc');
-            const badgeEl = document.getElementById('quiz-type-badge');
-            const usBadge = document.getElementById('us-special-badge');
-            
-            const mapContainer = document.getElementById('map-container');
-            const flagContainer = document.getElementById('flag-container');
-            const landmarkContainer = document.getElementById('landmark-container'); 
-            const textContainer = document.getElementById('text-quiz-container');
-            const logoContainer = document.getElementById('logo-quiz-container');
-            
-            const textContent = document.getElementById('text-quiz-content');
-            const flagImg = document.getElementById('flag-image');
-            const landmarkImg = document.getElementById('landmark-image'); 
-            const logoImg = document.getElementById('company-logo');
-
-            // 핸들러 초기화
-            landmarkImg.onload = null;
-            landmarkImg.onerror = null;
-            flagImg.onload = null;
-            flagImg.onerror = null;
-            logoImg.onload = null;
-            logoImg.onerror = null;
-
-            mapContainer.classList.add('hidden');
-            flagContainer.classList.add('hidden');
-            landmarkContainer.classList.add('hidden'); 
-            textContainer.classList.add('hidden');
-            logoContainer.classList.add('hidden');
-
-            if (currentCountry.isUS) {
-                usBadge.classList.remove('hidden');
+            const loadMoreBtn = document.getElementById('load-more-container');
+            if (filtered.length <= 9 || isShowingAll) {
+                loadMoreBtn.style.display = 'none';
             } else {
-                usBadge.classList.add('hidden');
-            }
-
-            const namePair = splitNamePair(currentCountry.name);
-            const capitalPair = splitNamePair(currentCountry.capital);
-            const countryKo = namePair.ko;
-            const countryEn = namePair.en || 'Country';
-            const capitalKo = capitalPair.ko;
-            const capitalEn = capitalPair.en || capitalPair.ko;
-            const safeBrands = currentCountry.brands || [];
-
-            if (currentType === 'map') {
-                badgeEl.textContent = currentCountry.isUS ? "미국 지리 퀴즈" : "세계 지리 퀴즈";
-                badgeEl.className = "inline-block px-3 py-1 rounded-full text-xs font-bold text-white bg-green-600 mb-2";
-                titleEl.textContent = "🌍 이곳은 어디일까요?";
-                descEl.textContent = "초록색 영역을 보고 정답을 맞춰보세요!";
-                mapContainer.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    if (!map) return;
-                    const lat = parseFloat(currentCountry.lat);
-                    const lng = parseFloat(currentCountry.lng);
-                    const zoom = parseFloat(currentCountry.zoom);
-                    if (isNaN(lat) || isNaN(lng)) return;
-
-                    try {
-                        map.invalidateSize();
-                        map.flyTo([lat, lng], zoom || 6, { duration: 1.0 });
-                        if (mapCircle) map.removeLayer(mapCircle);
-                        mapCircle = L.circle([lat, lng], {
-                            color: '#22c55e', fillColor: '#22c55e', fillOpacity: 0.2, radius: currentCountry.radius || 200000 
-                        }).addTo(map);
-                    } catch (err) {}
-                    forceStopLoading();
-                }, 800);
-            
-            } else if (currentType === 'flag') {
-                badgeEl.textContent = "국기 퀴즈";
-                badgeEl.className = "inline-block px-3 py-1 rounded-full text-xs font-bold text-white bg-red-500 mb-2";
-                titleEl.textContent = "🏳️ 어느 나라 국기일까요?";
-                descEl.textContent = "깃발을 보고 정답을 맞춰보세요!";
-                flagContainer.classList.remove('hidden');
-                flagImg.onload = forceStopLoading;
-                flagImg.onerror = () => { flagImg.src = "https://via.placeholder.com/300x200"; forceStopLoading(); };
-                flagImg.src = currentCountry.flagUrl;
-                
-            } else if (currentType === 'landmark') { 
-                badgeEl.textContent = "랜드마크 퀴즈";
-                badgeEl.className = "inline-block px-3 py-1 rounded-full text-xs font-bold text-white bg-purple-600 mb-2";
-                titleEl.textContent = "📸 이 멋진 곳은 어디일까요?";
-                descEl.textContent = `힌트: ${capitalKo}(${capitalEn})의 풍경입니다.`;
-                landmarkContainer.classList.remove('hidden');
-                
-                landmarkImg.onload = forceStopLoading;
-                landmarkImg.onerror = handleImageError;
-                landmarkImg.src = "https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif";
-
-                fetchWikiImage(capitalEn).then(url => {
-                    if (url) landmarkImg.src = url;
-                    else fetchWikiImage(countryEn).then(u => { if(u) landmarkImg.src = u; else handleImageError(); });
-                });
-            
-            } else if (currentType === 'brand') {
-                badgeEl.textContent = "키워드 퀴즈";
-                badgeEl.className = "inline-block px-3 py-1 rounded-full text-xs font-bold text-white bg-orange-500 mb-2";
-                titleEl.textContent = "👜 유명 키워드의 고향은?";
-                descEl.textContent = "이 브랜드나 키워드는 어디 것일까요?";
-                textContainer.classList.remove('hidden');
-                
-                if (safeBrands.length === 0) {
-                    textContent.innerHTML = `<p class="text-sm text-slate-600">힌트가 없습니다.</p>`;
-                } else {
-                    const brandList = safeBrands.map(b => `<div class="brand-card">${b}</div>`).join('');
-                    textContent.innerHTML = `<div class="flex flex-wrap justify-center items-center">${brandList}</div>`;
-                }
-                forceStopLoading();
-
-            } else if (currentType === 'logo') {
-                badgeEl.textContent = "기업 로고 퀴즈 (HELL)";
-                badgeEl.className = "inline-block px-3 py-1 rounded-full text-xs font-bold text-white bg-indigo-600 mb-2";
-                titleEl.textContent = "🏢 이 로고의 주인은?";
-                descEl.textContent = "전 세계 히든 챔피언 기업을 맞춰보세요!";
-                logoContainer.classList.remove('hidden');
-                
-                logoImg.onload = forceStopLoading;
-                logoImg.onerror = () => { 
-                    console.warn("Logo load failed, fallback to brand text");
-                    logoContainer.classList.add('hidden');
-                    currentType = 'brand'; // fallback
-                    updateDisplayForRound();
-                };
-
-                const randomLogo = currentCountry.logos[Math.floor(Math.random() * currentCountry.logos.length)];
-                logoImg.src = randomLogo;
+                loadMoreBtn.style.display = 'block';
             }
         }
 
-        function createOptions() {
-            try {
-                let options = [currentCountry];
-                let otherCountries;
-                
-                if (currentCountry.isUS) {
-                    const usStates = countries.filter(c => c.isUS && c.name !== currentCountry.name);
-                    otherCountries = usStates.length >= 3 ? usStates : countries.filter(c => c.name !== currentCountry.name);
-                } else {
-                    otherCountries = countries.filter(c => c.name !== currentCountry.name);
-                }
+        window.filterPortfolio = (cat) => {
+            currentFilter = cat;
+            isShowingAll = false;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-white', 'text-slate-500', 'border', 'border-slate-200');
+            });
+            const activeBtn = document.querySelector(`[data-filter="${cat}"]`);
+            activeBtn.classList.remove('bg-white', 'text-slate-500', 'border');
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+            renderPortfolio();
+        };
 
-                const shuffledOthers = otherCountries.sort(() => 0.5 - Math.random()).slice(0, 3);
-                options = options.concat(shuffledOthers);
-                options.sort(() => 0.5 - Math.random());
+        window.showAllPortfolio = () => {
+            isShowingAll = true;
+            renderPortfolio();
+        };
 
-                const container = document.getElementById('options-container');
-                options.forEach(option => {
-                    const btn = document.createElement('button');
-                    btn.className = "option-btn bg-white hover:bg-slate-50 border-2 border-slate-200 text-slate-700 font-semibold py-4 px-2 rounded-lg shadow-sm transition-all active:scale-95 text-sm sm:text-base break-keep";
-                    const namePair = splitNamePair(option.name);
-                    btn.textContent = namePair.ko;
-                    btn.onclick = () => checkAnswer(option, btn);
-                    container.appendChild(btn);
-                });
-            } catch (error) { console.error(error); }
-        }
+        const filters = [
+            { id: 'all', label: '전체실적' },
+            { id: 'global', label: '글로벌/연수' },
+            { id: 'public', label: '공공/지자체' },
+            { id: 'school', label: '학교/교육' },
+            { id: 'corp', label: '기업/MICE' }
+        ];
 
-        function checkAnswer(selected, btnElement) {
-            if (isAnswered) return;
-            isAnswered = true;
-            const container = document.getElementById('options-container');
+        document.getElementById('filter-container').innerHTML = filters.map(f => `
+            <button onclick="filterPortfolio('${f.id}')" data-filter="${f.id}" class="filter-btn px-6 py-2 rounded-full text-[11px] font-black transition ${f.id === 'all' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'}">
+                ${f.label}
+            </button>
+        `).join('');
 
-            if (selected.name === currentCountry.name) {
-                score += 10;
-                document.getElementById('score').textContent = score;
-                btnElement.classList.add('bg-green-100', 'border-green-500', 'text-green-700', 'correct-anim');
-                setTimeout(() => openModal(currentCountry), 500); 
-            } else {
-                btnElement.classList.add('bg-red-100', 'border-red-500', 'text-red-700');
-                const namePair = splitNamePair(currentCountry.name);
-                const buttons = container.getElementsByTagName('button');
-                for (let btn of buttons) {
-                    if (btn.textContent === namePair.ko) {
-                        btn.classList.add('bg-green-100', 'border-green-500', 'text-green-700');
-                    }
-                }
-                setTimeout(() => nextRound(), 2000);
-            }
-            container.classList.add('pointer-events-none');
-        }
-
-        function openModal(country) {
-            const modal = document.getElementById('video-modal');
-            const iframe = document.getElementById('reward-video');
-            const title = document.getElementById('modal-title');
-            const desc = document.getElementById('modal-desc');
-            const fallbackLink = document.getElementById('video-fallback-link');
-
-            const namePair = splitNamePair(country.name);
-            const countryKo = namePair.ko;
-            const countryEn = namePair.en;
-
-            title.textContent = `🎉 ${countryKo} 정답!`;
-            
-            if (currentType === 'logo') {
-                desc.textContent = `대단합니다! 이 기업은 ${countryKo}의 기술력을 상징합니다.`;
-            } else if (country.isUS) {
-                desc.textContent = `미국 ${countryKo}에 오신 것을 환영합니다!`;
-            } else {
-                desc.textContent = `${countryKo} 여행을 떠나볼까요?`;
-            }
-
-            let videoId = country.videoId || "P_upO4tqLTk";
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&showinfo=0&modestbranding=1`;
-            
-            if (fallbackLink) {
-                fallbackLink.href = `https://www.youtube.com/results?search_query=travel+${encodeURIComponent(countryEn || countryKo)}`;
-                fallbackLink.textContent = "📺 더 많은 영상 검색하기";
-            }
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('video-modal');
-            const iframe = document.getElementById('reward-video');
-            iframe.src = ""; 
-            modal.classList.add('hidden');
-            if(isAnswered) nextRound();
-        }
-
-        window.onload = initMap;
+        renderPortfolio();
     </script>
 </body>
 </html>
