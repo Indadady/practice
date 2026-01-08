@@ -36,15 +36,14 @@
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; color: #334155; }
         section { scroll-margin-top: 80px; }
         
-        /* Intro Motion Logo Styles - 마스킹 기법 적용 */
+        /* Intro Motion Logo Styles - 선형 마스크(Linear Mask) 적용 */
         #intro-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* 🎨 [배경색 미세조정] 영상과 가장 유사한 표준 회색조 적용 */
-            background-color: #ececec;
+            background-color: #ececec; /* 배경색 유지 */
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -60,20 +59,21 @@
             transition: transform 0.3s ease;
             mix-blend-mode: multiply; 
             
-            /* 💡 [핵심 기술] CSS Masking: 가장자리를 부드럽게 지워 경계선을 없앰 */
-            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 90%);
-            mask-image: radial-gradient(circle, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 90%);
+            /* 💡 [핵심 수정] 위/아래 경계선 완벽 제거를 위한 선형 마스크 적용 */
+            /* 상단 0~15% 투명 -> 불투명, 하단 85%~100% 불투명 -> 투명 */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
         }
 
-        /* 📱 모바일 전용: 로고 확대 및 마스킹 범위 최적화 */
+        /* 📱 모바일 전용: 로고 확대 */
         @media (max-width: 768px) {
             #intro-video {
                 max-width: 100%; 
                 width: 100%;      
                 transform: scale(1.6);
-                /* 모바일에서는 조금 더 넓게 페이드 처리 */
-                -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 85%);
-                mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 85%);
+                /* 모바일에서는 위아래를 조금 더 과감하게(20%) 날려서 경계선 방지 */
+                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+                mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
             }
         }
         
