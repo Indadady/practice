@@ -36,7 +36,7 @@
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; color: #334155; }
         section { scroll-margin-top: 80px; }
         
-        /* Intro Motion Logo Styles - 선형 마스크(Linear Mask) 최적화 */
+        /* Intro Motion Logo Styles - PC/모바일 분리 최적화 */
         #intro-overlay {
             position: fixed;
             top: 0;
@@ -59,20 +59,21 @@
             transition: transform 0.3s ease;
             mix-blend-mode: multiply; 
             
-            /* 💡 [PC/기본 설정] 위아래 경계 제거를 위한 선형 마스크 복귀 */
-            /* 상단 15%와 하단 15% 구간을 부드럽게 투명 처리하여 경계선 완벽 제거 */
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            /* 💡 [PC 최적화] 타원형 마스크(Ellipse) 적용 */
+            /* - 타원 형태를 사용하여 가로로 긴 영상의 상하좌우 모든 경계선을 부드럽게 감춤 */
+            /* - Center 35%는 선명하게, 80% 지점부터 투명하게 페이드 아웃 */
+            -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+            mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
         }
 
-        /* 📱 모바일 전용: 로고 확대 및 마스킹 강화 */
+        /* 📱 모바일 전용: 기존 선형 마스크 유지 */
         @media (max-width: 768px) {
             #intro-video {
                 max-width: 100%; 
                 width: 100%;      
                 transform: scale(1.6); /* 모바일 확대 유지 */
                 
-                /* 모바일은 화면이 작아 경계가 더 잘 보일 수 있으므로 상하단 25%를 과감하게 처리 */
+                /* 모바일은 위아래를 과감하게 자르는 선형 마스크가 더 자연스럽다는 피드백 반영 */
                 -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
                 mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
             }
