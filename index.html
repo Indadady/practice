@@ -36,14 +36,14 @@
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; color: #334155; }
         section { scroll-margin-top: 80px; }
         
-        /* Intro Motion Logo Styles - 선형 마스크(Linear Mask) 적용 */
+        /* Intro Motion Logo Styles - 원형 스포트라이트 마스크 적용 */
         #intro-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ececec; /* 배경색 유지 */
+            background-color: #ececec; /* 배경색 */
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -54,26 +54,29 @@
         #intro-video {
             max-width: 80%;
             max-height: 80vh;
-            width: 600px; 
+            width: 600px; /* PC 기본 사이즈 */
             object-fit: contain;
             transition: transform 0.3s ease;
             mix-blend-mode: multiply; 
             
-            /* 💡 [핵심 수정] 위/아래 경계선 완벽 제거를 위한 선형 마스크 적용 */
-            /* 상단 0~15% 투명 -> 불투명, 하단 85%~100% 불투명 -> 투명 */
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+            /* 💡 [핵심 기술 개선] Spotlight Masking (PC/모바일 공통 적용) 
+               - 선형(Linear) 대신 원형(Radial) 그라데이션 사용
+               - 중앙 40%는 선명하게(opacity 1), 가장자리 70% 지점부터 투명하게 날림
+               - 직사각형 비디오의 '네 모서리'와 '상하단 경계'를 모두 부드럽게 제거함 */
+            -webkit-mask-image: radial-gradient(circle, black 40%, transparent 80%);
+            mask-image: radial-gradient(circle, black 40%, transparent 80%);
         }
 
-        /* 📱 모바일 전용: 로고 확대 */
+        /* 📱 모바일 전용: 로고 확대 및 마스킹 미세 조정 */
         @media (max-width: 768px) {
             #intro-video {
                 max-width: 100%; 
                 width: 100%;      
-                transform: scale(1.6);
-                /* 모바일에서는 위아래를 조금 더 과감하게(20%) 날려서 경계선 방지 */
-                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
-                mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+                transform: scale(1.6); /* 모바일 확대 유지 */
+                
+                /* 모바일은 화면이 작으므로 마스킹을 조금 더 타이트하게 적용하여 경계 완벽 차단 */
+                -webkit-mask-image: radial-gradient(circle, black 35%, transparent 75%);
+                mask-image: radial-gradient(circle, black 35%, transparent 75%);
             }
         }
         
