@@ -19,14 +19,14 @@
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="https://tourmaker.kr/" />
 
-    <!-- ✅ Open Graph (카톡/네이버/페북 공유 안정화) -->
+    <!-- ✅ Open Graph (카톡/네이버/페북 공유 안정화 - 잘림 방지 썸네일 적용) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="(주)투어메이커" />
     <meta property="og:title" content="(주)투어메이커 - 데이터로 만드는 혁신적 여행" />
     <meta property="og:description" content="VIP를 위한 단 하나의 맞춤형 여정, 투어메이커의 기획력이면 가능합니다." />
     <meta property="og:url" content="https://tourmaker.kr/" />
-    <!-- 1200x630 권장 사이즈 강제 지정 -->
-    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" />
+    <!-- 1200x630 권장 사이즈 강제 지정 (대표님이 주신 새 이미지 링크 적용) -->
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEhPxG_ONo2BdFAGDNnn-pHIGJTrAq374YbqgwTTlyIZTP22kOWTDD_AyjKDNFPhsHg5t1Iq6zV0dL_NZIj4o97Kd0eWJYCv-NHhtIqme-Mp3htGhAdkqVv5NRU3Jc9TbdbvvVKrPslObA1oNABpgl12QtGwirC2QM5lcPCVoWm8pIbeKuZBbeDHAvpbKEQ" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
@@ -34,7 +34,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="(주)투어메이커 - 데이터로 만드는 혁신적 여행" />
     <meta name="twitter:description" content="공공기관 연수부터 VIP 가족여행까지, 데이터 기반 기획력." />
-    <meta name="twitter:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" />
+    <meta name="twitter:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEhPxG_ONo2BdFAGDNnn-pHIGJTrAq374YbqgwTTlyIZTP22kOWTDD_AyjKDNFPhsHg5t1Iq6zV0dL_NZIj4o97Kd0eWJYCv-NHhtIqme-Mp3htGhAdkqVv5NRU3Jc9TbdbvvVKrPslObA1oNABpgl12QtGwirC2QM5lcPCVoWm8pIbeKuZBbeDHAvpbKEQ" />
 
     <!-- ✅ Fonts/Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -106,7 +106,7 @@
         }
         .intro-skip:hover{ background: #fff; transform: translateY(-2px); }
 
-        /* ✅ Hero BG (모바일 성능 개선) */
+        /* ✅ Hero BG */
         .hero-bg{
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 58, 138, 0.8) 100%),
             url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop');
@@ -155,7 +155,8 @@
     <nav class="bg-white/95 backdrop-blur-md fixed w-full z-50 border-b border-slate-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
             <a href="#" class="flex items-center" aria-label="투어메이커 홈">
-                <img src="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" alt="Tourmaker Logo" class="h-8 md:h-10 w-auto object-contain" loading="eager" decoding="async" />
+                <!-- ✅ 지정된 투어메이커 로고 삽입 -->
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker Logo" class="h-8 md:h-10 w-auto object-contain" loading="eager" decoding="async" />
             </a>
 
             <div class="flex items-center gap-6">
@@ -196,20 +197,15 @@
                 (주)투어메이커는 <strong>기획력 하나로 완벽한 여행</strong>을 만듭니다.
             </p>
 
-            <!-- ✅ CTA 3종 -->
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="투어메이커_회사소개서.pdf" download="투어메이커_회사소개서.pdf" class="bg-white text-blue-900 px-8 py-5 rounded-2xl font-black transition hover:bg-blue-50 shadow-2xl flex items-center justify-center gap-3" data-ga="download_company_pdf">
+                <a href="투어메이커_회사소개서.pdf" download="투어메이커_회사소개서.pdf" class="bg-white text-blue-900 px-10 py-5 rounded-2xl font-black transition hover:bg-blue-50 shadow-2xl flex items-center justify-center gap-3" data-ga="download_company_pdf">
                     <i class="fas fa-file-pdf"></i> 회사소개서(PDF) 다운로드
                 </a>
-                <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" rel="noopener" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-8 py-5 rounded-2xl font-black transition shadow-2xl flex items-center justify-center gap-3" data-ga="click_kakao_chat">
+                <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" rel="noopener" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-10 py-5 rounded-2xl font-black transition shadow-2xl flex items-center justify-center gap-3" data-ga="click_kakao_chat">
                     <i class="fas fa-comment"></i> 카톡 실시간 상담
-                </a>
-                <a href="#contact" class="bg-blue-500/20 hover:bg-blue-500 text-white px-8 py-5 rounded-2xl font-black transition shadow-2xl flex items-center justify-center gap-3 border border-white/25 backdrop-blur-sm" data-ga="click_quote_form">
-                    <i class="fas fa-pen-to-square"></i> 견적/제안 요청서 작성
                 </a>
             </div>
 
-            <!-- Trust badges -->
             <div class="mt-16 flex flex-wrap justify-center gap-4 md:gap-8 opacity-90 text-sm font-bold">
                 <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
                     <i class="fas fa-certificate text-yellow-400"></i> 국외/국내 여행업 등록
@@ -250,7 +246,7 @@
             </div>
         </section>
 
-        <!-- ✅ 기관 담당자 신뢰 섹션 (GPT 제안 결합) -->
+        <!-- 기관 담당자 신뢰 섹션 -->
         <section class="py-16 px-4 bg-white border-t border-slate-50">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-10">
@@ -291,25 +287,71 @@
                 <h2 class="text-3xl md:text-4xl font-black">관광청이 보증하는 완벽한 영감</h2>
                 <p class="text-slate-400 mt-4">투어메이커의 기획력과 관광청의 공신력이 만납니다.</p>
             </div>
-            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                <!-- Singapore -->
                 <div class="group">
                     <div class="video-container shadow-2xl" onclick="loadVideo(this, '7ipKUSzPHt8')" role="button" aria-label="싱가포르 홍보영상 재생">
                         <img src="https://img.youtube.com/vi/7ipKUSzPHt8/hqdefault.jpg" alt="Singapore Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
                         <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
                     </div>
-                    <div class="px-4 mt-8">
-                        <h4 class="font-black text-xl mb-3 text-blue-400">Singapore: Passion Made Possible</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed">스마트 시티와 데이터 경제의 글로벌 허브. 투어메이커가 제안하는 기술 연수의 표본입니다.</p>
+                    <div class="px-4 mt-6">
+                        <h4 class="font-black text-lg mb-2 text-blue-400">Singapore</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">스마트 시티와 데이터 경제의 글로벌 허브. 투어메이커가 제안하는 기술 연수의 표본입니다.</p>
                     </div>
                 </div>
+                <!-- Macau -->
                 <div class="group">
                     <div class="video-container shadow-2xl" onclick="loadVideo(this, '27dEhlOYKXE')" role="button" aria-label="마카오 홍보영상 재생">
                         <img src="https://img.youtube.com/vi/27dEhlOYKXE/hqdefault.jpg" alt="Macau Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
                         <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
                     </div>
-                    <div class="px-4 mt-8">
-                        <h4 class="font-black text-xl mb-3 text-yellow-500">Experience Macao, Unlimited</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed">복합 리조트 산업의 정수. 강원랜드 협력사 및 지자체 시찰을 위한 최적의 장소입니다.</p>
+                    <div class="px-4 mt-6">
+                        <h4 class="font-black text-lg mb-2 text-yellow-500">Macao</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">복합 리조트 산업의 정수. 강원랜드 협력사 및 지자체 시찰을 위한 최적의 장소입니다.</p>
+                    </div>
+                </div>
+                <!-- Shanghai -->
+                <div class="group">
+                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'Ly6Botr2638')" role="button" aria-label="상해 홍보영상 재생">
+                        <img src="https://img.youtube.com/vi/Ly6Botr2638/hqdefault.jpg" alt="Shanghai Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
+                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+                    </div>
+                    <div class="px-4 mt-6">
+                        <h4 class="font-black text-lg mb-2 text-red-400">Shanghai</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">아시아의 경제 중심지. 첨단 AI 기술과 과거의 유산이 공존하는 매력적인 연수지입니다.</p>
+                    </div>
+                </div>
+                <!-- Hangzhou -->
+                <div class="group">
+                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'gBLWtXkXHoo')" role="button" aria-label="항주 홍보영상 재생">
+                        <img src="https://img.youtube.com/vi/gBLWtXkXHoo/hqdefault.jpg" alt="Hangzhou Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
+                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+                    </div>
+                    <div class="px-4 mt-6">
+                        <h4 class="font-black text-lg mb-2 text-teal-400">Hangzhou</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">알리바바의 본고장. 눈부신 자연경관 속에서 피어나는 혁신적인 트래블 테크를 경험하세요.</p>
+                    </div>
+                </div>
+                <!-- Taiwan -->
+                <div class="group">
+                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'X2iPm7GITyM')" role="button" aria-label="대만 홍보영상 재생">
+                        <img src="https://img.youtube.com/vi/X2iPm7GITyM/hqdefault.jpg" alt="Taiwan Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
+                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+                    </div>
+                    <div class="px-4 mt-6">
+                        <h4 class="font-black text-lg mb-2 text-emerald-400">Taiwan</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">미식과 감성의 힐링 여행. VIP 가족 여행과 프라이빗 투어의 만족도가 가장 높은 목적지입니다.</p>
+                    </div>
+                </div>
+                <!-- Osaka -->
+                <div class="group">
+                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'Xg2aoWcLiFU')" role="button" aria-label="오사카 홍보영상 재생">
+                        <img src="https://img.youtube.com/vi/Xg2aoWcLiFU/hqdefault.jpg" alt="Osaka Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
+                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
+                    </div>
+                    <div class="px-4 mt-6">
+                        <h4 class="font-black text-lg mb-2 text-purple-400">Osaka</h4>
+                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">전통 문화와 현대적 인프라의 조화. 짧은 비행 시간으로 최고의 효율을 내는 핵심 연수 목적지입니다.</p>
                     </div>
                 </div>
             </div>
@@ -362,10 +404,22 @@
                             "가족과 같은 마음으로,<br>
                             <span class="text-blue-600">VIP 맞춤형 인솔</span>을 약속합니다"
                         </h2>
-                        <p class="text-slate-600 mb-8 leading-relaxed text-lg">
+                        <p class="text-slate-600 mb-6 leading-relaxed text-lg">
                             투어메이커의 VIP 서비스는 정해진 일정이 없습니다. 항공부터 호텔, 현지 로컬 맛집 투어까지 <strong>고객의 의사를 100% 반영</strong>하여 설계합니다.<br><br>
-                            지난 <strong>10월 대만 행사</strong>와 같이, 현지 가이드에 의존하지 않고 대표가 직접 기획하고 인솔하는 프라이빗 여정을 제공합니다.
+                            현지 가이드에 의존하지 않고 대표가 직접 기획하고 인솔하는 완벽한 프라이빗 여정을 경험해 보세요.
                         </p>
+                        
+                        <a href="https://indadady.github.io/Taipei_healing_trip/" target="_blank" rel="noopener" class="inline-flex items-center gap-4 bg-slate-50 hover:bg-blue-50 text-blue-800 px-6 py-4 rounded-2xl text-sm transition border border-slate-200 shadow-sm mb-8 group" data-ga="click_vip_guidebook">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition">
+                                <i class="fas fa-mobile-screen-button text-blue-600"></i>
+                            </div>
+                            <div class="text-left">
+                                <span class="block text-[10px] text-slate-400 font-black tracking-widest uppercase mb-0.5">Reference</span>
+                                <strong class="block text-sm">VIP 투어 전용 스마트 가이드북 보기</strong>
+                            </div>
+                            <i class="fas fa-chevron-right ml-2 text-blue-400 group-hover:translate-x-1 transition"></i>
+                        </a>
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3 shadow-sm">
                                 <i class="fas fa-crown text-blue-600"></i>
@@ -500,7 +554,7 @@
             </div>
         </section>
 
-        <!-- ✅ Portfolio (Gemini의 UI 비즈니스 로직 적용) -->
+        <!-- ✅ Portfolio -->
         <section id="portfolio" class="py-24 px-4 bg-slate-50">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-12">
@@ -555,77 +609,72 @@
                             <div class="pb-6 border-t border-slate-100 pt-4">네, 투어메이커는 기관 연수뿐만 아니라 가족 여행, 동호회 투어 등 소규모 맞춤 여행도 전문으로 진행합니다. 고객님이 원하시는 테마에 맞춰 1:1 일정을 설계해 드립니다.</div>
                         </div>
                     </div>
-                    <!-- GPT가 제안한 견적문의 FAQ 항목 추가 수용 -->
                     <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
                         <input type="checkbox" id="q4" class="hidden faq-input">
                         <label for="q4" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
                             견적/제안 요청은 어떻게 하나요? <i class="fas fa-chevron-down arrow transition-transform"></i>
                         </label>
                         <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
-                            <div class="pb-6 border-t border-slate-100 pt-4">하단의 <strong>맞춤 견적 요청</strong> 버튼 또는 카카오톡 상담을 통해 접수하시면, 목적/인원/예산/기간/필수방문지 기준으로 빠르게 초안을 제공해 드립니다.</div>
+                            <div class="pb-6 border-t border-slate-100 pt-4">하단의 안내된 전담 데스크 직통 전화나 공식 이메일(jmlojm@nate.com / siriusjh85@naver.com)로 목적, 인원, 예산, 필수 방문지 등을 남겨주시면 빠르게 초안과 견적을 안내해 드립니다.</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Contact Section -->
+        <!-- ✅ Contact Section (B2B 전담 데스크 컨셉으로 완전 개편) -->
         <section id="contact" class="py-24 px-4 bg-slate-50">
             <div class="max-w-4xl mx-auto text-center">
-                <div class="bg-blue-700 rounded-[3rem] p-12 text-white shadow-2xl flex flex-col items-center relative overflow-hidden">
+                <div class="bg-blue-700 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl flex flex-col items-center relative overflow-hidden">
                     <div class="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                    <h2 class="text-4xl font-black mb-8 relative z-10 text-white">투어메이커와 지금 바로 상의하세요</h2>
-                    <div class="flex flex-col md:flex-row gap-4 w-full relative z-10">
-                        <!-- 연락 수단 3분할 -->
-                        <a href="tel:0335622551" class="flex-1 bg-white/10 p-6 rounded-3xl border border-white/20 hover:bg-white/20 transition backdrop-blur-md group" data-ga="click_call">
-                            <i class="fas fa-phone-alt text-xl mb-3 text-blue-300 group-hover:scale-110 transition"></i>
-                            <span class="block text-xs font-black uppercase tracking-widest mb-1 opacity-70">Official Call</span>
-                            <span class="text-xl font-black">033-562-2551</span>
-                        </a>
-                        <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" rel="noopener" class="flex-1 bg-yellow-400 p-6 rounded-3xl hover:bg-yellow-500 transition text-slate-900 group" data-ga="click_kakao_chat">
-                            <i class="fas fa-comment text-xl mb-3 group-hover:scale-110 transition text-slate-700"></i>
-                            <span class="block text-xs font-black uppercase tracking-widest mb-1 opacity-70 text-slate-700">KakaoTalk</span>
-                            <span class="text-xl font-black">실시간 카톡 상담</span>
-                        </a>
-                        <!-- 공공기관/단체 특화 견적요청 버튼 (임시 구글폼 링크, 추후 교체가능) -->
-                        <a href="https://forms.gle/REPLACE_WITH_YOUR_FORM" target="_blank" rel="noopener" class="flex-1 bg-teal-600 p-6 rounded-3xl border border-teal-500 hover:bg-teal-700 transition text-white group" data-ga="click_quote_form">
-                            <i class="fas fa-file-signature text-xl mb-3 text-teal-200 group-hover:scale-110 transition"></i>
-                            <span class="block text-xs font-black uppercase tracking-widest mb-1 opacity-80 text-teal-100">For Business</span>
-                            <span class="text-xl font-black">맞춤 견적 요청</span>
-                        </a>
+                    
+                    <h2 class="text-3xl md:text-4xl font-black mb-4 relative z-10 text-white">성공적인 일정을 위한 첫걸음</h2>
+                    <p class="text-blue-200 mb-10 relative z-10 font-medium text-sm md:text-base">투어메이커 B2B·공공기관 전담 데스크가 빠르고 정확하게 답변해 드립니다.</p>
+                    
+                    <!-- 심플하고 고급스러운 연락처 정보 패널 (버튼 남발 방지) -->
+                    <div class="inline-flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white/10 p-8 rounded-3xl border border-white/20 backdrop-blur-md relative z-10 w-full md:w-auto">
+                        <div class="flex items-center gap-5 text-left w-full md:w-auto">
+                            <div class="w-14 h-14 bg-blue-600/50 rounded-2xl flex items-center justify-center text-white text-2xl border border-white/10 shadow-inner">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Official Call</span>
+                                <a href="tel:0335622551" class="text-2xl md:text-3xl font-black text-white hover:text-blue-100 transition tracking_call" data-ga="click_call">033-562-2551</a>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full h-px md:w-px md:h-16 bg-white/20"></div>
+                        
+                        <div class="flex items-center gap-5 text-left w-full md:w-auto">
+                            <div class="w-14 h-14 bg-blue-600/50 rounded-2xl flex items-center justify-center text-white text-2xl border border-white/10 shadow-inner shrink-0">
+                                <i class="fas fa-envelope-open-text"></i>
+                            </div>
+                            <div>
+                                <span class="block text-xs font-bold text-blue-300 uppercase tracking-widest mb-2">Email / Document</span>
+                                <div class="space-y-1">
+                                    <p class="text-base md:text-lg font-bold text-white tracking-wide"><span class="text-[10px] md:text-xs font-black text-blue-200 mr-2 border border-blue-400/30 px-2 py-0.5 rounded bg-blue-900/50">이재명 대표</span>jmlojm@nate.com</p>
+                                    <p class="text-base md:text-lg font-bold text-white tracking-wide"><span class="text-[10px] md:text-xs font-black text-blue-200 mr-2 border border-blue-400/30 px-2 py-0.5 rounded bg-blue-900/50">조 혁 이사</span>siriusjh85@naver.com</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- 법적/운영 안정성 텍스트 -->
-                    <p class="mt-8 text-xs opacity-80 font-medium leading-relaxed relative z-10 max-w-2xl text-blue-100">
-                        * 상담/요청서 제출 시, 견적 산출 목적의 최소한의 정보만 수집하며 자세한 내용은 개인정보처리방침을 확인해 주세요.
-                    </p>
-                    <p class="mt-8 text-sm opacity-60 font-medium tracking-tight relative z-10">
-                        강원특별자치도 정선군 정선읍 봉양3길 22-10 3층 | jmlojm@nate.com
-                    </p>
                 </div>
             </div>
         </section>
 
-        <!-- Footer -->
+        <!-- ✅ Footer -->
         <footer class="bg-slate-900 text-white py-16 px-4">
             <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 opacity-90">
                 <div>
-                    <!-- 사용자가 가장 마지막으로 명시한 로고 링크 완벽 반영 -->
-                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" loading="lazy" decoding="async" alt="Footer Logo" class="h-6 mb-8 grayscale brightness-200 opacity-80">
-                    <a href="https://tourmaker.kr" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-bold tracking-widest mb-4 opacity-80 hover:text-blue-400 transition">
-                        투어메이커 홈페이지 바로가기 <i class="fas fa-external-link-alt text-[10px]"></i>
-                    </a>
-                    <div class="text-xs opacity-70 space-y-2">
-                        <a href="#" class="underline hover:text-blue-300">개인정보처리방침</a>
-                        <span class="mx-2 opacity-50">|</span>
-                        <a href="#" class="underline hover:text-blue-300">이용약관</a>
-                    </div>
+                    <!-- ✅ 공식 시스템 로고 적용 -->
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" loading="lazy" decoding="async" alt="Footer Logo" class="h-12 md:h-14 mb-8 grayscale brightness-200 opacity-90">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-12 text-[11px] font-medium leading-loose opacity-70">
                     <ul class="space-y-1">
                         <li>(주)투어메이커 | 대표: 이재명</li>
                         <li>사업자등록번호: 473-81-03183</li>
                         <li>관광사업등록: 제2024-000001호</li>
-                        <li>이메일: jmlojm@nate.com</li>
+                        <li>이메일: jmlojm@nate.com / siriusjh85@naver.com</li>
                     </ul>
                     <ul class="space-y-1">
                         <li>본사: 정선군 정선읍 봉양3길 22-10 3층</li>
@@ -645,7 +694,7 @@
 
     <script>
         /* =========================
-           ✅ GA4 트래킹 자동화 (GPT 방식 수용)
+           ✅ GA4 트래킹 자동화
         ========================= */
         (function(){
             function track(eventName){
@@ -663,42 +712,30 @@
         })();
 
         /* =========================
-           ✅ Intro Control (1일 1회 노출 로직 완성본)
+           ✅ Intro Control (무조건 노출되도록 수정)
         ========================= */
         (function(){
             const introOverlay = document.getElementById('intro-overlay');
             const introVideo = document.getElementById('intro-video');
             const skipBtn = document.getElementById('intro-skip-btn');
-            const KEY = 'tm_intro_seen_date';
-
-            function todayKey(){
-                const d = new Date();
-                const y = d.getFullYear();
-                const m = String(d.getMonth()+1).padStart(2,'0');
-                const day = String(d.getDate()).padStart(2,'0');
-                return `${y}-${m}-${day}`;
-            }
 
             function hideIntro(setSeen){
                 if (!introOverlay) return;
-                if (setSeen) localStorage.setItem(KEY, todayKey());
                 introOverlay.style.opacity = '0';
                 setTimeout(()=>{ introOverlay.style.display = 'none'; }, 600);
             }
 
             window.addEventListener('load', function() {
-                const seen = localStorage.getItem(KEY);
-                if (seen === todayKey()){
-                    if (introOverlay) introOverlay.style.display = 'none';
-                    return;
-                }
+                // 이탈률 방지를 위해 1.5초 내외로 빠르게 재생 후 숨김 처리합니다.
+                
                 if (introVideo && introOverlay) {
-                    introVideo.playbackRate = 2.5;
-                    introVideo.addEventListener('ended', ()=> hideIntro(true));
-                    setTimeout(()=> hideIntro(true), 2500);
+                    introVideo.playbackRate = 2.5; // 재생 속도 2.5배속 (약 1.5초만에 완료되도록 조정)
+                    introVideo.addEventListener('ended', ()=> hideIntro(false));
+                    setTimeout(()=> hideIntro(false), 1500); // 최대 1.5초 후 무조건 숨김 (이탈 방지용 안전장치)
                 }
+                
                 if (skipBtn){
-                    skipBtn.addEventListener('click', ()=> hideIntro(true));
+                    skipBtn.addEventListener('click', ()=> hideIntro(false));
                 }
             });
         })();
@@ -710,7 +747,7 @@
         }
 
         /* =========================
-           ✅ Portfolio 로직 (Gemini 상세 UI 결합)
+           ✅ Portfolio 로직
         ========================= */
         let portfolioData = [
             { category: 'global', date: '2026.01', title: '강원대학교 글로컬 패스파인더 (상해/항주)', desc: '상해·항주 AI 첨단 기업 탐방 및 글로벌 해커톤 단독 기획·운영', link: 'https://indadady.github.io/260112_kangwon_univ/' },
@@ -739,7 +776,6 @@
             { category: 'school', date: '2025.07', title: '영월 신천초등학교 필리핀 연수', desc: '글로벌 어학 및 문화 체험 위탁' }
         ];
 
-        // 최근 날짜순(내림차순) 정렬
         portfolioData.sort((a, b) => b.date.localeCompare(a.date));
 
         const catMap = { 'global': '글로벌/연수', 'public': '공공/지자체', 'school': '학교/교육', 'corp': '기업/MICE' };
