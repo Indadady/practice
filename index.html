@@ -72,7 +72,7 @@
             display: flex; justify-content: center; align-items: flex-start; padding: 32px 16px;
         }
 
-        /* ===== 견적 템플릿 관리 툴바 (심플 버전) ===== */
+        /* ===== 템플릿 관리 툴바 ===== */
         .template-manager {
             background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;
             padding: 12px; margin-bottom: 20px;
@@ -97,7 +97,7 @@
         .section-title.dark { border-color: #1e293b; color: #1e293b; }
         .section-title.green { border-color: #166534; color: #166534; }
         .section-title.orange { border-color: #9a3412; color: #9a3412; }
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 24px; }
         .form-row { display: grid; gap: 8px; margin-bottom: 8px; }
         .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
         .form-row.cols-1 { grid-template-columns: 1fr; }
@@ -112,11 +112,17 @@
             padding: 6px 8px; font-size: 13px; font-weight: 700; color: #1e40af;
             background: #fff; font-family: inherit;
         }
+        
+        /* 동적 슬롯 디자인 */
         .slot-card {
             background: #f9fafb; border: 1px solid #e5e7eb;
-            border-radius: 6px; padding: 8px; margin-bottom: 6px;
+            border-radius: 6px; padding: 8px; margin-bottom: 8px; position: relative;
         }
-        .slot-card:hover { background: #f0fdf4; }
+        .slot-card:hover { background: #f0fdf4; border-color:#cbd5e1; }
+        .slot-card-header { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+        .btn-delete-row { background: none; border: none; color: #ef4444; font-size: 14px; cursor: pointer; padding: 0 4px; line-height: 1; border-radius: 4px; }
+        .btn-delete-row:hover { background: #fee2e2; }
+        
         .slot-grid { display: grid; grid-template-columns: 3fr 3fr 2fr 4fr; gap: 4px; margin-bottom: 4px; }
         .slot-grid-flight { display: grid; grid-template-columns: 3fr 4fr 2fr 3fr; gap: 4px; margin-bottom: 4px; }
         .slot-input {
@@ -124,6 +130,15 @@
             padding: 4px 6px; font-size: 12px; font-family: inherit; outline: none;
         }
         .slot-input:focus { border-color: #2563eb; }
+        
+        /* 항목 추가 버튼 */
+        .btn-add-item {
+            width: 100%; background: #f8fafc; border: 1px dashed #94a3b8; color: #475569; 
+            padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; 
+            cursor: pointer; transition: all 0.2s; margin-top: 4px;
+        }
+        .btn-add-item:hover { background: #e2e8f0; border-color: #64748b; color: #0f172a; }
+
         .exrate-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
         .exrate-row label { font-size: 12px; color: #6b7280; white-space: nowrap; }
         .exrate-input {
@@ -196,16 +211,8 @@
         @media (max-width: 1023px) {
             .mobile-tabs { display: flex; }
             .main-layout { flex-direction: column; height: auto; overflow: visible; }
-            .panel-input {
-                width: 100%; border-right: none; border-bottom: 1px solid #d1d5db;
-                max-height: none; overflow: visible; padding: 16px;
-            }
-            .panel-preview {
-                width: 100%; padding: 16px 0;
-                overflow-x: scroll; overflow-y: visible;
-                height: auto; min-height: 0; display: block;
-                -webkit-overflow-scrolling: touch;
-            }
+            .panel-input { width: 100%; border-right: none; border-bottom: 1px solid #d1d5db; max-height: none; overflow: visible; padding: 16px; }
+            .panel-preview { width: 100%; padding: 16px 0; overflow-x: scroll; overflow-y: visible; height: auto; min-height: 0; display: block; -webkit-overflow-scrolling: touch; }
             .a4-sheet { min-width: 750px; width: 750px; padding: 24px; margin: 0 8px; }
             .panel-hidden { display: none !important; }
             .top-header h1 { font-size: 13px; }
@@ -227,16 +234,8 @@
             body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
             .no-print, .top-header, .mobile-tabs, .panel-input { display: none !important; }
             .main-layout { display: block !important; height: auto !important; overflow: visible !important; }
-            .panel-preview {
-                background: #fff !important; padding: 0 !important;
-                overflow: visible !important; display: flex !important;
-                justify-content: center !important; height: auto !important;
-            }
-            .a4-sheet {
-                box-shadow: none !important; max-width: 100% !important;
-                width: 100% !important; min-width: 0 !important;
-                padding: 5mm 8mm !important; margin: 0 auto !important;
-            }
+            .panel-preview { background: #fff !important; padding: 0 !important; overflow: visible !important; display: flex !important; justify-content: center !important; height: auto !important; }
+            .a4-sheet { box-shadow: none !important; max-width: 100% !important; width: 100% !important; min-width: 0 !important; padding: 5mm 8mm !important; margin: 0 auto !important; }
             .footer-brand a { display: none !important; }
             .info-table th { background: #e2e8f0 !important; }
             .main-table thead th { background: #e2e8f0 !important; }
@@ -248,108 +247,16 @@
         }
 
         /* ===== 인쇄용 compact 모드 - 10단계 세밀 조절 ===== */
-        .pc-1 .doc-header { margin-bottom: 16px; }
-        .pc-1 .doc-title-area { margin-bottom: 16px; }
-        .pc-1 .doc-title-area h2 { font-size: 24px; }
-        .pc-1 .info-table th, .pc-1 .info-table td { padding: 4px 7px; font-size: 11.5px; }
-        .pc-1 .main-table th, .pc-1 .main-table td { padding: 4px 6px; font-size: 10.5px; }
-        .pc-1 .main-table tbody tr { height: 26px; }
-        .pc-1 .footer-notes p.body { font-size: 10px; line-height: 1.5; }
-        .pc-1 .footer-brand { margin-top: 12px; }
-
-        .pc-2 .doc-header { margin-bottom: 14px; }
-        .pc-2 .doc-header-right img { height: 42px; }
-        .pc-2 .doc-title-area { margin-bottom: 14px; }
-        .pc-2 .doc-title-area h2 { font-size: 23px; }
-        .pc-2 .info-table th, .pc-2 .info-table td { padding: 3.5px 6px; font-size: 11px; }
-        .pc-2 .main-table th, .pc-2 .main-table td { padding: 3.5px 5px; font-size: 10px; }
-        .pc-2 .main-table tbody tr { height: 24px; }
-        .pc-2 .footer-notes p.body { font-size: 9.5px; line-height: 1.45; }
-        .pc-2 .footer-brand { margin-top: 10px; }
-
-        .pc-3 .doc-header { margin-bottom: 12px; }
-        .pc-3 .doc-header-right img { height: 38px; }
-        .pc-3 .doc-title-area { margin-bottom: 12px; }
-        .pc-3 .doc-title-area h2 { font-size: 22px; padding: 0 20px 3px; }
-        .pc-3 .info-table th, .pc-3 .info-table td { padding: 3px 6px; font-size: 11px; }
-        .pc-3 .main-table th, .pc-3 .main-table td { padding: 3px 5px; font-size: 10px; }
-        .pc-3 .main-table tbody tr { height: 22px; }
-        .pc-3 .subtotal-row td, .pc-3 .grand-row td { padding: 4px 5px; }
-        .pc-3 .footer-notes p.title { font-size: 11px; }
-        .pc-3 .footer-notes p.body { font-size: 9px; line-height: 1.4; }
-        .pc-3 .footer-brand { margin-top: 8px; padding-top: 6px; }
-        .pc-3 .footer-brand p { font-size: 9.5px; }
-
-        .pc-4 .doc-header { margin-bottom: 10px; }
-        .pc-4 .doc-header-right img { height: 36px; }
-        .pc-4 .doc-title-area { margin-bottom: 10px; }
-        .pc-4 .doc-title-area h2 { font-size: 21px; padding: 0 18px 3px; }
-        .pc-4 .info-table th, .pc-4 .info-table td { padding: 2.5px 5px; font-size: 10.5px; }
-        .pc-4 .main-table th, .pc-4 .main-table td { padding: 2.5px 4px; font-size: 9.5px; }
-        .pc-4 .main-table tbody tr { height: 20px; }
-        .pc-4 .subtotal-row td, .pc-4 .grand-row td { padding: 3.5px 4px; }
-        .pc-4 .grand-amount { font-size: 12px !important; }
-        .pc-4 .footer-notes p.title { font-size: 10.5px; }
-        .pc-4 .footer-notes p.body { font-size: 8.5px; line-height: 1.35; }
-        .pc-4 .footer-brand { margin-top: 6px; padding-top: 5px; }
-        .pc-4 .footer-brand p { font-size: 9px; }
-
-        .pc-5 .doc-header { margin-bottom: 8px; }
-        .pc-5 .doc-header-right img { height: 34px; }
-        .pc-5 .doc-title-area { margin-bottom: 8px; }
-        .pc-5 .doc-title-area h2 { font-size: 20px; padding: 0 16px 2px; }
-        .pc-5 .info-table th, .pc-5 .info-table td { padding: 2px 5px; font-size: 10px; }
-        .pc-5 .main-table th, .pc-5 .main-table td { padding: 2px 4px; font-size: 9px; }
-        .pc-5 .main-table tbody tr { height: 18px; }
-        .pc-5 .subtotal-row td, .pc-5 .grand-row td { padding: 3px 4px; }
-        .pc-5 .grand-amount { font-size: 11px !important; }
-        .pc-5 .grand-label { font-size: 10px !important; }
-        .pc-5 .footer-notes p.title { font-size: 10px; margin-bottom: 1px; }
-        .pc-5 .footer-notes p.body { font-size: 8px; line-height: 1.3; }
-        .pc-5 .footer-brand { margin-top: 5px; padding-top: 4px; }
-        .pc-5 .footer-brand p { font-size: 8.5px; }
-
-        .pc-6 .doc-header { margin-bottom: 6px; }
-        .pc-6 .doc-header-right img { height: 30px; }
-        .pc-6 .doc-title-area { margin-bottom: 6px; }
-        .pc-6 .doc-title-area h2 { font-size: 18px; padding: 0 14px 2px; }
-        .pc-6 .info-table th, .pc-6 .info-table td { padding: 2px 4px; font-size: 9.5px; }
-        .pc-6 .main-table th, .pc-6 .main-table td { padding: 2px 3px; font-size: 8.5px; line-height: 1.25; }
-        .pc-6 .main-table tbody tr { height: 17px; }
-        .pc-6 .subtotal-row td, .pc-6 .grand-row td { padding: 2.5px 3px; }
-        .pc-6 .grand-amount { font-size: 10.5px !important; }
-        .pc-6 .footer-notes p.title { font-size: 9.5px; margin-bottom: 1px; }
-        .pc-6 .footer-notes p.body { font-size: 7.5px; line-height: 1.25; }
-
-        .pc-7 .doc-header { margin-bottom: 5px; }
-        .pc-7 .doc-header-right img { height: 26px; }
-        .pc-7 .doc-title-area h2 { font-size: 17px; padding: 0 12px 2px; }
-        .pc-7 .info-table th, .pc-7 .info-table td { padding: 1.5px 4px; font-size: 9px; }
-        .pc-7 .main-table th, .pc-7 .main-table td { padding: 1.5px 3px; font-size: 8px; line-height: 1.2; }
-        .pc-7 .main-table tbody tr { height: 16px; }
-        .pc-7 .footer-notes p.title { font-size: 9px; margin-bottom: 0; }
-        .pc-7 .footer-notes p.body { font-size: 7px; line-height: 1.2; }
-
-        .pc-8 .doc-header { margin-bottom: 4px; }
-        .pc-8 .doc-title-area h2 { font-size: 16px; padding: 0 10px 1px; }
-        .pc-8 .info-table th, .pc-8 .info-table td { padding: 1px 3px; font-size: 8.5px; }
-        .pc-8 .main-table th, .pc-8 .main-table td { padding: 1px 2.5px; font-size: 7.5px; line-height: 1.15; }
-        .pc-8 .main-table tbody tr { height: 15px; }
-        .pc-8 .footer-notes p.body { font-size: 6.5px; line-height: 1.15; }
-
-        .pc-9 .doc-header { margin-bottom: 3px; }
-        .pc-9 .doc-title-area h2 { font-size: 15px; padding: 0 8px 1px; }
-        .pc-9 .info-table th, .pc-9 .info-table td { padding: 1px 3px; font-size: 8px; }
-        .pc-9 .main-table th, .pc-9 .main-table td { padding: 1px 2px; font-size: 7px; line-height: 1.1; }
-        .pc-9 .main-table tbody tr { height: 14px; }
-        .pc-9 .footer-notes p.body { font-size: 6px; line-height: 1.1; }
-
-        .pc-10 .doc-header { margin-bottom: 2px; }
-        .pc-10 .doc-title-area h2 { font-size: 14px; padding: 0 6px 1px; }
-        .pc-10 .info-table th, .pc-10 .info-table td { padding: 0.5px 2px; font-size: 7.5px; }
-        .pc-10 .main-table th, .pc-10 .main-table td { padding: 0.5px 1.5px; font-size: 6.5px; line-height: 1.05; }
-        .pc-10 .main-table tbody tr { height: 13px; }
-        .pc-10 .footer-notes p.body { font-size: 5.5px; line-height: 1.05; }
+        .pc-1 .doc-header { margin-bottom: 16px; } .pc-1 .doc-title-area { margin-bottom: 16px; } .pc-1 .doc-title-area h2 { font-size: 24px; } .pc-1 .info-table th, .pc-1 .info-table td { padding: 4px 7px; font-size: 11.5px; } .pc-1 .main-table th, .pc-1 .main-table td { padding: 4px 6px; font-size: 10.5px; } .pc-1 .main-table tbody tr { height: 26px; } .pc-1 .footer-notes p.body { font-size: 10px; line-height: 1.5; } .pc-1 .footer-brand { margin-top: 12px; }
+        .pc-2 .doc-header { margin-bottom: 14px; } .pc-2 .doc-header-right img { height: 42px; } .pc-2 .doc-title-area { margin-bottom: 14px; } .pc-2 .doc-title-area h2 { font-size: 23px; } .pc-2 .info-table th, .pc-2 .info-table td { padding: 3.5px 6px; font-size: 11px; } .pc-2 .main-table th, .pc-2 .main-table td { padding: 3.5px 5px; font-size: 10px; } .pc-2 .main-table tbody tr { height: 24px; } .pc-2 .footer-notes p.body { font-size: 9.5px; line-height: 1.45; } .pc-2 .footer-brand { margin-top: 10px; }
+        .pc-3 .doc-header { margin-bottom: 12px; } .pc-3 .doc-header-right img { height: 38px; } .pc-3 .doc-title-area { margin-bottom: 12px; } .pc-3 .doc-title-area h2 { font-size: 22px; padding: 0 20px 3px; } .pc-3 .info-table th, .pc-3 .info-table td { padding: 3px 6px; font-size: 11px; } .pc-3 .main-table th, .pc-3 .main-table td { padding: 3px 5px; font-size: 10px; } .pc-3 .main-table tbody tr { height: 22px; } .pc-3 .subtotal-row td, .pc-3 .grand-row td { padding: 4px 5px; } .pc-3 .footer-notes p.title { font-size: 11px; } .pc-3 .footer-notes p.body { font-size: 9px; line-height: 1.4; } .pc-3 .footer-brand { margin-top: 8px; padding-top: 6px; } .pc-3 .footer-brand p { font-size: 9.5px; }
+        .pc-4 .doc-header { margin-bottom: 10px; } .pc-4 .doc-header-right img { height: 36px; } .pc-4 .doc-title-area { margin-bottom: 10px; } .pc-4 .doc-title-area h2 { font-size: 21px; padding: 0 18px 3px; } .pc-4 .info-table th, .pc-4 .info-table td { padding: 2.5px 5px; font-size: 10.5px; } .pc-4 .main-table th, .pc-4 .main-table td { padding: 2.5px 4px; font-size: 9.5px; } .pc-4 .main-table tbody tr { height: 20px; } .pc-4 .subtotal-row td, .pc-4 .grand-row td { padding: 3.5px 4px; } .pc-4 .grand-amount { font-size: 12px !important; } .pc-4 .footer-notes p.title { font-size: 10.5px; } .pc-4 .footer-notes p.body { font-size: 8.5px; line-height: 1.35; } .pc-4 .footer-brand { margin-top: 6px; padding-top: 5px; } .pc-4 .footer-brand p { font-size: 9px; }
+        .pc-5 .doc-header { margin-bottom: 8px; } .pc-5 .doc-header-right img { height: 34px; } .pc-5 .doc-title-area { margin-bottom: 8px; } .pc-5 .doc-title-area h2 { font-size: 20px; padding: 0 16px 2px; } .pc-5 .info-table th, .pc-5 .info-table td { padding: 2px 5px; font-size: 10px; } .pc-5 .main-table th, .pc-5 .main-table td { padding: 2px 4px; font-size: 9px; } .pc-5 .main-table tbody tr { height: 18px; } .pc-5 .subtotal-row td, .pc-5 .grand-row td { padding: 3px 4px; } .pc-5 .grand-amount { font-size: 11px !important; } .pc-5 .grand-label { font-size: 10px !important; } .pc-5 .footer-notes p.title { font-size: 10px; margin-bottom: 1px; } .pc-5 .footer-notes p.body { font-size: 8px; line-height: 1.3; } .pc-5 .footer-brand { margin-top: 5px; padding-top: 4px; } .pc-5 .footer-brand p { font-size: 8.5px; }
+        .pc-6 .doc-header { margin-bottom: 6px; } .pc-6 .doc-header-right img { height: 30px; } .pc-6 .doc-title-area { margin-bottom: 6px; } .pc-6 .doc-title-area h2 { font-size: 18px; padding: 0 14px 2px; } .pc-6 .info-table th, .pc-6 .info-table td { padding: 2px 4px; font-size: 9.5px; } .pc-6 .main-table th, .pc-6 .main-table td { padding: 2px 3px; font-size: 8.5px; line-height: 1.25; } .pc-6 .main-table tbody tr { height: 17px; } .pc-6 .subtotal-row td, .pc-6 .grand-row td { padding: 2.5px 3px; } .pc-6 .grand-amount { font-size: 10.5px !important; } .pc-6 .footer-notes p.title { font-size: 9.5px; margin-bottom: 1px; } .pc-6 .footer-notes p.body { font-size: 7.5px; line-height: 1.25; }
+        .pc-7 .doc-header { margin-bottom: 5px; } .pc-7 .doc-header-right img { height: 26px; } .pc-7 .doc-title-area h2 { font-size: 17px; padding: 0 12px 2px; } .pc-7 .info-table th, .pc-7 .info-table td { padding: 1.5px 4px; font-size: 9px; } .pc-7 .main-table th, .pc-7 .main-table td { padding: 1.5px 3px; font-size: 8px; line-height: 1.2; } .pc-7 .main-table tbody tr { height: 16px; } .pc-7 .footer-notes p.title { font-size: 9px; margin-bottom: 0; } .pc-7 .footer-notes p.body { font-size: 7px; line-height: 1.2; }
+        .pc-8 .doc-header { margin-bottom: 4px; } .pc-8 .doc-title-area h2 { font-size: 16px; padding: 0 10px 1px; } .pc-8 .info-table th, .pc-8 .info-table td { padding: 1px 3px; font-size: 8.5px; } .pc-8 .main-table th, .pc-8 .main-table td { padding: 1px 2.5px; font-size: 7.5px; line-height: 1.15; } .pc-8 .main-table tbody tr { height: 15px; } .pc-8 .footer-notes p.body { font-size: 6.5px; line-height: 1.15; }
+        .pc-9 .doc-header { margin-bottom: 3px; } .pc-9 .doc-title-area h2 { font-size: 15px; padding: 0 8px 1px; } .pc-9 .info-table th, .pc-9 .info-table td { padding: 1px 3px; font-size: 8px; } .pc-9 .main-table th, .pc-9 .main-table td { padding: 1px 2px; font-size: 7px; line-height: 1.1; } .pc-9 .main-table tbody tr { height: 14px; } .pc-9 .footer-notes p.body { font-size: 6px; line-height: 1.1; }
+        .pc-10 .doc-header { margin-bottom: 2px; } .pc-10 .doc-title-area h2 { font-size: 14px; padding: 0 6px 1px; } .pc-10 .info-table th, .pc-10 .info-table td { padding: 0.5px 2px; font-size: 7.5px; } .pc-10 .main-table th, .pc-10 .main-table td { padding: 0.5px 1.5px; font-size: 6.5px; line-height: 1.05; } .pc-10 .main-table tbody tr { height: 13px; } .pc-10 .footer-notes p.body { font-size: 5.5px; line-height: 1.05; }
 
         /* 스크롤바 */
         .panel-input::-webkit-scrollbar, .panel-preview::-webkit-scrollbar { width: 6px; }
@@ -379,7 +286,7 @@
         <div class="panel-input no-print" id="panelInput">
             <h2>문서 데이터 입력</h2>
 
-            <!-- 심플 버전: 템플릿 관리 영역 -->
+            <!-- 템플릿 관리 영역 (검색 개선) -->
             <div class="template-manager">
                 <div class="template-header">
                     <span>
@@ -399,6 +306,7 @@
                 </div>
             </div>
 
+            <!-- 1. 기본 정보 설정 -->
             <div class="form-group">
                 <div class="section-title blue">1. 기본 정보 설정</div>
                 <div class="form-row cols-2">
@@ -431,28 +339,14 @@
                 </div>
             </div>
 
+            <!-- 2. 항공료 영역 (동적 배열) -->
             <div class="form-group">
                 <div class="section-title dark" id="title-flight-area">2. 항공료 영역 (원화 직접 입력)</div>
-                <div class="slot-card">
-                    <div class="slot-grid-flight">
-                        <input type="text" id="inp-f1-name" class="slot-input" value="에어로케이" placeholder="항목">
-                        <input type="text" id="inp-f1-desc" class="slot-input" value="인천-오사카-인천" placeholder="내용">
-                        <input type="number" id="inp-f1-qty" class="slot-input" style="text-align:center" value="38" placeholder="수량">
-                        <input type="number" id="inp-f1-krw" class="slot-input" style="text-align:right" value="326900" placeholder="단가(₩)">
-                    </div>
-                    <input type="text" id="inp-f1-note" class="slot-input" style="width:100%" value="그룹가 예상가" placeholder="비고">
-                </div>
-                <div class="slot-card">
-                    <div class="slot-grid-flight">
-                        <input type="text" id="inp-f2-name" class="slot-input" value="발권수수료" placeholder="항목">
-                        <input type="text" id="inp-f2-desc" class="slot-input" value="" placeholder="내용">
-                        <input type="number" id="inp-f2-qty" class="slot-input" style="text-align:center" value="38" placeholder="수량">
-                        <input type="number" id="inp-f2-krw" class="slot-input" style="text-align:right" value="22000" placeholder="단가(₩)">
-                    </div>
-                    <input type="text" id="inp-f2-note" class="slot-input" style="width:100%" value="항공 발권 대리점" placeholder="비고">
-                </div>
+                <div id="flight-inputs-container"></div>
+                <button class="btn-add-item" onclick="addFlightRow()">+ 항공비 항목 추가</button>
             </div>
 
+            <!-- 3. 현지 발생비용 영역 (동적 배열) -->
             <div class="form-group">
                 <div class="section-title green" id="title-local-expense" style="display:flex;justify-content:space-between;align-items:center;">
                     <span>3. 해외현지 발생비용 (외화 입력)</span>
@@ -460,41 +354,18 @@
                 </div>
                 <p class="hint-text">연속된 항목명+내용이 같으면 출력물에서 셀이 자동 병합됩니다.</p>
                 <div id="local-inputs-container"></div>
+                <button class="btn-add-item" onclick="addLocalRow()">+ 현지 발생비용 항목 추가</button>
             </div>
 
+            <!-- 4. 국내 발생비용 영역 (동적 배열) -->
             <div class="form-group">
                 <div class="section-title orange">4. 국내 발생 비용 (원화 직접 입력)</div>
-                <div class="slot-card">
-                    <div class="slot-grid-flight">
-                        <input type="text" id="inp-d1-name" class="slot-input" value="여행자보험" placeholder="항목">
-                        <input type="text" id="inp-d1-desc" class="slot-input" value="1억원 기준" placeholder="내용">
-                        <input type="number" id="inp-d1-qty" class="slot-input" style="text-align:center" value="38" placeholder="수량">
-                        <input type="number" id="inp-d1-krw" class="slot-input" style="text-align:right" value="5000" placeholder="단가(₩)">
-                    </div>
-                    <input type="text" id="inp-d1-note" class="slot-input" style="width:100%" value="주민번호 필요" placeholder="비고">
-                </div>
-                <div class="slot-card">
-                    <div class="slot-grid-flight">
-                        <input type="text" id="inp-d2-name" class="slot-input" value="진행수수료" placeholder="항목">
-                        <input type="text" id="inp-d2-desc" class="slot-input" value="운영 관리비" placeholder="내용">
-                        <input type="number" id="inp-d2-qty" class="slot-input" style="text-align:center" value="1" placeholder="수량">
-                        <input type="number" id="inp-d2-krw" class="slot-input" style="text-align:right" value="3900000" placeholder="단가(₩)">
-                    </div>
-                    <input type="text" id="inp-d2-note" class="slot-input" style="width:100%" value="" placeholder="비고">
-                </div>
-                <div class="slot-card">
-                    <div class="slot-grid-flight">
-                        <input type="text" id="inp-d3-name" class="slot-input" value="공항수송" placeholder="항목">
-                        <input type="text" id="inp-d3-desc" class="slot-input" value="공항 왕복 차량비" placeholder="내용">
-                        <input type="number" id="inp-d3-qty" class="slot-input" style="text-align:center" value="" placeholder="수량">
-                        <input type="number" id="inp-d3-krw" class="slot-input" style="text-align:right" value="" placeholder="단가(₩)">
-                    </div>
-                    <input type="text" id="inp-d3-note" class="slot-input" style="width:100%" value="" placeholder="비고(빈칸가능)">
-                </div>
+                <div id="domestic-inputs-container"></div>
+                <button class="btn-add-item" onclick="addDomesticRow()">+ 국내 발생비용 항목 추가</button>
             </div>
         </div>
 
-        <!-- 미리보기 -->
+        <!-- 미리보기 패널 -->
         <div class="panel-preview" id="panelPreview">
             <div class="a4-sheet" id="print-section">
                 <div id="doc-header-area">
@@ -544,7 +415,7 @@
 
 <script>
 // ===================================================================
-// PDF 1페이지 출력 — PC 최적화
+// PDF 출력 및 탭 전환
 // ===================================================================
 function printPDF() {
     const sheet = document.getElementById('print-section');
@@ -596,7 +467,6 @@ function printPDF() {
     });
 }
 
-// ===== 모바일 탭 =====
 function switchTab(tab) {
     const input = document.getElementById('panelInput');
     const preview = document.getElementById('panelPreview');
@@ -618,7 +488,6 @@ function switchTab(tab) {
     }
 }
 
-// ===== 환율 UI 동기화 =====
 function syncCurrencyUI() {
     const curr = document.getElementById('inp-currency').value;
     const rW = document.getElementById('wrap-exRate');
@@ -634,10 +503,24 @@ function syncCurrencyUI() {
         else if (curr === 'USD' && val < 100) rI.value = 1400;
         else if (curr === 'CNY' && (val < 100 || val > 300)) rI.value = 195;
     }
+    
+    // 항목 단가 placeholder 업데이트
+    const isKRW = (curr === 'KRW_MAINLAND' || curr === 'KRW_JEJU');
+    document.querySelectorAll('.l-fgn').forEach(el => {
+        el.placeholder = isKRW ? '단가(₩)' : '단가(외화)';
+    });
 }
 
-// ===== 초기 데이터 (문곡중 디폴트 셋팅) =====
-const initialLocals = [
+// ===================================================================
+// 동적 입력 필드 (항목 추가/삭제) 생성 로직
+// ===================================================================
+
+const initFlights = [
+    { name: "에어로케이", desc: "인천-오사카-인천", qty: 38, krw: 326900, note: "그룹가 예상가" },
+    { name: "발권수수료", desc: "", qty: 38, krw: 22000, note: "항공 발권 대리점" }
+];
+
+const initLocals = [
     { name:"호텔", desc:"(2인실) 3박요금", qty:20, fgn:65000, note:"조식포함" },
     { name:"호텔", desc:"(1인실) 3박요금", qty:"", fgn:52000, note:"" },
     { name:"차량비", desc:"전용차량", qty:1, fgn:950000, note:"통행료+주차비" },
@@ -654,80 +537,192 @@ const initialLocals = [
     { name:"가이드비용", desc:"전일정", qty:1, fgn:240000, note:"노쇼핑/*인천공항 미팅" }
 ];
 
-function buildLocalInputs() {
-    const c = document.getElementById('local-inputs-container');
-    let h = '';
-    for (let i = 0; i < 20; i++) {
-        const it = initialLocals[i] || { name:'', desc:'', qty:'', fgn:'', note:'' };
-        const qtyVal = (it.qty !== undefined && it.qty !== '') ? it.qty : '';
-        const fgnVal = (it.fgn !== undefined && it.fgn !== '') ? it.fgn : '';
-        
-        h += `<div class="slot-card">
-            <div class="slot-grid">
-                <input type="text" id="inp-l${i}-name" class="slot-input" value="${it.name || ''}" placeholder="항목명">
-                <input type="text" id="inp-l${i}-desc" class="slot-input" value="${it.desc || ''}" placeholder="내용(병합)">
-                <input type="number" id="inp-l${i}-qty" class="slot-input" style="text-align:center" value="${qtyVal}" placeholder="수량">
-                <input type="number" id="inp-l${i}-fgn" class="slot-input" style="text-align:right" value="${fgnVal}" placeholder="단가(외화)">
+const initDomestics = [
+    { name:"여행자보험", desc:"1억원 기준", qty:38, krw:5000, note:"주민번호 필요" },
+    { name:"진행수수료", desc:"운영 관리비", qty:1, krw:3900000, note:"" },
+    { name:"공항수송", desc:"공항 왕복 차량비", qty:"", krw:"", note:"비고(빈칸가능)" }
+];
+
+function addFlightRow(data = {name:'', desc:'', qty:'', krw:'', note:''}) {
+    const container = document.getElementById('flight-inputs-container');
+    const html = `
+        <div class="slot-card flight-item">
+            <div class="slot-card-header">
+                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender();" title="항목 삭제">✕</button>
             </div>
-            <input type="text" id="inp-l${i}-note" class="slot-input" style="width:100%" value="${it.note || ''}" placeholder="비고(빈칸가능)">
-        </div>`;
-    }
-    c.innerHTML = h;
+            <div class="slot-grid-flight">
+                <input type="text" class="slot-input f-name" value="${data.name}" placeholder="항목">
+                <input type="text" class="slot-input f-desc" value="${data.desc}" placeholder="내용">
+                <input type="number" class="slot-input f-qty" style="text-align:center" value="${data.qty}" placeholder="수량">
+                <input type="number" class="slot-input f-krw" style="text-align:right" value="${data.krw}" placeholder="단가(₩)">
+            </div>
+            <input type="text" class="slot-input f-note" style="width:100%" value="${data.note}" placeholder="비고">
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+    calculateAndRender();
 }
 
-// ===== SAVE & LOAD (브라우저 자체 템플릿 기능) 로직 =====
+function addLocalRow(data = {name:'', desc:'', qty:'', fgn:'', note:''}) {
+    const container = document.getElementById('local-inputs-container');
+    const html = `
+        <div class="slot-card local-item">
+            <div class="slot-card-header">
+                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender();" title="항목 삭제">✕</button>
+            </div>
+            <div class="slot-grid">
+                <input type="text" class="slot-input l-name" value="${data.name}" placeholder="항목명">
+                <input type="text" class="slot-input l-desc" value="${data.desc}" placeholder="내용(병합)">
+                <input type="number" class="slot-input l-qty" style="text-align:center" value="${data.qty}" placeholder="수량">
+                <input type="number" class="slot-input l-fgn" style="text-align:right" value="${data.fgn}" placeholder="단가(외화)">
+            </div>
+            <input type="text" class="slot-input l-note" style="width:100%" value="${data.note}" placeholder="비고(빈칸가능)">
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+    syncCurrencyUI(); // 방금 추가된 row의 외화단가 placeholder 맞춤
+    calculateAndRender();
+}
 
-// 모든 인풋 데이터 객체로 추출
+function addDomesticRow(data = {name:'', desc:'', qty:'', krw:'', note:''}) {
+    const container = document.getElementById('domestic-inputs-container');
+    const html = `
+        <div class="slot-card domestic-item">
+            <div class="slot-card-header">
+                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender();" title="항목 삭제">✕</button>
+            </div>
+            <div class="slot-grid-flight">
+                <input type="text" class="slot-input d-name" value="${data.name}" placeholder="항목">
+                <input type="text" class="slot-input d-desc" value="${data.desc}" placeholder="내용">
+                <input type="number" class="slot-input d-qty" style="text-align:center" value="${data.qty}" placeholder="수량">
+                <input type="number" class="slot-input d-krw" style="text-align:right" value="${data.krw}" placeholder="단가(₩)">
+            </div>
+            <input type="text" class="slot-input d-note" style="width:100%" value="${data.note}" placeholder="비고(빈칸가능)">
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', html);
+    calculateAndRender();
+}
+
+// 화면 초기 로딩 시 기본칸 생성
+function buildInitialInputs() {
+    document.getElementById('flight-inputs-container').innerHTML = '';
+    document.getElementById('local-inputs-container').innerHTML = '';
+    document.getElementById('domestic-inputs-container').innerHTML = '';
+
+    initFlights.forEach(d => addFlightRow(d));
+    initLocals.forEach(d => addLocalRow(d));
+    initDomestics.forEach(d => addDomesticRow(d));
+}
+
+// ===================================================================
+// 저장 / 불러오기 (검색 및 동적 배열 완벽 지원)
+// ===================================================================
+
 function getFormData() {
-    const data = {};
-    const inputs = document.querySelectorAll('.panel-input input, .panel-input select');
-    inputs.forEach(el => {
-        if(el.id && el.id !== 'preset-select') {
-            data[el.id] = el.value;
-        }
-    });
-    return data;
+    return {
+        clientName: document.getElementById('inp-clientName').value,
+        docTitle: document.getElementById('inp-docTitle').value,
+        travelDate: document.getElementById('inp-travelDate').value,
+        paxStr: document.getElementById('inp-paxStr').value,
+        issueDate: document.getElementById('inp-issueDate').value,
+        currency: document.getElementById('inp-currency').value,
+        exRate: document.getElementById('inp-exRate').value,
+        
+        // 동적 항목들 값 추출
+        flights: Array.from(document.querySelectorAll('.flight-item')).map(el => ({
+            name: el.querySelector('.f-name').value,
+            desc: el.querySelector('.f-desc').value,
+            qty: el.querySelector('.f-qty').value,
+            krw: el.querySelector('.f-krw').value,
+            note: el.querySelector('.f-note').value
+        })),
+        locals: Array.from(document.querySelectorAll('.local-item')).map(el => ({
+            name: el.querySelector('.l-name').value,
+            desc: el.querySelector('.l-desc').value,
+            qty: el.querySelector('.l-qty').value,
+            fgn: el.querySelector('.l-fgn').value,
+            note: el.querySelector('.l-note').value
+        })),
+        domestics: Array.from(document.querySelectorAll('.domestic-item')).map(el => ({
+            name: el.querySelector('.d-name').value,
+            desc: el.querySelector('.d-desc').value,
+            qty: el.querySelector('.d-qty').value,
+            krw: el.querySelector('.d-krw').value,
+            note: el.querySelector('.d-note').value
+        }))
+    };
 }
 
-// 추출한 객체를 폼에 세팅
+// 추출한 객체를 폼에 세팅 (과거 하드코딩 방식과 신규 동적 방식 모두 호환)
 function setFormData(data) {
-    Object.keys(data).forEach(key => {
-        const el = document.getElementById(key);
-        if(el) el.value = data[key];
-    });
+    // 1. 기본 정보 세팅
+    document.getElementById('inp-clientName').value = data.clientName || data['inp-clientName'] || '';
+    document.getElementById('inp-docTitle').value = data.docTitle || data['inp-docTitle'] || '';
+    document.getElementById('inp-travelDate').value = data.travelDate || data['inp-travelDate'] || '';
+    document.getElementById('inp-paxStr').value = data.paxStr || data['inp-paxStr'] || '';
+    document.getElementById('inp-issueDate').value = data.issueDate || data['inp-issueDate'] || '';
+    document.getElementById('inp-currency').value = data.currency || data['inp-currency'] || 'JPY';
+    document.getElementById('inp-exRate').value = data.exRate || data['inp-exRate'] || '9.5';
+
+    // 2. 동적 항목 세팅 전에 화면 싹 비우기
+    document.getElementById('flight-inputs-container').innerHTML = '';
+    document.getElementById('local-inputs-container').innerHTML = '';
+    document.getElementById('domestic-inputs-container').innerHTML = '';
+
+    // 3. 신규 저장 방식 (배열 구조)일 경우
+    if (data.flights || data.locals || data.domestics) {
+        if(data.flights) data.flights.forEach(item => addFlightRow(item));
+        if(data.locals) data.locals.forEach(item => addLocalRow(item));
+        if(data.domestics) data.domestics.forEach(item => addDomesticRow(item));
+    } 
+    // 4. 구형 저장 방식 (inp-f1-name 형태)일 경우의 하위 호환성 (과거 저장 데이터도 정상적으로 불려오도록 보장)
+    else {
+        for(let i=1; i<=5; i++) {
+            if(data[`inp-f${i}-name`] !== undefined) addFlightRow({name: data[`inp-f${i}-name`], desc: data[`inp-f${i}-desc`], qty: data[`inp-f${i}-qty`], krw: data[`inp-f${i}-krw`], note: data[`inp-f${i}-note`]});
+        }
+        for(let i=0; i<=30; i++) {
+            if(data[`inp-l${i}-name`] !== undefined) addLocalRow({name: data[`inp-l${i}-name`], desc: data[`inp-l${i}-desc`], qty: data[`inp-l${i}-qty`], fgn: data[`inp-l${i}-fgn`], note: data[`inp-l${i}-note`]});
+        }
+        for(let i=1; i<=10; i++) {
+            if(data[`inp-d${i}-name`] !== undefined) addDomesticRow({name: data[`inp-d${i}-name`], desc: data[`inp-d${i}-desc`], qty: data[`inp-d${i}-qty`], krw: data[`inp-d${i}-krw`], note: data[`inp-d${i}-note`]});
+        }
+    }
 }
 
-// 셀렉트 박스(드롭다운) 갱신 (가나다순 정렬 및 검색 기능 추가)
+// 셀렉트 박스(드롭다운) 갱신 (가나다순 정렬 및 자동 선택 추가)
 function updatePresetDropdown(filterText = '') {
     const select = document.getElementById('preset-select');
     const presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
     
-    // 저장된 이름들을 가나다순으로 정렬
     const keys = Object.keys(presets).sort();
-    
     select.innerHTML = '<option value="">저장된 템플릿 선택...</option>';
     
+    let matchCount = 0;
     keys.forEach(key => {
-        // 검색어가 포함된 항목만 드롭다운에 표시
         if (key.toLowerCase().includes(filterText.toLowerCase())) {
             const option = document.createElement('option');
             option.value = key;
             option.textContent = key;
             select.appendChild(option);
+            matchCount++;
         }
     });
+
+    // 검색어가 있고 매칭된 항목이 있으면 첫 번째 매칭 항목을 자동으로 선택 상태로 둠 (UX 향상)
+    if (filterText && matchCount > 0) {
+        select.selectedIndex = 1;
+    }
 }
 
-// 검색창 입력 시 작동하는 필터 함수
 function filterPresets() {
     const text = document.getElementById('preset-search').value;
     updatePresetDropdown(text);
 }
 
-// 템플릿 저장
 function savePreset() {
     const currentName = document.getElementById('inp-clientName').value || '임시견적';
-    const presetName = prompt("현재 견적을 브라우저에 저장할 이름을 입력하세요.\n(예: 오사카 3박4일 기본폼)", currentName + " 견적");
+    const presetName = prompt("현재 견적을 브라우저에 저장할 이름을 입력하세요.\n(예: [문곡중] 오사카 30명)", currentName + " 견적");
     
     if(!presetName) return; 
     
@@ -737,12 +732,12 @@ function savePreset() {
     presets[presetName] = currentData;
     localStorage.setItem('tourmaker_presets', JSON.stringify(presets));
     
+    document.getElementById('preset-search').value = ''; // 저장후 검색어 초기화
     updatePresetDropdown();
     document.getElementById('preset-select').value = presetName;
-    alert(`[${presetName}] 견적이 내 브라우저에 저장되었습니다.\n상단 목록에서 언제든 불러올 수 있습니다.`);
+    alert(`[${presetName}] 견적이 저장되었습니다.`);
 }
 
-// 템플릿 불러오기
 function loadPreset() {
     const selectedName = document.getElementById('preset-select').value;
     if(!selectedName) {
@@ -760,7 +755,6 @@ function loadPreset() {
     }
 }
 
-// 템플릿 삭제 기능
 function deletePreset() {
     const selectedName = document.getElementById('preset-select').value;
     if(!selectedName) {
@@ -770,35 +764,42 @@ function deletePreset() {
     
     if(confirm(`[ ${selectedName} ] 견적을 보관함에서 영구 삭제하시겠습니까?`)) {
         let presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
-        delete presets[selectedName]; // 데이터 삭제
-        localStorage.setItem('tourmaker_presets', JSON.stringify(presets)); // 로컬스토리지 업데이트
+        delete presets[selectedName];
+        localStorage.setItem('tourmaker_presets', JSON.stringify(presets));
         
-        document.getElementById('preset-search').value = ''; // 검색창 초기화
-        updatePresetDropdown(); // 목록 갱신
+        document.getElementById('preset-search').value = '';
+        updatePresetDropdown();
         alert('삭제가 완료되었습니다.');
     }
 }
 
-// 모든 폼 지우기 (초기화)
 function clearForm() {
-    if(confirm('입력된 모든 데이터가 삭제되고 빈 칸으로 초기화됩니다.\n계속하시겠습니까? (필요시 먼저 저장해주세요)')) {
-        const inputs = document.querySelectorAll('.panel-input input:not(#preset-select)');
-        inputs.forEach(el => {
-            if(el.type === 'number') el.value = '';
-            else el.value = '';
-        });
-        
-        // 날짜/환율 등 필수 기본 세팅만 기본값 복원
+    if(confirm('입력된 모든 데이터가 삭제되고 빈 칸으로 초기화됩니다.\n(행 개수는 기본 1개로 초기화됩니다.)')) {
+        document.getElementById('inp-clientName').value = '';
+        document.getElementById('inp-docTitle').value = '';
+        document.getElementById('inp-travelDate').value = '';
+        document.getElementById('inp-paxStr').value = '';
+        document.getElementById('inp-issueDate').value = '';
         document.getElementById('inp-currency').value = 'JPY';
         document.getElementById('inp-exRate').value = '9.5';
+        
+        // 동적 항목들 싹 지우고 빈 칸 1개씩만 생성
+        document.getElementById('flight-inputs-container').innerHTML = '';
+        document.getElementById('local-inputs-container').innerHTML = '';
+        document.getElementById('domestic-inputs-container').innerHTML = '';
+        
+        addFlightRow();
+        addLocalRow();
+        addDomesticRow();
         
         syncCurrencyUI();
         calculateAndRender();
     }
 }
 
-
-// ===== 렌더링 및 계산 로직 =====
+// ===================================================================
+// 렌더링 및 계산 로직
+// ===================================================================
 
 const fmt = n => (n===0||n==='') ? '' : Number(n).toLocaleString();
 const fmtT = n => n===0 ? '0' : Number(n).toLocaleString();
@@ -833,7 +834,6 @@ function calculateAndRender() {
     if (isMainland) le.innerHTML = '<span>3. 행사비용 (원화 직접 입력)</span>';
     else if (isJeju) le.innerHTML = '<span>3. 제주(현지) 발생비용 (원화 직접 입력)</span>';
     else le.innerHTML = '<span>3. 해외현지 발생비용 (외화 입력)</span><span style="font-size:11px;font-weight:400;color:#9ca3af;">*원화 자동 환산</span>';
-    for (let i=0;i<20;i++) { const el=document.getElementById(`inp-l${i}-fgn`); if(el) el.placeholder=isKRW?'단가(₩)':'단가(외화)'; }
 
     document.getElementById('out-clientName').innerText = clientName;
     document.getElementById('out-docTitle').innerText = docTitle;
@@ -858,21 +858,21 @@ function calculateAndRender() {
 
     let tF=0, tL=0, tD=0;
 
-    // --- 항공/교통 ---
+    // --- 항공/교통 (동적 스크래핑) ---
     const fH = isMainland?'교통비':'항공료';
     const fSub = isMainland?'(1) 합계 - 교통비':'(1) 합계 - 항공료';
     const flights=[];
-    for(let i=1;i<=2;i++){
-        const n=document.getElementById(`inp-f${i}-name`).value;
+    document.querySelectorAll('.flight-item').forEach(el => {
+        const n = el.querySelector('.f-name').value;
         if(n.trim()){
-            const d=document.getElementById(`inp-f${i}-desc`).value;
-            const q=Number(document.getElementById(`inp-f${i}-qty`).value)||0;
-            const k=Number(document.getElementById(`inp-f${i}-krw`).value)||0;
-            const nt=document.getElementById(`inp-f${i}-note`).value;
-            tF+=k*q;
-            flights.push({name:n,desc:d,qty:q,krw:k,tot:k*q,note:nt});
+            const d = el.querySelector('.f-desc').value;
+            const q = Number(el.querySelector('.f-qty').value)||0;
+            const k = Number(el.querySelector('.f-krw').value)||0;
+            const nt = el.querySelector('.f-note').value;
+            tF += k*q;
+            flights.push({name:n, desc:d, qty:q, krw:k, tot:k*q, note:nt});
         }
-    }
+    });
     
     let h='';
     if (flights.length === 0) {
@@ -891,21 +891,21 @@ function calculateAndRender() {
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${fSub}</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tF)}</td><td></td></tr>`;
     document.getElementById('tbody-flight').innerHTML=h;
 
-    // --- 현지비용 ---
+    // --- 현지비용 (동적 스크래핑) ---
     const lH=isMainland?'행사비용':(isJeju?'제주(현지)<br>발생비용':'해외현지<br>발생비용');
     const lSub=isMainland?'(2) 합계 - 행사 비용':(isJeju?'(2) 합계 - 제주(현지) 발생 비용':'(2) 합계 - 해외현지 발생 비용');
     const locals=[];
-    for(let i=0;i<20;i++){
-        const n=document.getElementById(`inp-l${i}-name`).value;
+    document.querySelectorAll('.local-item').forEach(el => {
+        const n = el.querySelector('.l-name').value;
         if(n.trim()){
-            const d=document.getElementById(`inp-l${i}-desc`).value;
-            const q=Number(document.getElementById(`inp-l${i}-qty`).value)||0;
-            const f=Number(document.getElementById(`inp-l${i}-fgn`).value)||0;
-            const k=isKRW?f:Math.round(f*exRate);
-            tL+=k*q;
-            locals.push({name:n,desc:d,qty:q,fgn:f,krw:k,tot:k*q,note:document.getElementById(`inp-l${i}-note`).value});
+            const d = el.querySelector('.l-desc').value;
+            const q = Number(el.querySelector('.l-qty').value)||0;
+            const f = Number(el.querySelector('.l-fgn').value)||0;
+            const k = isKRW ? f : Math.round(f*exRate);
+            tL += k*q;
+            locals.push({name:n, desc:d, qty:q, fgn:f, krw:k, tot:k*q, note:el.querySelector('.l-note').value});
         }
-    }
+    });
     
     h='';
     if (locals.length === 0) {
@@ -924,18 +924,18 @@ function calculateAndRender() {
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${lSub}</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tL)}</td><td></td></tr>`;
     document.getElementById('tbody-local').innerHTML=h;
 
-    // --- 국내비용 ---
+    // --- 국내비용 (동적 스크래핑) ---
     const doms=[];
-    for(let i=1;i<=3;i++){
-        const n=document.getElementById(`inp-d${i}-name`).value;
+    document.querySelectorAll('.domestic-item').forEach(el => {
+        const n = el.querySelector('.d-name').value;
         if(n.trim()){
-            const d=document.getElementById(`inp-d${i}-desc`).value;
-            const q=Number(document.getElementById(`inp-d${i}-qty`).value)||0;
-            const k=Number(document.getElementById(`inp-d${i}-krw`).value)||0;
-            tD+=k*q;
-            doms.push({name:n,desc:d,qty:q,krw:k,tot:k*q,note:document.getElementById(`inp-d${i}-note`).value});
+            const d = el.querySelector('.d-desc').value;
+            const q = Number(el.querySelector('.d-qty').value)||0;
+            const k = Number(el.querySelector('.d-krw').value)||0;
+            tD += k*q;
+            doms.push({name:n, desc:d, qty:q, krw:k, tot:k*q, note:el.querySelector('.d-note').value});
         }
-    }
+    });
     
     h='';
     if (doms.length === 0) {
@@ -964,8 +964,8 @@ function calculateAndRender() {
 
 // ===== 초기화 및 이벤트 등록 =====
 document.addEventListener('DOMContentLoaded', function() {
-    buildLocalInputs();
-    updatePresetDropdown(); // 로컬 스토리지에 저장된 목록 불러오기
+    buildInitialInputs(); // 동적 배열 방식으로 기본값 생성
+    updatePresetDropdown(); // 로컬 스토리지 데이터 연동
     syncCurrencyUI();
     calculateAndRender();
 
@@ -974,8 +974,9 @@ document.addEventListener('DOMContentLoaded', function() {
         calculateAndRender();
     });
 
+    // 이벤트 위임 (동적으로 생성된 input들도 모두 이벤트 감지)
     document.getElementById('panelInput').addEventListener('input', function(e) {
-        if (e.target.id !== 'inp-currency') {
+        if (e.target.id !== 'inp-currency' && e.target.id !== 'preset-search') {
             calculateAndRender();
         }
     });
