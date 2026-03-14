@@ -91,6 +91,21 @@
         .btn-delete { background: #fff; color: #dc2626; border: 1px solid #dc2626; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
         .btn-delete:hover { background: #fef2f2; }
 
+        /* ===== 경고 패널 (새로 추가됨) ===== */
+        .warning-panel {
+            background-color: #fef2f2; border: 1px solid #f87171; border-radius: 8px;
+            padding: 12px 16px; margin-bottom: 20px; color: #991b1b;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1);
+            transition: all 0.3s ease;
+        }
+        .warning-panel.hidden { display: none; }
+        .warning-title { font-weight: 800; font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #b91c1c; }
+        .warning-list { list-style-type: none; padding-left: 0; font-size: 12px; line-height: 1.6; }
+        .warning-list li { position: relative; padding-left: 14px; }
+        .warning-list li::before { content: "•"; position: absolute; left: 0; color: #ef4444; font-weight: bold; }
+        .error-border { border: 2px solid #ef4444 !important; background-color: #fef2f2 !important; transition: all 0.2s; }
+        .error-row-container { border: 1px solid #f87171 !important; box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
+
         /* ===== 입력 폼 ===== */
         .section-title { font-size: 13px; font-weight: 700; padding-left: 8px; border-left: 4px solid; margin-bottom: 8px; }
         .section-title.blue { border-color: #1e40af; color: #1e40af; }
@@ -105,6 +120,7 @@
         .form-input {
             width: 100%; border: 1px solid #d1d5db; border-radius: 4px;
             padding: 6px 8px; font-size: 13px; font-family: inherit; outline: none;
+            transition: border-color 0.2s;
         }
         .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
         .form-select {
@@ -117,6 +133,7 @@
         .slot-card {
             background: #f9fafb; border: 1px solid #e5e7eb;
             border-radius: 6px; padding: 8px; margin-bottom: 8px; position: relative;
+            transition: all 0.2s;
         }
         .slot-card:hover { background: #f0fdf4; border-color:#cbd5e1; }
         .slot-card-header { display: flex; justify-content: flex-end; margin-bottom: 4px; }
@@ -246,7 +263,7 @@
             @page { size: A4 portrait; margin: 8mm; }
         }
 
-        /* ===== 인쇄용 compact 모드 - 10단계 세밀 조절 ===== */
+        /* 인쇄용 compact 모드 조절 코드는 생략없이 유지됨 (CSS 하단) */
         .pc-1 .doc-header { margin-bottom: 16px; } .pc-1 .doc-title-area { margin-bottom: 16px; } .pc-1 .doc-title-area h2 { font-size: 24px; } .pc-1 .info-table th, .pc-1 .info-table td { padding: 4px 7px; font-size: 11.5px; } .pc-1 .main-table th, .pc-1 .main-table td { padding: 4px 6px; font-size: 10.5px; } .pc-1 .main-table tbody tr { height: 26px; } .pc-1 .footer-notes p.body { font-size: 10px; line-height: 1.5; } .pc-1 .footer-brand { margin-top: 12px; }
         .pc-2 .doc-header { margin-bottom: 14px; } .pc-2 .doc-header-right img { height: 42px; } .pc-2 .doc-title-area { margin-bottom: 14px; } .pc-2 .doc-title-area h2 { font-size: 23px; } .pc-2 .info-table th, .pc-2 .info-table td { padding: 3.5px 6px; font-size: 11px; } .pc-2 .main-table th, .pc-2 .main-table td { padding: 3.5px 5px; font-size: 10px; } .pc-2 .main-table tbody tr { height: 24px; } .pc-2 .footer-notes p.body { font-size: 9.5px; line-height: 1.45; } .pc-2 .footer-brand { margin-top: 10px; }
         .pc-3 .doc-header { margin-bottom: 12px; } .pc-3 .doc-header-right img { height: 38px; } .pc-3 .doc-title-area { margin-bottom: 12px; } .pc-3 .doc-title-area h2 { font-size: 22px; padding: 0 20px 3px; } .pc-3 .info-table th, .pc-3 .info-table td { padding: 3px 6px; font-size: 11px; } .pc-3 .main-table th, .pc-3 .main-table td { padding: 3px 5px; font-size: 10px; } .pc-3 .main-table tbody tr { height: 22px; } .pc-3 .subtotal-row td, .pc-3 .grand-row td { padding: 4px 5px; } .pc-3 .footer-notes p.title { font-size: 11px; } .pc-3 .footer-notes p.body { font-size: 9px; line-height: 1.4; } .pc-3 .footer-brand { margin-top: 8px; padding-top: 6px; } .pc-3 .footer-brand p { font-size: 9.5px; }
@@ -258,7 +275,6 @@
         .pc-9 .doc-header { margin-bottom: 3px; } .pc-9 .doc-title-area h2 { font-size: 15px; padding: 0 8px 1px; } .pc-9 .info-table th, .pc-9 .info-table td { padding: 1px 3px; font-size: 8px; } .pc-9 .main-table th, .pc-9 .main-table td { padding: 1px 2px; font-size: 7px; line-height: 1.1; } .pc-9 .main-table tbody tr { height: 14px; } .pc-9 .footer-notes p.body { font-size: 6px; line-height: 1.1; }
         .pc-10 .doc-header { margin-bottom: 2px; } .pc-10 .doc-title-area h2 { font-size: 14px; padding: 0 6px 1px; } .pc-10 .info-table th, .pc-10 .info-table td { padding: 0.5px 2px; font-size: 7.5px; } .pc-10 .main-table th, .pc-10 .main-table td { padding: 0.5px 1.5px; font-size: 6.5px; line-height: 1.05; } .pc-10 .main-table tbody tr { height: 13px; } .pc-10 .footer-notes p.body { font-size: 5.5px; line-height: 1.05; }
 
-        /* 스크롤바 */
         .panel-input::-webkit-scrollbar, .panel-preview::-webkit-scrollbar { width: 6px; }
         .panel-input::-webkit-scrollbar-track, .panel-preview::-webkit-scrollbar-track { background: #f1f1f1; }
         .panel-input::-webkit-scrollbar-thumb, .panel-preview::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -286,7 +302,13 @@
         <div class="panel-input no-print" id="panelInput">
             <h2>문서 데이터 입력</h2>
 
-            <!-- 템플릿 관리 영역 (검색 개선) -->
+            <!-- ===== 에러 경고 패널 (추가됨) ===== -->
+            <div id="warning-panel" class="warning-panel hidden">
+                <div class="warning-title">⚠️ 검수 경고: 확인이 필요한 항목이 있습니다.</div>
+                <ul id="warning-list" class="warning-list"></ul>
+            </div>
+
+            <!-- 템플릿 관리 영역 -->
             <div class="template-manager">
                 <div class="template-header">
                     <span>
@@ -317,7 +339,7 @@
                     <div><label class="form-label">여행일</label><input type="text" id="inp-travelDate" class="form-input" value="2025.05.12~05.15"></div>
                 </div>
                 <div class="form-row cols-1">
-                    <div><label class="form-label">여행인원 표기</label><input type="text" id="inp-paxStr" class="form-input" value="38명기준(학생 33+ 교사5)"></div>
+                    <div><label class="form-label">여행인원 표기 (숫자가 포함되면 기준인원 자동계산)</label><input type="text" id="inp-paxStr" class="form-input" value="38명기준(학생 33+ 교사5)"></div>
                 </div>
                 <div class="form-row cols-2">
                     <div><label class="form-label">발송일자</label><input type="text" id="inp-issueDate" class="form-input" value="2026.03.10"></div>
@@ -415,9 +437,134 @@
 
 <script>
 // ===================================================================
+// 유효성 검사 및 경고 시스템 (새로 추가된 핵심 로직)
+// ===================================================================
+
+// 기준 인원 추출 (예: "38명기준" -> 38)
+function extractBasePax() {
+    const paxStr = document.getElementById('inp-paxStr').value || '';
+    const match = paxStr.match(/(\d+)\s*명/);
+    return match ? Number(match[1]) : null;
+}
+
+// 전체 입력 폼 검증 로직
+function validateRows() {
+    const warnings = [];
+    const basePax = extractBasePax();
+    const currency = document.getElementById('inp-currency').value;
+    const exRateInput = document.getElementById('inp-exRate');
+    const exRate = Number(exRateInput.value) || 0;
+
+    // 기존의 에러 테두리 초기화
+    document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
+    document.querySelectorAll('.error-row-container').forEach(el => el.classList.remove('error-row-container'));
+
+    // 1. 환율 비정상 검증
+    if (currency === 'JPY' && (exRate < 5 || exRate > 20)) {
+        warnings.push(`환율 경고: JPY 환율(${exRate})이 일반적인 범위를 벗어났습니다.`);
+        exRateInput.classList.add('error-border');
+    }
+    if (currency === 'USD' && (exRate < 1000 || exRate > 2000)) {
+        warnings.push(`환율 경고: USD 환율(${exRate})이 일반적인 범위를 벗어났습니다.`);
+        exRateInput.classList.add('error-border');
+    }
+    if (currency === 'CNY' && (exRate < 100 || exRate > 300)) {
+        warnings.push(`환율 경고: CNY 환율(${exRate})이 일반적인 범위를 벗어났습니다.`);
+        exRateInput.classList.add('error-border');
+    }
+
+    // 2. 동적 행 검증
+    // 기준 인원과 일치해야 할 가능성이 높은 대표 항목들
+    const paxCheckItems = ['식비', '입장료', '관광지', '여행자보험', '에어로케이', '항공료', '항공'];
+
+    document.querySelectorAll('.flight-item, .local-item, .domestic-item').forEach((rowEl, index) => {
+        let rowHasError = false;
+
+        const inputs = rowEl.querySelectorAll('.slot-input');
+        const nameEl = inputs[0]; // 첫번째가 name
+        const qtyEl = inputs[2];  // 세번째가 qty
+        const priceEl = inputs[3]; // 네번째가 price
+
+        const name = nameEl.value.trim();
+        const qtyStr = qtyEl.value.trim();
+        const priceStr = priceEl.value.trim();
+        
+        const qty = Number(qtyStr) || 0;
+        const price = Number(priceStr) || 0;
+
+        if (!name && !qtyStr && !priceStr) return; // 완전 빈 칸은 무시
+
+        // A. 수량과 단가 중 하나만 입력된 경우 누락 경고
+        if ((qtyStr !== '' && priceStr === '') || (qtyStr === '' && priceStr !== '')) {
+            warnings.push(`[${name || '이름없음'}] 항목: 수량 또는 단가 중 하나가 누락되었습니다.`);
+            qtyEl.classList.add('error-border');
+            priceEl.classList.add('error-border');
+            rowHasError = true;
+        }
+
+        // B. 항목명은 있는데 금액이 산출되지 않는 경우
+        if (name && qty === 0 && price === 0 && (qtyStr !== '' || priceStr !== '')) {
+            warnings.push(`[${name}] 항목: 수량 또는 단가가 0으로 계산되어 산출 금액이 없습니다.`);
+            rowHasError = true;
+        }
+
+        // C. 기준 인원과 수량 불일치 검증
+        if (basePax && name && qtyStr !== '') {
+            // 항목 이름에 확인 키워드가 포함되어 있다면 (예: "관광지입장료", "중식비" 등)
+            const isPaxRelated = paxCheckItems.some(keyword => name.includes(keyword));
+            if (isPaxRelated && qty > 0 && qty !== basePax) {
+                warnings.push(`[${name}] 수량 경고: 입력된 수량(${qty})이 전체 기준 인원(${basePax}명)과 다릅니다.`);
+                qtyEl.classList.add('error-border');
+                rowHasError = true;
+            }
+        }
+
+        if (rowHasError) {
+            rowEl.classList.add('error-row-container');
+        }
+    });
+
+    return warnings;
+}
+
+// 화면 경고 패널 렌더링
+function renderWarnings() {
+    const warnings = validateRows();
+    const panel = document.getElementById('warning-panel');
+    const list = document.getElementById('warning-list');
+
+    if (warnings.length > 0) {
+        panel.classList.remove('hidden');
+        list.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+    } else {
+        panel.classList.add('hidden');
+        list.innerHTML = '';
+    }
+    return warnings;
+}
+
+// ===================================================================
 // PDF 출력 및 탭 전환
 // ===================================================================
 function printPDF() {
+    // 1. 출력 전 마지막 검증 수행
+    const warnings = renderWarnings();
+    
+    // 2. 에러가 있다면 Confirm 창으로 인지시킴
+    if (warnings.length > 0) {
+        let msg = "⚠️ 입력된 데이터에 확인이 필요한 항목이 있습니다.\n\n";
+        msg += warnings.slice(0, 5).map(w => "- " + w).join('\n');
+        if (warnings.length > 5) msg += `\n...외 ${warnings.length - 5}건`;
+        msg += "\n\n이대로 PDF 출력을 진행하시겠습니까?";
+        
+        if (!confirm(msg)) {
+            // 출력 취소 시 상단 경고 패널로 스크롤 이동
+            document.getElementById('panelInput').scrollTop = 0;
+            return;
+        }
+    }
+
+    // 통과했거나 무시하고 진행 시 PDF 렌더링 시작
     const sheet = document.getElementById('print-section');
     const tableArea = document.getElementById('table-area');
     const allLevels = [];
@@ -512,7 +659,7 @@ function syncCurrencyUI() {
 }
 
 // ===================================================================
-// 동적 입력 필드 (항목 추가/삭제) 생성 로직
+// 동적 입력 필드 생성 로직
 // ===================================================================
 
 const initFlights = [
@@ -580,7 +727,7 @@ function addLocalRow(data = {name:'', desc:'', qty:'', fgn:'', note:''}) {
         </div>
     `;
     container.insertAdjacentHTML('beforeend', html);
-    syncCurrencyUI(); // 방금 추가된 row의 외화단가 placeholder 맞춤
+    syncCurrencyUI(); 
     calculateAndRender();
 }
 
@@ -604,7 +751,6 @@ function addDomesticRow(data = {name:'', desc:'', qty:'', krw:'', note:''}) {
     calculateAndRender();
 }
 
-// 화면 초기 로딩 시 기본칸 생성
 function buildInitialInputs() {
     document.getElementById('flight-inputs-container').innerHTML = '';
     document.getElementById('local-inputs-container').innerHTML = '';
@@ -616,9 +762,8 @@ function buildInitialInputs() {
 }
 
 // ===================================================================
-// 저장 / 불러오기 (검색 및 동적 배열 완벽 지원)
+// 저장 / 불러오기
 // ===================================================================
-
 function getFormData() {
     return {
         clientName: document.getElementById('inp-clientName').value,
@@ -629,7 +774,6 @@ function getFormData() {
         currency: document.getElementById('inp-currency').value,
         exRate: document.getElementById('inp-exRate').value,
         
-        // 동적 항목들 값 추출
         flights: Array.from(document.querySelectorAll('.flight-item')).map(el => ({
             name: el.querySelector('.f-name').value,
             desc: el.querySelector('.f-desc').value,
@@ -654,9 +798,7 @@ function getFormData() {
     };
 }
 
-// 추출한 객체를 폼에 세팅 (과거 하드코딩 방식과 신규 동적 방식 모두 호환)
 function setFormData(data) {
-    // 1. 기본 정보 세팅
     document.getElementById('inp-clientName').value = data.clientName || data['inp-clientName'] || '';
     document.getElementById('inp-docTitle').value = data.docTitle || data['inp-docTitle'] || '';
     document.getElementById('inp-travelDate').value = data.travelDate || data['inp-travelDate'] || '';
@@ -665,18 +807,15 @@ function setFormData(data) {
     document.getElementById('inp-currency').value = data.currency || data['inp-currency'] || 'JPY';
     document.getElementById('inp-exRate').value = data.exRate || data['inp-exRate'] || '9.5';
 
-    // 2. 동적 항목 세팅 전에 화면 싹 비우기
     document.getElementById('flight-inputs-container').innerHTML = '';
     document.getElementById('local-inputs-container').innerHTML = '';
     document.getElementById('domestic-inputs-container').innerHTML = '';
 
-    // 3. 신규 저장 방식 (배열 구조)일 경우
     if (data.flights || data.locals || data.domestics) {
         if(data.flights) data.flights.forEach(item => addFlightRow(item));
         if(data.locals) data.locals.forEach(item => addLocalRow(item));
         if(data.domestics) data.domestics.forEach(item => addDomesticRow(item));
     } 
-    // 4. 구형 저장 방식 (inp-f1-name 형태)일 경우의 하위 호환성 (과거 저장 데이터도 정상적으로 불려오도록 보장)
     else {
         for(let i=1; i<=5; i++) {
             if(data[`inp-f${i}-name`] !== undefined) addFlightRow({name: data[`inp-f${i}-name`], desc: data[`inp-f${i}-desc`], qty: data[`inp-f${i}-qty`], krw: data[`inp-f${i}-krw`], note: data[`inp-f${i}-note`]});
@@ -690,7 +829,6 @@ function setFormData(data) {
     }
 }
 
-// 셀렉트 박스(드롭다운) 갱신 (가나다순 정렬 및 자동 선택 추가)
 function updatePresetDropdown(filterText = '') {
     const select = document.getElementById('preset-select');
     const presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
@@ -709,7 +847,6 @@ function updatePresetDropdown(filterText = '') {
         }
     });
 
-    // 검색어가 있고 매칭된 항목이 있으면 첫 번째 매칭 항목을 자동으로 선택 상태로 둠 (UX 향상)
     if (filterText && matchCount > 0) {
         select.selectedIndex = 1;
     }
@@ -732,7 +869,7 @@ function savePreset() {
     presets[presetName] = currentData;
     localStorage.setItem('tourmaker_presets', JSON.stringify(presets));
     
-    document.getElementById('preset-search').value = ''; // 저장후 검색어 초기화
+    document.getElementById('preset-search').value = ''; 
     updatePresetDropdown();
     document.getElementById('preset-select').value = presetName;
     alert(`[${presetName}] 견적이 저장되었습니다.`);
@@ -783,7 +920,6 @@ function clearForm() {
         document.getElementById('inp-currency').value = 'JPY';
         document.getElementById('inp-exRate').value = '9.5';
         
-        // 동적 항목들 싹 지우고 빈 칸 1개씩만 생성
         document.getElementById('flight-inputs-container').innerHTML = '';
         document.getElementById('local-inputs-container').innerHTML = '';
         document.getElementById('domestic-inputs-container').innerHTML = '';
@@ -835,11 +971,12 @@ function calculateAndRender() {
     else if (isJeju) le.innerHTML = '<span>3. 제주(현지) 발생비용 (원화 직접 입력)</span>';
     else le.innerHTML = '<span>3. 해외현지 발생비용 (외화 입력)</span><span style="font-size:11px;font-weight:400;color:#9ca3af;">*원화 자동 환산</span>';
 
-    document.getElementById('out-clientName').innerText = clientName;
-    document.getElementById('out-docTitle').innerText = docTitle;
-    document.getElementById('out-travelDate').innerText = travelDate;
-    document.getElementById('out-paxStr').innerText = paxStr;
-    document.getElementById('out-issueAndRate').innerText = isKRW ? `${issueDate} / 국내행사 (환율 미적용)` : `${issueDate} / ${currency} ${exRate} 기준(송금)`;
+    // XSS 방지 처리하여 대입
+    document.getElementById('out-clientName').textContent = clientName;
+    document.getElementById('out-docTitle').textContent = docTitle;
+    document.getElementById('out-travelDate').textContent = travelDate;
+    document.getElementById('out-paxStr').textContent = paxStr;
+    document.getElementById('out-issueAndRate').textContent = isKRW ? `${issueDate} / 국내행사 (환율 미적용)` : `${issueDate} / ${currency} ${exRate} 기준(송금)`;
 
     const cN = currency==='JPY'?'엔화':(currency==='USD'?'달러':(isKRW?'원화':'위안화'));
     const cS = currency==='USD'?'$':(isKRW?'₩':'¥');
@@ -960,12 +1097,15 @@ function calculateAndRender() {
     document.getElementById('tbody-total').innerHTML=`
         <tr class="grand-row"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(1)+(2)+(3) 전체 합계 금액</td><td class="text-right text-blue-800 grand-amount" style="white-space:nowrap">₩${fmtT(gT)}</td><td></td></tr>
         <tr class="grand-row grand-row-last"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(2)+(3) 행사 비용 합계 <span style="font-size:10px;font-weight:400;color:#64748b">${ex}</span></td><td class="text-right text-red-700 grand-amount" style="white-space:nowrap">₩${fmtT(nF)}</td><td></td></tr>`;
+
+    // 렌더링 끝난 후 실시간 에러 검증 실행
+    renderWarnings();
 }
 
 // ===== 초기화 및 이벤트 등록 =====
 document.addEventListener('DOMContentLoaded', function() {
-    buildInitialInputs(); // 동적 배열 방식으로 기본값 생성
-    updatePresetDropdown(); // 로컬 스토리지 데이터 연동
+    buildInitialInputs(); 
+    updatePresetDropdown();
     syncCurrencyUI();
     calculateAndRender();
 
@@ -974,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', function() {
         calculateAndRender();
     });
 
-    // 이벤트 위임 (동적으로 생성된 input들도 모두 이벤트 감지)
+    // 실시간 이벤트 리스너 (입력값이 바뀔 때마다 렌더링 & 검증 동시 실행)
     document.getElementById('panelInput').addEventListener('input', function(e) {
         if (e.target.id !== 'inp-currency' && e.target.id !== 'preset-search') {
             calculateAndRender();
