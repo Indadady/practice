@@ -62,6 +62,7 @@
         .panel-input {
             width: 480px; flex-shrink: 0; background: #fff;
             border-right: 1px solid #d1d5db; overflow-y: auto; padding: 20px;
+            scroll-behavior: smooth; /* 스무스 스크롤 추가 */
         }
         .panel-input h2 {
             font-size: 16px; font-weight: 800; border-bottom: 2px solid #0f172a;
@@ -91,7 +92,7 @@
         .btn-delete { background: #fff; color: #dc2626; border: 1px solid #dc2626; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
         .btn-delete:hover { background: #fef2f2; }
 
-        /* ===== 경고 패널 (새로 추가됨) ===== */
+        /* ===== 경고 패널 ===== */
         .warning-panel {
             background-color: #fef2f2; border: 1px solid #f87171; border-radius: 8px;
             padding: 12px 16px; margin-bottom: 20px; color: #991b1b;
@@ -101,8 +102,9 @@
         .warning-panel.hidden { display: none; }
         .warning-title { font-weight: 800; font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: #b91c1c; }
         .warning-list { list-style-type: none; padding-left: 0; font-size: 12px; line-height: 1.6; }
-        .warning-list li { position: relative; padding-left: 14px; }
-        .warning-list li::before { content: "•"; position: absolute; left: 0; color: #ef4444; font-weight: bold; }
+        .warning-list li { position: relative; padding-left: 14px; cursor: pointer; transition: color 0.2s; }
+        .warning-list li:hover { color: #dc2626; text-decoration: underline; } /* 클릭 유도 */
+        .warning-list li::before { content: "•"; position: absolute; left: 0; color: #ef4444; font-weight: bold; text-decoration: none; display: inline-block; }
         .error-border { border: 2px solid #ef4444 !important; background-color: #fef2f2 !important; transition: all 0.2s; }
         .error-row-container { border: 1px solid #f87171 !important; box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
 
@@ -302,7 +304,7 @@
         <div class="panel-input no-print" id="panelInput">
             <h2>문서 데이터 입력</h2>
 
-            <!-- ===== 에러 경고 패널 (추가됨) ===== -->
+            <!-- ===== 에러 경고 패널 ===== -->
             <div id="warning-panel" class="warning-panel hidden">
                 <div class="warning-title">⚠️ 검수 경고: 확인이 필요한 항목이 있습니다.</div>
                 <ul id="warning-list" class="warning-list"></ul>
@@ -437,14 +439,50 @@
 
 <script>
 // ===================================================================
-// 유효성 검사 및 경고 시스템 (새로 추가된 핵심 로직)
+// 유틸리티 및 보안 처리
 // ===================================================================
 
-// 기준 인원 추출 (예: "38명기준" -> 38)
+// HTML 특수문자 Escape 처리 (보안 및 UI 깨짐 방지)
+function escAttr(str = '') {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+// 스무스 스크롤 이동 함수 (UX 개선)
+function scrollToRow(rowId) {
+    const el = document.getElementById(rowId);
+    if(el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // 부드럽게 배경색 깜빡임 효과 (사용자 인지 향상)
+        const origBg = el.style.backgroundColor;
+        el.style.backgroundColor = '#fecaca';
+        setTimeout(() => { el.style.backgroundColor = origBg; }, 800);
+    }
+}
+
+
+// ===================================================================
+// 유효성 검사 및 경고 시스템 (리팩토링 및 고도화)
+// ===================================================================
+
+let warningTimer = null; // 디바운스용 타이머
+
+// 기준 인원 추출 로직 고도화 (예: "총 38", "38명", "33+5명")
 function extractBasePax() {
-    const paxStr = document.getElementById('inp-paxStr').value || '';
-    const match = paxStr.match(/(\d+)\s*명/);
-    return match ? Number(match[1]) : null;
+    const paxStr = (document.getElementById('inp-paxStr').value || '').replace(/\s/g, '');
+    
+    // 1순위: "총 38명", "38명기준" 등 직접적인 숫자 표기
+    const totalMatch = paxStr.match(/총(\d+)/) || paxStr.match(/(\d+)명/);
+    if (totalMatch) return Number(totalMatch[1]);
+    
+    // 2순위: "33+5" 형태의 합산
+    const plusMatch = paxStr.match(/(\d+)\+(\d+)/);
+    if (plusMatch) return Number(plusMatch[1]) + Number(plusMatch[2]);
+    
+    return null;
 }
 
 // 전체 입력 폼 검증 로직
@@ -455,67 +493,95 @@ function validateRows() {
     const exRateInput = document.getElementById('inp-exRate');
     const exRate = Number(exRateInput.value) || 0;
 
-    // 기존의 에러 테두리 초기화
+    // 기존 에러 테두리 초기화
     document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
     document.querySelectorAll('.error-row-container').forEach(el => el.classList.remove('error-row-container'));
 
-    // 1. 환율 비정상 검증
+    // 1. 환율 비정상 검증 (수정 덮어쓰기 대신 경고만)
     if (currency === 'JPY' && (exRate < 5 || exRate > 20)) {
-        warnings.push(`환율 경고: JPY 환율(${exRate})이 일반적인 범위를 벗어났습니다.`);
+        warnings.push({ msg: `환율 경고: JPY 환율(${exRate})이 일반적인 범위를 벗어났습니다.`, targetId: 'wrap-exRate' });
         exRateInput.classList.add('error-border');
     }
     if (currency === 'USD' && (exRate < 1000 || exRate > 2000)) {
-        warnings.push(`환율 경고: USD 환율(${exRate})이 일반적인 범위를 벗어났습니다.`);
+        warnings.push({ msg: `환율 경고: USD 환율(${exRate})이 일반적인 범위를 벗어났습니다.`, targetId: 'wrap-exRate' });
         exRateInput.classList.add('error-border');
     }
     if (currency === 'CNY' && (exRate < 100 || exRate > 300)) {
-        warnings.push(`환율 경고: CNY 환율(${exRate})이 일반적인 범위를 벗어났습니다.`);
+        warnings.push({ msg: `환율 경고: CNY 환율(${exRate})이 일반적인 범위를 벗어났습니다.`, targetId: 'wrap-exRate' });
         exRateInput.classList.add('error-border');
     }
 
-    // 2. 동적 행 검증
-    // 기준 인원과 일치해야 할 가능성이 높은 대표 항목들
-    const paxCheckItems = ['식비', '입장료', '관광지', '여행자보험', '에어로케이', '항공료', '항공'];
+    // 인원 체크 대상 분류 함수
+    const isPaxSensitiveItem = (name) => {
+        const exactItems = ['식비', '관광지입장료', '여행자보험', '항공료'];
+        const includesItems = ['중식', '석식', '입장권'];
+        if (exactItems.includes(name)) return true;
+        return includesItems.some(k => name.includes(k));
+    };
 
+    // 2. 동적 행 검증 (클래스 기반의 안전한 탐색)
     document.querySelectorAll('.flight-item, .local-item, .domestic-item').forEach((rowEl, index) => {
         let rowHasError = false;
+        
+        // 이동용 ID 부여
+        const rowId = `row-${index}`;
+        rowEl.id = rowId;
 
-        const inputs = rowEl.querySelectorAll('.slot-input');
-        const nameEl = inputs[0]; // 첫번째가 name
-        const qtyEl = inputs[2];  // 세번째가 qty
-        const priceEl = inputs[3]; // 네번째가 price
+        const nameEl = rowEl.querySelector('.f-name, .l-name, .d-name');
+        const descEl = rowEl.querySelector('.f-desc, .l-desc, .d-desc');
+        const qtyEl = rowEl.querySelector('.f-qty, .l-qty, .d-qty');
+        const priceEl = rowEl.querySelector('.f-krw, .l-fgn, .d-krw');
+        const noteEl = rowEl.querySelector('.f-note, .l-note, .d-note');
 
-        const name = nameEl.value.trim();
-        const qtyStr = qtyEl.value.trim();
-        const priceStr = priceEl.value.trim();
+        const name = nameEl?.value.trim() || '';
+        const desc = descEl?.value.trim() || '';
+        const qtyStr = qtyEl?.value.trim() || '';
+        const priceStr = priceEl?.value.trim() || '';
+        const note = noteEl?.value.trim() || '';
         
         const qty = Number(qtyStr) || 0;
         const price = Number(priceStr) || 0;
 
-        if (!name && !qtyStr && !priceStr) return; // 완전 빈 칸은 무시
+        // 완전 빈 칸 및 애매한 빈 칸 무시 로직 강화
+        const isAnyFilled = name || desc || qtyStr || priceStr || note;
+        if (!isAnyFilled) return; 
 
-        // A. 수량과 단가 중 하나만 입력된 경우 누락 경고
-        if ((qtyStr !== '' && priceStr === '') || (qtyStr === '' && priceStr !== '')) {
-            warnings.push(`[${name || '이름없음'}] 항목: 수량 또는 단가 중 하나가 누락되었습니다.`);
-            qtyEl.classList.add('error-border');
-            priceEl.classList.add('error-border');
+        // 이름 누락 검사
+        if (!name && (desc || qtyStr || priceStr || note)) {
+            warnings.push({ msg: `[${index + 1}번째 줄] 항목명이 누락되었습니다. (다른 데이터는 존재함)`, targetId: rowId });
+            if(nameEl) nameEl.classList.add('error-border');
             rowHasError = true;
         }
 
-        // B. 항목명은 있는데 금액이 산출되지 않는 경우
-        if (name && qty === 0 && price === 0 && (qtyStr !== '' || priceStr !== '')) {
-            warnings.push(`[${name}] 항목: 수량 또는 단가가 0으로 계산되어 산출 금액이 없습니다.`);
-            rowHasError = true;
-        }
-
-        // C. 기준 인원과 수량 불일치 검증
-        if (basePax && name && qtyStr !== '') {
-            // 항목 이름에 확인 키워드가 포함되어 있다면 (예: "관광지입장료", "중식비" 등)
-            const isPaxRelated = paxCheckItems.some(keyword => name.includes(keyword));
-            if (isPaxRelated && qty > 0 && qty !== basePax) {
-                warnings.push(`[${name}] 수량 경고: 입력된 수량(${qty})이 전체 기준 인원(${basePax}명)과 다릅니다.`);
-                qtyEl.classList.add('error-border');
+        if (name) {
+            // A. 수량과 단가 중 하나만 입력된 경우
+            if (qtyStr !== '' && priceStr === '') {
+                warnings.push({ msg: `[${name}] 항목: 단가가 누락되었습니다.`, targetId: rowId });
+                if(priceEl) priceEl.classList.add('error-border');
                 rowHasError = true;
+            } else if (qtyStr === '' && priceStr !== '') {
+                warnings.push({ msg: `[${name}] 항목: 수량이 누락되었습니다.`, targetId: rowId });
+                if(qtyEl) qtyEl.classList.add('error-border');
+                rowHasError = true;
+            }
+
+            // B. 금액 0 경고 분리
+            if (qtyStr !== '' && qty === 0) {
+                warnings.push({ msg: `[${name}] 항목: 수량이 0으로 입력되었습니다.`, targetId: rowId });
+                rowHasError = true;
+            }
+            if (priceStr !== '' && price === 0) {
+                warnings.push({ msg: `[${name}] 항목: 단가가 0으로 입력되었습니다.`, targetId: rowId });
+                rowHasError = true;
+            }
+
+            // C. 기준 인원과 불일치 검증 (세분화)
+            if (basePax && qtyStr !== '') {
+                if (isPaxSensitiveItem(name) && qty > 0 && qty !== basePax) {
+                    warnings.push({ msg: `[${name}] 수량 경고: 입력된 수량(${qty})이 기준 인원(${basePax}명)과 다릅니다.`, targetId: rowId });
+                    if(qtyEl) qtyEl.classList.add('error-border');
+                    rowHasError = true;
+                }
             }
         }
 
@@ -535,7 +601,10 @@ function renderWarnings() {
 
     if (warnings.length > 0) {
         panel.classList.remove('hidden');
-        list.innerHTML = warnings.map(w => `<li>${w}</li>`).join('');
+        // 클릭 시 해당 row로 스크롤 이동하는 UX 적용
+        list.innerHTML = warnings.map(w => 
+            `<li onclick="scrollToRow('${w.targetId}')" title="클릭 시 해당 항목으로 이동합니다">${w.msg}</li>`
+        ).join('');
     } else {
         panel.classList.add('hidden');
         list.innerHTML = '';
@@ -543,28 +612,33 @@ function renderWarnings() {
     return warnings;
 }
 
+// 디바운스를 적용한 검사 스케줄러 (성능 최적화)
+function scheduleValidation() {
+    clearTimeout(warningTimer);
+    warningTimer = setTimeout(() => {
+        renderWarnings();
+    }, 300); // 0.3초 대기 후 검사
+}
+
 // ===================================================================
 // PDF 출력 및 탭 전환
 // ===================================================================
 function printPDF() {
-    // 1. 출력 전 마지막 검증 수행
+    // 출력 전 마지막 동기적 검증
     const warnings = renderWarnings();
     
-    // 2. 에러가 있다면 Confirm 창으로 인지시킴
     if (warnings.length > 0) {
         let msg = "⚠️ 입력된 데이터에 확인이 필요한 항목이 있습니다.\n\n";
-        msg += warnings.slice(0, 5).map(w => "- " + w).join('\n');
+        msg += warnings.slice(0, 5).map(w => "- " + w.msg).join('\n');
         if (warnings.length > 5) msg += `\n...외 ${warnings.length - 5}건`;
         msg += "\n\n이대로 PDF 출력을 진행하시겠습니까?";
         
         if (!confirm(msg)) {
-            // 출력 취소 시 상단 경고 패널로 스크롤 이동
             document.getElementById('panelInput').scrollTop = 0;
             return;
         }
     }
 
-    // 통과했거나 무시하고 진행 시 PDF 렌더링 시작
     const sheet = document.getElementById('print-section');
     const tableArea = document.getElementById('table-area');
     const allLevels = [];
@@ -645,13 +719,9 @@ function syncCurrencyUI() {
         rI.value = 1;
     } else {
         rW.style.display = 'flex';
-        const val = Number(rI.value);
-        if (curr === 'JPY' && val > 100) rI.value = 9.5;
-        else if (curr === 'USD' && val < 100) rI.value = 1400;
-        else if (curr === 'CNY' && (val < 100 || val > 300)) rI.value = 195;
+        // (수정됨) 강제로 덮어씌우는 로직 제거. 사용자가 원하는 값을 입력하도록 두고, 이상하면 validateRows에서 경고처리.
     }
     
-    // 항목 단가 placeholder 업데이트
     const isKRW = (curr === 'KRW_MAINLAND' || curr === 'KRW_JEJU');
     document.querySelectorAll('.l-fgn').forEach(el => {
         el.placeholder = isKRW ? '단가(₩)' : '단가(외화)';
@@ -659,7 +729,7 @@ function syncCurrencyUI() {
 }
 
 // ===================================================================
-// 동적 입력 필드 생성 로직
+// 동적 입력 필드 생성 로직 (초기화 및 Escape 처리)
 // ===================================================================
 
 const initFlights = [
@@ -690,65 +760,66 @@ const initDomestics = [
     { name:"공항수송", desc:"공항 왕복 차량비", qty:"", krw:"", note:"비고(빈칸가능)" }
 ];
 
-function addFlightRow(data = {name:'', desc:'', qty:'', krw:'', note:''}) {
+// skipRender 파라미터 추가하여 대량 추가 시 불필요한 렌더링 방지
+function addFlightRow(data = {name:'', desc:'', qty:'', krw:'', note:''}, skipRender = false) {
     const container = document.getElementById('flight-inputs-container');
     const html = `
         <div class="slot-card flight-item">
             <div class="slot-card-header">
-                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender();" title="항목 삭제">✕</button>
+                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender(); scheduleValidation();" title="항목 삭제">✕</button>
             </div>
             <div class="slot-grid-flight">
-                <input type="text" class="slot-input f-name" value="${data.name}" placeholder="항목">
-                <input type="text" class="slot-input f-desc" value="${data.desc}" placeholder="내용">
-                <input type="number" class="slot-input f-qty" style="text-align:center" value="${data.qty}" placeholder="수량">
-                <input type="number" class="slot-input f-krw" style="text-align:right" value="${data.krw}" placeholder="단가(₩)">
+                <input type="text" class="slot-input f-name" value="${escAttr(data.name)}" placeholder="항목">
+                <input type="text" class="slot-input f-desc" value="${escAttr(data.desc)}" placeholder="내용">
+                <input type="number" class="slot-input f-qty" style="text-align:center" value="${escAttr(data.qty)}" placeholder="수량">
+                <input type="number" class="slot-input f-krw" style="text-align:right" value="${escAttr(data.krw)}" placeholder="단가(₩)">
             </div>
-            <input type="text" class="slot-input f-note" style="width:100%" value="${data.note}" placeholder="비고">
+            <input type="text" class="slot-input f-note" style="width:100%" value="${escAttr(data.note)}" placeholder="비고">
         </div>
     `;
     container.insertAdjacentHTML('beforeend', html);
-    calculateAndRender();
+    if (!skipRender) { calculateAndRender(); scheduleValidation(); }
 }
 
-function addLocalRow(data = {name:'', desc:'', qty:'', fgn:'', note:''}) {
+function addLocalRow(data = {name:'', desc:'', qty:'', fgn:'', note:''}, skipRender = false) {
     const container = document.getElementById('local-inputs-container');
     const html = `
         <div class="slot-card local-item">
             <div class="slot-card-header">
-                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender();" title="항목 삭제">✕</button>
+                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender(); scheduleValidation();" title="항목 삭제">✕</button>
             </div>
             <div class="slot-grid">
-                <input type="text" class="slot-input l-name" value="${data.name}" placeholder="항목명">
-                <input type="text" class="slot-input l-desc" value="${data.desc}" placeholder="내용(병합)">
-                <input type="number" class="slot-input l-qty" style="text-align:center" value="${data.qty}" placeholder="수량">
-                <input type="number" class="slot-input l-fgn" style="text-align:right" value="${data.fgn}" placeholder="단가(외화)">
+                <input type="text" class="slot-input l-name" value="${escAttr(data.name)}" placeholder="항목명">
+                <input type="text" class="slot-input l-desc" value="${escAttr(data.desc)}" placeholder="내용(병합)">
+                <input type="number" class="slot-input l-qty" style="text-align:center" value="${escAttr(data.qty)}" placeholder="수량">
+                <input type="number" class="slot-input l-fgn" style="text-align:right" value="${escAttr(data.fgn)}" placeholder="단가(외화)">
             </div>
-            <input type="text" class="slot-input l-note" style="width:100%" value="${data.note}" placeholder="비고(빈칸가능)">
+            <input type="text" class="slot-input l-note" style="width:100%" value="${escAttr(data.note)}" placeholder="비고(빈칸가능)">
         </div>
     `;
     container.insertAdjacentHTML('beforeend', html);
     syncCurrencyUI(); 
-    calculateAndRender();
+    if (!skipRender) { calculateAndRender(); scheduleValidation(); }
 }
 
-function addDomesticRow(data = {name:'', desc:'', qty:'', krw:'', note:''}) {
+function addDomesticRow(data = {name:'', desc:'', qty:'', krw:'', note:''}, skipRender = false) {
     const container = document.getElementById('domestic-inputs-container');
     const html = `
         <div class="slot-card domestic-item">
             <div class="slot-card-header">
-                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender();" title="항목 삭제">✕</button>
+                <button type="button" class="btn-delete-row" onclick="this.closest('.slot-card').remove(); calculateAndRender(); scheduleValidation();" title="항목 삭제">✕</button>
             </div>
             <div class="slot-grid-flight">
-                <input type="text" class="slot-input d-name" value="${data.name}" placeholder="항목">
-                <input type="text" class="slot-input d-desc" value="${data.desc}" placeholder="내용">
-                <input type="number" class="slot-input d-qty" style="text-align:center" value="${data.qty}" placeholder="수량">
-                <input type="number" class="slot-input d-krw" style="text-align:right" value="${data.krw}" placeholder="단가(₩)">
+                <input type="text" class="slot-input d-name" value="${escAttr(data.name)}" placeholder="항목">
+                <input type="text" class="slot-input d-desc" value="${escAttr(data.desc)}" placeholder="내용">
+                <input type="number" class="slot-input d-qty" style="text-align:center" value="${escAttr(data.qty)}" placeholder="수량">
+                <input type="number" class="slot-input d-krw" style="text-align:right" value="${escAttr(data.krw)}" placeholder="단가(₩)">
             </div>
-            <input type="text" class="slot-input d-note" style="width:100%" value="${data.note}" placeholder="비고(빈칸가능)">
+            <input type="text" class="slot-input d-note" style="width:100%" value="${escAttr(data.note)}" placeholder="비고(빈칸가능)">
         </div>
     `;
     container.insertAdjacentHTML('beforeend', html);
-    calculateAndRender();
+    if (!skipRender) { calculateAndRender(); scheduleValidation(); }
 }
 
 function buildInitialInputs() {
@@ -756,9 +827,10 @@ function buildInitialInputs() {
     document.getElementById('local-inputs-container').innerHTML = '';
     document.getElementById('domestic-inputs-container').innerHTML = '';
 
-    initFlights.forEach(d => addFlightRow(d));
-    initLocals.forEach(d => addLocalRow(d));
-    initDomestics.forEach(d => addDomesticRow(d));
+    // skipRender = true 로 설정하여 초기 렌더링 버벅임 방지
+    initFlights.forEach(d => addFlightRow(d, true));
+    initLocals.forEach(d => addLocalRow(d, true));
+    initDomestics.forEach(d => addDomesticRow(d, true));
 }
 
 // ===================================================================
@@ -811,20 +883,21 @@ function setFormData(data) {
     document.getElementById('local-inputs-container').innerHTML = '';
     document.getElementById('domestic-inputs-container').innerHTML = '';
 
+    // skipRender = true 로 설정하여 대량 데이터 불러올 때 렌더링 최적화
     if (data.flights || data.locals || data.domestics) {
-        if(data.flights) data.flights.forEach(item => addFlightRow(item));
-        if(data.locals) data.locals.forEach(item => addLocalRow(item));
-        if(data.domestics) data.domestics.forEach(item => addDomesticRow(item));
+        if(data.flights) data.flights.forEach(item => addFlightRow(item, true));
+        if(data.locals) data.locals.forEach(item => addLocalRow(item, true));
+        if(data.domestics) data.domestics.forEach(item => addDomesticRow(item, true));
     } 
-    else {
+    else { // 과거 버전 하위 호환
         for(let i=1; i<=5; i++) {
-            if(data[`inp-f${i}-name`] !== undefined) addFlightRow({name: data[`inp-f${i}-name`], desc: data[`inp-f${i}-desc`], qty: data[`inp-f${i}-qty`], krw: data[`inp-f${i}-krw`], note: data[`inp-f${i}-note`]});
+            if(data[`inp-f${i}-name`] !== undefined) addFlightRow({name: data[`inp-f${i}-name`], desc: data[`inp-f${i}-desc`], qty: data[`inp-f${i}-qty`], krw: data[`inp-f${i}-krw`], note: data[`inp-f${i}-note`]}, true);
         }
         for(let i=0; i<=30; i++) {
-            if(data[`inp-l${i}-name`] !== undefined) addLocalRow({name: data[`inp-l${i}-name`], desc: data[`inp-l${i}-desc`], qty: data[`inp-l${i}-qty`], fgn: data[`inp-l${i}-fgn`], note: data[`inp-l${i}-note`]});
+            if(data[`inp-l${i}-name`] !== undefined) addLocalRow({name: data[`inp-l${i}-name`], desc: data[`inp-l${i}-desc`], qty: data[`inp-l${i}-qty`], fgn: data[`inp-l${i}-fgn`], note: data[`inp-l${i}-note`]}, true);
         }
         for(let i=1; i<=10; i++) {
-            if(data[`inp-d${i}-name`] !== undefined) addDomesticRow({name: data[`inp-d${i}-name`], desc: data[`inp-d${i}-desc`], qty: data[`inp-d${i}-qty`], krw: data[`inp-d${i}-krw`], note: data[`inp-d${i}-note`]});
+            if(data[`inp-d${i}-name`] !== undefined) addDomesticRow({name: data[`inp-d${i}-name`], desc: data[`inp-d${i}-desc`], qty: data[`inp-d${i}-qty`], krw: data[`inp-d${i}-krw`], note: data[`inp-d${i}-note`]}, true);
         }
     }
 }
@@ -889,6 +962,7 @@ function loadPreset() {
         setFormData(data);
         syncCurrencyUI();
         calculateAndRender();
+        renderWarnings();
     }
 }
 
@@ -924,12 +998,13 @@ function clearForm() {
         document.getElementById('local-inputs-container').innerHTML = '';
         document.getElementById('domestic-inputs-container').innerHTML = '';
         
-        addFlightRow();
-        addLocalRow();
-        addDomesticRow();
+        addFlightRow({}, true);
+        addLocalRow({}, true);
+        addDomesticRow({}, true);
         
         syncCurrencyUI();
         calculateAndRender();
+        renderWarnings();
     }
 }
 
@@ -971,7 +1046,7 @@ function calculateAndRender() {
     else if (isJeju) le.innerHTML = '<span>3. 제주(현지) 발생비용 (원화 직접 입력)</span>';
     else le.innerHTML = '<span>3. 해외현지 발생비용 (외화 입력)</span><span style="font-size:11px;font-weight:400;color:#9ca3af;">*원화 자동 환산</span>';
 
-    // XSS 방지 처리하여 대입
+    // XSS 방지 처리
     document.getElementById('out-clientName').textContent = clientName;
     document.getElementById('out-docTitle').textContent = docTitle;
     document.getElementById('out-travelDate').textContent = travelDate;
@@ -995,7 +1070,7 @@ function calculateAndRender() {
 
     let tF=0, tL=0, tD=0;
 
-    // --- 항공/교통 (동적 스크래핑) ---
+    // --- 항공/교통 ---
     const fH = isMainland?'교통비':'항공료';
     const fSub = isMainland?'(1) 합계 - 교통비':'(1) 합계 - 항공료';
     const flights=[];
@@ -1018,17 +1093,17 @@ function calculateAndRender() {
         for(let i=0;i<flights.length;i++){
             h+='<tr>';
             if(i===0)h+=`<td rowspan="${flights.length}" class="text-center font-bold bg-gray-50">${fH}</td>`;
-            if(i===0||flights[i].name!==flights[i-1].name)h+=`<td rowspan="${rs(flights,i,'name')}" class="text-center">${flights[i].name}</td>`;
-            if(i===0||flights[i].name!==flights[i-1].name||flights[i].desc!==flights[i-1].desc)h+=`<td rowspan="${rs2(flights,i)}">${flights[i].desc}</td>`;
+            if(i===0||flights[i].name!==flights[i-1].name)h+=`<td rowspan="${rs(flights,i,'name')}" class="text-center">${escAttr(flights[i].name)}</td>`;
+            if(i===0||flights[i].name!==flights[i-1].name||flights[i].desc!==flights[i-1].desc)h+=`<td rowspan="${rs2(flights,i)}">${escAttr(flights[i].desc)}</td>`;
             h+=`<td class="text-center">${fmt(flights[i].qty)}</td>`;
             if(!isKRW)h+='<td class="text-right bg-gray-50"></td>';
-            h+=`<td class="text-right" style="white-space:nowrap">${fmt(flights[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(flights[i].tot)}</td><td class="text-center">${flights[i].note}</td></tr>`;
+            h+=`<td class="text-right" style="white-space:nowrap">${fmt(flights[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(flights[i].tot)}</td><td class="text-center">${escAttr(flights[i].note)}</td></tr>`;
         }
     }
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${fSub}</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tF)}</td><td></td></tr>`;
     document.getElementById('tbody-flight').innerHTML=h;
 
-    // --- 현지비용 (동적 스크래핑) ---
+    // --- 현지비용 ---
     const lH=isMainland?'행사비용':(isJeju?'제주(현지)<br>발생비용':'해외현지<br>발생비용');
     const lSub=isMainland?'(2) 합계 - 행사 비용':(isJeju?'(2) 합계 - 제주(현지) 발생 비용':'(2) 합계 - 해외현지 발생 비용');
     const locals=[];
@@ -1051,17 +1126,17 @@ function calculateAndRender() {
         for(let i=0;i<locals.length;i++){
             h+='<tr>';
             if(i===0)h+=`<td rowspan="${locals.length}" class="text-center font-bold bg-gray-50">${lH}</td>`;
-            if(i===0||locals[i].name!==locals[i-1].name)h+=`<td rowspan="${rs(locals,i,'name')}" class="text-center">${locals[i].name}</td>`;
-            if(i===0||locals[i].name!==locals[i-1].name||locals[i].desc!==locals[i-1].desc)h+=`<td rowspan="${rs2(locals,i)}">${locals[i].desc}</td>`;
+            if(i===0||locals[i].name!==locals[i-1].name)h+=`<td rowspan="${rs(locals,i,'name')}" class="text-center">${escAttr(locals[i].name)}</td>`;
+            if(i===0||locals[i].name!==locals[i-1].name||locals[i].desc!==locals[i-1].desc)h+=`<td rowspan="${rs2(locals,i)}">${escAttr(locals[i].desc)}</td>`;
             h+=`<td class="text-center">${fmt(locals[i].qty)}</td>`;
             if(!isKRW)h+=`<td class="text-right bg-yellow-50"><span style="float:left;font-size:9px;color:#9ca3af">${cS}</span>${fmt(locals[i].fgn)}</td>`;
-            h+=`<td class="text-right" style="white-space:nowrap">${fmt(locals[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(locals[i].tot)}</td><td class="text-center">${locals[i].note}</td></tr>`;
+            h+=`<td class="text-right" style="white-space:nowrap">${fmt(locals[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(locals[i].tot)}</td><td class="text-center">${escAttr(locals[i].note)}</td></tr>`;
         }
     }
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${lSub}</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tL)}</td><td></td></tr>`;
     document.getElementById('tbody-local').innerHTML=h;
 
-    // --- 국내비용 (동적 스크래핑) ---
+    // --- 국내비용 ---
     const doms=[];
     document.querySelectorAll('.domestic-item').forEach(el => {
         const n = el.querySelector('.d-name').value;
@@ -1081,11 +1156,11 @@ function calculateAndRender() {
         for(let i=0;i<doms.length;i++){
             h+='<tr>';
             if(i===0)h+=`<td rowspan="${doms.length}" class="text-center font-bold bg-gray-50">국내 발생 비용</td>`;
-            if(i===0||doms[i].name!==doms[i-1].name)h+=`<td rowspan="${rs(doms,i,'name')}" class="text-center">${doms[i].name}</td>`;
-            if(i===0||doms[i].name!==doms[i-1].name||doms[i].desc!==doms[i-1].desc)h+=`<td rowspan="${rs2(doms,i)}">${doms[i].desc}</td>`;
+            if(i===0||doms[i].name!==doms[i-1].name)h+=`<td rowspan="${rs(doms,i,'name')}" class="text-center">${escAttr(doms[i].name)}</td>`;
+            if(i===0||doms[i].name!==doms[i-1].name||doms[i].desc!==doms[i-1].desc)h+=`<td rowspan="${rs2(doms,i)}">${escAttr(doms[i].desc)}</td>`;
             h+=`<td class="text-center">${fmt(doms[i].qty)}</td>`;
             if(!isKRW)h+='<td class="text-right bg-gray-50"></td>';
-            h+=`<td class="text-right" style="white-space:nowrap">${fmt(doms[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(doms[i].tot)}</td><td class="text-center">${doms[i].note}</td></tr>`;
+            h+=`<td class="text-right" style="white-space:nowrap">${fmt(doms[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(doms[i].tot)}</td><td class="text-center">${escAttr(doms[i].note)}</td></tr>`;
         }
     }
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">(3) 합계 - 국내 발생 비용</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tD)}</td><td></td></tr>`;
@@ -1098,26 +1173,30 @@ function calculateAndRender() {
         <tr class="grand-row"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(1)+(2)+(3) 전체 합계 금액</td><td class="text-right text-blue-800 grand-amount" style="white-space:nowrap">₩${fmtT(gT)}</td><td></td></tr>
         <tr class="grand-row grand-row-last"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(2)+(3) 행사 비용 합계 <span style="font-size:10px;font-weight:400;color:#64748b">${ex}</span></td><td class="text-right text-red-700 grand-amount" style="white-space:nowrap">₩${fmtT(nF)}</td><td></td></tr>`;
 
-    // 렌더링 끝난 후 실시간 에러 검증 실행
-    renderWarnings();
+    // 💡 변경점: 무조건 renderWarnings() 호출하지 않고 디바운스 타이머 호출로 대체!
 }
 
 // ===== 초기화 및 이벤트 등록 =====
 document.addEventListener('DOMContentLoaded', function() {
-    buildInitialInputs(); 
+    buildInitialInputs(); // skipRender 상태로 입력칸 생성
     updatePresetDropdown();
     syncCurrencyUI();
+    
+    // 초기 렌더링 1회 및 초기 에러 검증
     calculateAndRender();
+    renderWarnings();
 
     document.getElementById('inp-currency').addEventListener('change', function() {
         syncCurrencyUI();
         calculateAndRender();
+        scheduleValidation();
     });
 
-    // 실시간 이벤트 리스너 (입력값이 바뀔 때마다 렌더링 & 검증 동시 실행)
+    // 실시간 이벤트 리스너 (입력값이 바뀔 때 렌더링은 즉시, 검증은 0.3초 지연 수행)
     document.getElementById('panelInput').addEventListener('input', function(e) {
         if (e.target.id !== 'inp-currency' && e.target.id !== 'preset-search') {
             calculateAndRender();
+            scheduleValidation();
         }
     });
 });
