@@ -1,849 +1,951 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <!-- ✅ GA4 (Tourmaker 통합 관리) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고객 제출용 가격 산출 내역서 - TOURMAKER</title>
+
+    <meta property="og:title" content="투어메이커 가격 산출 내역서">
+    <meta property="og:description" content="고객 제출용 공식 행사비 산출 내역서 (국내/해외 통합)">
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEhPxG_ONo2BdFAGDNnn-pHIGJTrAq374YbqgwTTlyIZTP22kOWTDD_AyjKDNFPhsHg5t1Iq6zV0dL_NZIj4o97Kd0eWJYCv-NHhtIqme-Mp3htGhAdkqVv5NRU3Jc9TbdbvvVKrPslObA1oNABpgl12QtGwirC2QM5lcPCVoWm8pIbeKuZBbeDHAvpbKEQ">
+    <meta property="og:type" content="website">
+
+    <!-- 투어메이커 GA4 측정 ID 반영 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-JLH9GD9SVR', { send_page_view: true });
-    </script>
-
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>(주)투어메이커 - 데이터로 만드는 혁신적 여행</title>
-
-    <!-- ✅ SEO -->
-    <meta name="description" content="S2B 학교장터 및 나라장터 등록업체. 공공기관 연수부터 가족여행, 소규모 프라이빗 투어까지. 데이터 사이언스 기반의 정교한 기획력을 경험하세요." />
-    <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="https://tourmaker.kr/" />
-
-    <!-- ✅ Open Graph (카톡/네이버/페북 공유 안정화 - 잘림 방지 썸네일 적용) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="(주)투어메이커" />
-    <meta property="og:title" content="(주)투어메이커 - 데이터로 만드는 혁신적 여행" />
-    <meta property="og:description" content="VIP를 위한 단 하나의 맞춤형 여정, 투어메이커의 기획력이면 가능합니다." />
-    <meta property="og:url" content="https://tourmaker.kr/" />
-    <!-- 1200x630 권장 사이즈 강제 지정 (대표님이 주신 새 이미지 링크 적용) -->
-    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEhPxG_ONo2BdFAGDNnn-pHIGJTrAq374YbqgwTTlyIZTP22kOWTDD_AyjKDNFPhsHg5t1Iq6zV0dL_NZIj4o97Kd0eWJYCv-NHhtIqme-Mp3htGhAdkqVv5NRU3Jc9TbdbvvVKrPslObA1oNABpgl12QtGwirC2QM5lcPCVoWm8pIbeKuZBbeDHAvpbKEQ" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-
-    <!-- ✅ Twitter (기타 공유 채널 대비) -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="(주)투어메이커 - 데이터로 만드는 혁신적 여행" />
-    <meta name="twitter:description" content="공공기관 연수부터 VIP 가족여행까지, 데이터 기반 기획력." />
-    <meta name="twitter:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEhPxG_ONo2BdFAGDNnn-pHIGJTrAq374YbqgwTTlyIZTP22kOWTDD_AyjKDNFPhsHg5t1Iq6zV0dL_NZIj4o97Kd0eWJYCv-NHhtIqme-Mp3htGhAdkqVv5NRU3Jc9TbdbvvVKrPslObA1oNABpgl12QtGwirC2QM5lcPCVoWm8pIbeKuZBbeDHAvpbKEQ" />
-
-    <!-- ✅ Fonts/Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-
-    <!-- ✅ Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- ✅ Structured Data (검색 최적화 JSON-LD) -->
-    <script type="application/ld+json">
-    {
-      "@context":"https://schema.org",
-      "@type":"TravelAgency",
-      "name":"(주)투어메이커",
-      "url":"https://tourmaker.kr/",
-      "telephone":"+82-33-562-2551",
-      "email":"jmlojm@nate.com",
-      "address":{
-        "@type":"PostalAddress",
-        "addressCountry":"KR",
-        "addressRegion":"강원특별자치도",
-        "addressLocality":"정선군",
-        "streetAddress":"정선군 정선읍 봉양3길 22-10 3층"
-      }
-    }
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JLH9GD9SVR');
     </script>
 
     <style>
-        :root { --brand-blue: #1e40af; --brand-accent: #f59e0b; }
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8f9fa; color: #334155; }
-        section { scroll-margin-top: 80px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f3f4f6; color: #1e293b; -webkit-text-size-adjust: 100%;
+        }
 
-        /* ✅ Intro Overlay */
-        #intro-overlay{
-            position:fixed; inset:0;
-            background-color:#ececec;
-            z-index:9999;
-            display:flex; justify-content:center; align-items:center;
-            transition: opacity 0.6s ease-out;
+        /* ===== 헤더 ===== */
+        .top-header {
+            background: #0f172a; color: #fff; padding: 12px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100;
         }
-        #intro-video{
-            max-width:80%; max-height:80vh; width:600px; object-fit:contain;
-            transition: transform 0.3s ease; mix-blend-mode:multiply;
-            -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 60%);
-            mask-image: radial-gradient(ellipse at center, black 20%, transparent 60%);
+        .top-header img { height: 28px; filter: brightness(0) invert(1); }
+        .top-header h1 { font-size: 15px; font-weight: 700; margin-left: 10px; white-space: nowrap; }
+        .header-left { display: flex; align-items: center; }
+        .header-right { display: flex; align-items: center; gap: 8px; }
+        
+        .btn-pdf {
+            background: #2563eb; color: #fff; border: none; padding: 8px 16px;
+            border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
         }
-        @media (max-width:768px){
-            #intro-video{
-                max-width:100%; width:100%; transform: scale(1.6);
-                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
-                mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+        .btn-pdf:hover { background: #1d4ed8; }
+
+        /* ===== 모바일 탭 ===== */
+        .mobile-tabs {
+            display: none; background: #fff; border-bottom: 2px solid #e2e8f0;
+            position: sticky; top: 52px; z-index: 99;
+        }
+        .mobile-tabs button {
+            flex: 1; padding: 12px 0; border: none; background: transparent;
+            font-size: 14px; font-weight: 600; color: #64748b; cursor: pointer; position: relative;
+        }
+        .mobile-tabs button.active { color: #1e40af; }
+        .mobile-tabs button.active::after {
+            content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 3px; background: #2563eb;
+        }
+
+        /* ===== PC 레이아웃 ===== */
+        .main-layout { display: flex; height: calc(100vh - 52px); overflow: hidden; }
+        .panel-input {
+            width: 480px; flex-shrink: 0; background: #fff;
+            border-right: 1px solid #d1d5db; overflow-y: auto; padding: 20px;
+        }
+        .panel-input h2 {
+            font-size: 16px; font-weight: 800; border-bottom: 2px solid #0f172a;
+            padding-bottom: 8px; margin-bottom: 16px; color: #1e293b;
+        }
+        .panel-preview {
+            flex: 1; overflow: auto; background: #525659;
+            display: flex; justify-content: center; align-items: flex-start; padding: 32px 16px;
+        }
+
+        /* ===== 견적 템플릿 관리 툴바 ===== */
+        .template-manager {
+            background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;
+            padding: 12px; margin-bottom: 20px;
+        }
+        .template-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .template-header span { font-size: 13px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 4px; }
+        .btn-clear { background: #fff; border: 1px solid #94a3b8; color: #475569; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .btn-clear:hover { background: #f1f5f9; color: #dc2626; border-color: #dc2626; }
+        .template-controls { display: flex; gap: 6px; }
+        .template-select { flex: 1; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; font-size: 12px; outline: none; }
+        .btn-load { background: #334155; color: #fff; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-load:hover { background: #0f172a; }
+        .btn-save { background: #2563eb; color: #fff; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-save:hover { background: #1d4ed8; }
+
+        /* ===== 입력 폼 ===== */
+        .section-title { font-size: 13px; font-weight: 700; padding-left: 8px; border-left: 4px solid; margin-bottom: 8px; }
+        .section-title.blue { border-color: #1e40af; color: #1e40af; }
+        .section-title.dark { border-color: #1e293b; color: #1e293b; }
+        .section-title.green { border-color: #166534; color: #166534; }
+        .section-title.orange { border-color: #9a3412; color: #9a3412; }
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; gap: 8px; margin-bottom: 8px; }
+        .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+        .form-row.cols-1 { grid-template-columns: 1fr; }
+        .form-label { display: block; font-size: 11px; color: #6b7280; margin-bottom: 3px; }
+        .form-input {
+            width: 100%; border: 1px solid #d1d5db; border-radius: 4px;
+            padding: 6px 8px; font-size: 13px; font-family: inherit; outline: none;
+        }
+        .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+        .form-select {
+            width: 100%; border: 1px solid #d1d5db; border-radius: 4px;
+            padding: 6px 8px; font-size: 13px; font-weight: 700; color: #1e40af;
+            background: #fff; font-family: inherit;
+        }
+        .slot-card {
+            background: #f9fafb; border: 1px solid #e5e7eb;
+            border-radius: 6px; padding: 8px; margin-bottom: 6px;
+        }
+        .slot-card:hover { background: #f0fdf4; }
+        .slot-grid { display: grid; grid-template-columns: 3fr 3fr 2fr 4fr; gap: 4px; margin-bottom: 4px; }
+        .slot-grid-flight { display: grid; grid-template-columns: 3fr 4fr 2fr 3fr; gap: 4px; margin-bottom: 4px; }
+        .slot-input {
+            width: 100%; border: 1px solid #d1d5db; border-radius: 4px;
+            padding: 4px 6px; font-size: 12px; font-family: inherit; outline: none;
+        }
+        .slot-input:focus { border-color: #2563eb; }
+        .exrate-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .exrate-row label { font-size: 12px; color: #6b7280; white-space: nowrap; }
+        .exrate-input {
+            width: 80px; border: 1px solid #d1d5db; border-radius: 4px;
+            padding: 5px 6px; font-size: 13px; text-align: right;
+            font-weight: 700; color: #1e40af; background: #eff6ff; font-family: inherit;
+        }
+
+        /* ===== A4 출력물 ===== */
+        .a4-sheet {
+            background: #fff; width: 100%; max-width: 850px; padding: 32px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .doc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .doc-header-left { width: 50%; }
+        .doc-header-right { width: 40%; display: flex; justify-content: flex-end; padding-top: 4px; }
+        .doc-header-right img { height: 48px; object-fit: contain; }
+        .doc-title-area { text-align: center; margin-bottom: 20px; }
+        .doc-title-area h2 {
+            display: inline-block; font-size: 26px; font-weight: 800;
+            letter-spacing: 0.15em; border-bottom: 2px solid #0f172a;
+            padding: 0 24px 4px; color: #0f172a;
+        }
+        .doc-title-area p { font-size: 11px; color: #64748b; font-weight: 700; letter-spacing: 0.25em; margin-top: 4px; text-transform: uppercase; }
+
+        .info-table { width: 100%; border-collapse: collapse; }
+        .info-table th, .info-table td { border: 1px solid #1e293b; padding: 5px 8px; font-size: 12px; }
+        .info-table th { background: #e2e8f0; color: #1e293b; font-weight: 700; text-align: left; width: 30%; }
+
+        .main-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .main-table th, .main-table td {
+            border: 1px solid #1e293b; padding: 5px 7px; font-size: 11px;
+            vertical-align: middle; overflow: hidden; word-break: keep-all;
+        }
+        .main-table th { text-align: center; font-weight: 700; }
+        .main-table thead th { background: #e2e8f0; color: #0f172a; }
+
+        .main-table tbody tr { height: 28px; }
+
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .bg-gray-50 { background: #f9fafb; }
+        .bg-yellow-50 { background: #fef9c3; }
+        .subtotal-row { background: #eff6ff; font-weight: 700; }
+        .subtotal-row td { border-bottom: 2px solid #0f172a !important; padding: 7px; height: auto !important; }
+        .grand-row { background: #f3f4f6; font-weight: 800; }
+        .grand-row td { border-top: 2px solid #0f172a !important; padding: 7px; height: auto !important; }
+        .grand-row-last td { border-bottom: 2px solid #0f172a !important; }
+        .grand-amount { font-size: 13px; }
+        .grand-label { font-size: 12px; }
+        .footer-notes { font-size: 11px; color: #334155; padding-top: 8px; }
+        .footer-notes p.title { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+        .footer-notes p.body { line-height: 1.6; color: #475569; letter-spacing: -0.02em; }
+        .footer-brand { text-align: center; margin-top: 16px; border-top: 1px solid #d1d5db; padding-top: 12px; }
+        .footer-brand p { font-size: 11px; color: #6c757d; }
+        .footer-brand a {
+            display: inline-block; margin-top: 6px; padding: 4px 12px;
+            border: 1px solid #6c757d; border-radius: 4px; color: #6c757d;
+            text-decoration: none; font-size: 11px; font-weight: 700;
+        }
+        .footer-brand a:hover { background: #f3f4f6; color: #1e293b; }
+        .text-blue-800 { color: #1e40af; }
+        .text-red-700 { color: #b91c1c; }
+        .hint-text { font-size: 11px; color: #9ca3af; margin-bottom: 8px; }
+        .empty-row-text { color: #9ca3af; font-size: 10.5px; font-weight: 400; }
+
+        /* ===== 모바일 ===== */
+        @media (max-width: 1023px) {
+            .mobile-tabs { display: flex; }
+            .main-layout { flex-direction: column; height: auto; overflow: visible; }
+            .panel-input {
+                width: 100%; border-right: none; border-bottom: 1px solid #d1d5db;
+                max-height: none; overflow: visible; padding: 16px;
             }
+            .panel-preview {
+                width: 100%; padding: 16px 0;
+                overflow-x: scroll; overflow-y: visible;
+                height: auto; min-height: 0; display: block;
+                -webkit-overflow-scrolling: touch;
+            }
+            .a4-sheet { min-width: 750px; width: 750px; padding: 24px; margin: 0 8px; }
+            .panel-hidden { display: none !important; }
+            .top-header h1 { font-size: 13px; }
+            .slot-grid, .slot-grid-flight { grid-template-columns: 1fr 1fr; }
+            .form-row.cols-2 { grid-template-columns: 1fr; }
+            .btn-pdf { padding: 6px 10px; font-size: 12px; }
         }
-        .intro-skip{
-            position:absolute; top:24px; right:24px;
-            background: rgba(255, 255, 255, 0.8);
-            color: #334155;
-            border: 1px solid #cbd5e1;
-            padding: 8px 16px;
-            border-radius: 999px;
-            font-size: 13px; font-weight: 700;
-            display:flex; align-items:center; gap:8px;
-            cursor:pointer;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            z-index: 10000;
+        @media (max-width: 480px) {
+            .top-header { padding: 10px 12px; }
+            .top-header img { height: 22px; }
+            .top-header h1 { font-size: 12px; }
+            .panel-input { padding: 12px; }
+            .a4-sheet { min-width: 680px; width: 680px; padding: 16px; }
         }
-        .intro-skip:hover{ background: #fff; transform: translateY(-2px); }
 
-        /* ✅ Hero BG */
-        .hero-bg{
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 58, 138, 0.8) 100%),
-            url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop');
-            background-size:cover; background-position:center; background-attachment: fixed;
+        /* ===== PDF 인쇄 ===== */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+            .no-print, .top-header, .mobile-tabs, .panel-input { display: none !important; }
+            .main-layout { display: block !important; height: auto !important; overflow: visible !important; }
+            .panel-preview {
+                background: #fff !important; padding: 0 !important;
+                overflow: visible !important; display: flex !important;
+                justify-content: center !important; height: auto !important;
+            }
+            .a4-sheet {
+                box-shadow: none !important; max-width: 100% !important;
+                width: 100% !important; min-width: 0 !important;
+                padding: 5mm 8mm !important; margin: 0 auto !important;
+            }
+            .footer-brand a { display: none !important; }
+            .info-table th { background: #e2e8f0 !important; }
+            .main-table thead th { background: #e2e8f0 !important; }
+            .bg-gray-50 { background: #f9fafb !important; }
+            .subtotal-row { background: #eff6ff !important; }
+            .bg-yellow-50 { background: #fef9c3 !important; }
+            .grand-row { background: #f3f4f6 !important; }
+            @page { size: A4 portrait; margin: 8mm; }
         }
-        @media (max-width:768px){ .hero-bg{ background-attachment: scroll; } }
 
-        .card-shadow{ box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); transition: all 0.3s ease; }
-        .card-shadow:hover{ transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        /* ===== 인쇄용 compact 모드 - 10단계 세밀 조절 ===== */
+        .pc-1 .doc-header { margin-bottom: 16px; }
+        .pc-1 .doc-title-area { margin-bottom: 16px; }
+        .pc-1 .doc-title-area h2 { font-size: 24px; }
+        .pc-1 .info-table th, .pc-1 .info-table td { padding: 4px 7px; font-size: 11.5px; }
+        .pc-1 .main-table th, .pc-1 .main-table td { padding: 4px 6px; font-size: 10.5px; }
+        .pc-1 .main-table tbody tr { height: 26px; }
+        .pc-1 .footer-notes p.body { font-size: 10px; line-height: 1.5; }
+        .pc-1 .footer-brand { margin-top: 12px; }
 
-        .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .faq-input:checked ~ .faq-content { max-height: 500px; }
-        .faq-input:checked ~ label .arrow { transform: rotate(180deg); }
+        .pc-2 .doc-header { margin-bottom: 14px; }
+        .pc-2 .doc-header-right img { height: 42px; }
+        .pc-2 .doc-title-area { margin-bottom: 14px; }
+        .pc-2 .doc-title-area h2 { font-size: 23px; }
+        .pc-2 .info-table th, .pc-2 .info-table td { padding: 3.5px 6px; font-size: 11px; }
+        .pc-2 .main-table th, .pc-2 .main-table td { padding: 3.5px 5px; font-size: 10px; }
+        .pc-2 .main-table tbody tr { height: 24px; }
+        .pc-2 .footer-notes p.body { font-size: 9.5px; line-height: 1.45; }
+        .pc-2 .footer-brand { margin-top: 10px; }
 
-        .animate-fade-up { animation: fadeUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        .pc-3 .doc-header { margin-bottom: 12px; }
+        .pc-3 .doc-header-right img { height: 38px; }
+        .pc-3 .doc-title-area { margin-bottom: 12px; }
+        .pc-3 .doc-title-area h2 { font-size: 22px; padding: 0 20px 3px; }
+        .pc-3 .info-table th, .pc-3 .info-table td { padding: 3px 6px; font-size: 11px; }
+        .pc-3 .main-table th, .pc-3 .main-table td { padding: 3px 5px; font-size: 10px; }
+        .pc-3 .main-table tbody tr { height: 22px; }
+        .pc-3 .subtotal-row td, .pc-3 .grand-row td { padding: 4px 5px; }
+        .pc-3 .footer-notes p.title { font-size: 11px; }
+        .pc-3 .footer-notes p.body { font-size: 9px; line-height: 1.4; }
+        .pc-3 .footer-brand { margin-top: 8px; padding-top: 6px; }
+        .pc-3 .footer-brand p { font-size: 9.5px; }
 
-        /* Video Player */
-        .video-container{ position: relative; background-color: #1a1a1a; border-radius: 1.5rem; overflow: hidden; aspect-ratio: 16 / 9; cursor: pointer; }
-        .video-thumbnail{ width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: transform 0.5s ease, opacity 0.3s; }
-        .video-container:hover .video-thumbnail{ transform: scale(1.05); opacity: 1; }
-        .play-btn{
-            position:absolute; top:50%; left:50%; transform: translate(-50%, -50%);
-            width: 60px; height: 60px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-            border: 2px solid white; border-radius: 50%; display:flex; align-items:center; justify-content:center;
-            color:white; font-size:1.25rem; transition: all 0.3s ease; z-index: 10;
-        }
-        .video-container:hover .play-btn{ background:white; color:#1e40af; transform: translate(-50%, -50%) scale(1.1); }
+        .pc-4 .doc-header { margin-bottom: 10px; }
+        .pc-4 .doc-header-right img { height: 36px; }
+        .pc-4 .doc-title-area { margin-bottom: 10px; }
+        .pc-4 .doc-title-area h2 { font-size: 21px; padding: 0 18px 3px; }
+        .pc-4 .info-table th, .pc-4 .info-table td { padding: 2.5px 5px; font-size: 10.5px; }
+        .pc-4 .main-table th, .pc-4 .main-table td { padding: 2.5px 4px; font-size: 9.5px; }
+        .pc-4 .main-table tbody tr { height: 20px; }
+        .pc-4 .subtotal-row td, .pc-4 .grand-row td { padding: 3.5px 4px; }
+        .pc-4 .grand-amount { font-size: 12px !important; }
+        .pc-4 .footer-notes p.title { font-size: 10.5px; }
+        .pc-4 .footer-notes p.body { font-size: 8.5px; line-height: 1.35; }
+        .pc-4 .footer-brand { margin-top: 6px; padding-top: 5px; }
+        .pc-4 .footer-brand p { font-size: 9px; }
+
+        .pc-5 .doc-header { margin-bottom: 8px; }
+        .pc-5 .doc-header-right img { height: 34px; }
+        .pc-5 .doc-title-area { margin-bottom: 8px; }
+        .pc-5 .doc-title-area h2 { font-size: 20px; padding: 0 16px 2px; }
+        .pc-5 .info-table th, .pc-5 .info-table td { padding: 2px 5px; font-size: 10px; }
+        .pc-5 .main-table th, .pc-5 .main-table td { padding: 2px 4px; font-size: 9px; }
+        .pc-5 .main-table tbody tr { height: 18px; }
+        .pc-5 .subtotal-row td, .pc-5 .grand-row td { padding: 3px 4px; }
+        .pc-5 .grand-amount { font-size: 11px !important; }
+        .pc-5 .grand-label { font-size: 10px !important; }
+        .pc-5 .footer-notes p.title { font-size: 10px; margin-bottom: 1px; }
+        .pc-5 .footer-notes p.body { font-size: 8px; line-height: 1.3; }
+        .pc-5 .footer-brand { margin-top: 5px; padding-top: 4px; }
+        .pc-5 .footer-brand p { font-size: 8.5px; }
+
+        .pc-6 .doc-header { margin-bottom: 6px; }
+        .pc-6 .doc-header-right img { height: 30px; }
+        .pc-6 .doc-title-area { margin-bottom: 6px; }
+        .pc-6 .doc-title-area h2 { font-size: 18px; padding: 0 14px 2px; }
+        .pc-6 .info-table th, .pc-6 .info-table td { padding: 2px 4px; font-size: 9.5px; }
+        .pc-6 .main-table th, .pc-6 .main-table td { padding: 2px 3px; font-size: 8.5px; line-height: 1.25; }
+        .pc-6 .main-table tbody tr { height: 17px; }
+        .pc-6 .subtotal-row td, .pc-6 .grand-row td { padding: 2.5px 3px; }
+        .pc-6 .grand-amount { font-size: 10.5px !important; }
+        .pc-6 .footer-notes p.title { font-size: 9.5px; margin-bottom: 1px; }
+        .pc-6 .footer-notes p.body { font-size: 7.5px; line-height: 1.25; }
+
+        .pc-7 .doc-header { margin-bottom: 5px; }
+        .pc-7 .doc-header-right img { height: 26px; }
+        .pc-7 .doc-title-area h2 { font-size: 17px; padding: 0 12px 2px; }
+        .pc-7 .info-table th, .pc-7 .info-table td { padding: 1.5px 4px; font-size: 9px; }
+        .pc-7 .main-table th, .pc-7 .main-table td { padding: 1.5px 3px; font-size: 8px; line-height: 1.2; }
+        .pc-7 .main-table tbody tr { height: 16px; }
+        .pc-7 .footer-notes p.title { font-size: 9px; margin-bottom: 0; }
+        .pc-7 .footer-notes p.body { font-size: 7px; line-height: 1.2; }
+
+        .pc-8 .doc-header { margin-bottom: 4px; }
+        .pc-8 .doc-title-area h2 { font-size: 16px; padding: 0 10px 1px; }
+        .pc-8 .info-table th, .pc-8 .info-table td { padding: 1px 3px; font-size: 8.5px; }
+        .pc-8 .main-table th, .pc-8 .main-table td { padding: 1px 2.5px; font-size: 7.5px; line-height: 1.15; }
+        .pc-8 .main-table tbody tr { height: 15px; }
+        .pc-8 .footer-notes p.body { font-size: 6.5px; line-height: 1.15; }
+
+        .pc-9 .doc-header { margin-bottom: 3px; }
+        .pc-9 .doc-title-area h2 { font-size: 15px; padding: 0 8px 1px; }
+        .pc-9 .info-table th, .pc-9 .info-table td { padding: 1px 3px; font-size: 8px; }
+        .pc-9 .main-table th, .pc-9 .main-table td { padding: 1px 2px; font-size: 7px; line-height: 1.1; }
+        .pc-9 .main-table tbody tr { height: 14px; }
+        .pc-9 .footer-notes p.body { font-size: 6px; line-height: 1.1; }
+
+        .pc-10 .doc-header { margin-bottom: 2px; }
+        .pc-10 .doc-title-area h2 { font-size: 14px; padding: 0 6px 1px; }
+        .pc-10 .info-table th, .pc-10 .info-table td { padding: 0.5px 2px; font-size: 7.5px; }
+        .pc-10 .main-table th, .pc-10 .main-table td { padding: 0.5px 1.5px; font-size: 6.5px; line-height: 1.05; }
+        .pc-10 .main-table tbody tr { height: 13px; }
+        .pc-10 .footer-notes p.body { font-size: 5.5px; line-height: 1.05; }
+
+        /* 스크롤바 */
+        .panel-input::-webkit-scrollbar, .panel-preview::-webkit-scrollbar { width: 6px; }
+        .panel-input::-webkit-scrollbar-track, .panel-preview::-webkit-scrollbar-track { background: #f1f1f1; }
+        .panel-input::-webkit-scrollbar-thumb, .panel-preview::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
+<body>
 
-<body class="overflow-x-hidden">
-
-    <!-- 🎬 Intro Motion Logo Overlay -->
-    <div id="intro-overlay" aria-hidden="true">
-        <button class="intro-skip" id="intro-skip-btn" type="button" aria-label="인트로 건너뛰기">
-            Skip <i class="fa-solid fa-forward"></i>
-        </button>
-        <video id="intro-video" muted playsinline autoplay>
-            <source src="./모션로고_투어메이커.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+    <div class="top-header no-print">
+        <div class="header-left">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker">
+            <h1>고객 제출용 가격 산출 내역서</h1>
+        </div>
+        <div class="header-right">
+            <button class="btn-pdf" onclick="printPDF()">PDF 내보내기</button>
+        </div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="bg-white/95 backdrop-blur-md fixed w-full z-50 border-b border-slate-100 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-            <a href="#" class="flex items-center" aria-label="투어메이커 홈">
-                <!-- ✅ 지정된 투어메이커 로고 삽입 -->
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker Logo" class="h-8 md:h-10 w-auto object-contain" loading="eager" decoding="async" />
-            </a>
-
-            <div class="flex items-center gap-6">
-                <div class="hidden lg:flex gap-6 text-sm font-bold text-slate-600">
-                    <a href="#about" class="hover:text-blue-600 transition">소개</a>
-                    <a href="#flagship" class="hover:text-blue-600 transition">글로벌연수</a>
-                    <a href="#specialty" class="hover:text-blue-600 transition">맞춤/가족여행</a>
-                    <a href="#portfolio" class="hover:text-blue-600 transition">수행실적</a>
-                    <a href="#contact" class="hover:text-blue-600 transition">문의</a>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <a href="tel:0335622551" class="hidden md:flex items-center gap-2 text-blue-700 font-bold text-sm bg-blue-50 px-3 py-2 rounded-lg border border-blue-100" data-ga="click_call" aria-label="사무실 전화하기">
-                        <i class="fas fa-phone-alt"></i> 033-562-2551
-                    </a>
-                    <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" rel="noopener" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-sm" data-ga="click_kakao_chat" aria-label="카카오톡 상담">
-                        <i class="fas fa-comment"></i> <span class="hidden sm:inline">상담톡</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero -->
-    <header class="hero-bg text-white pt-40 pb-24 px-4 min-h-screen flex items-center justify-center text-center relative">
-        <div class="max-w-5xl mx-auto animate-fade-up">
-            <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-5 py-2 mb-8 text-yellow-400 text-xs font-bold tracking-widest backdrop-blur-sm">
-                <i class="fas fa-shield-check text-[10px]"></i> S2B / G2B 공식 등록 종합여행사
-            </div>
-
-            <h1 class="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-2xl">
-                여행, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">데이터</span>를 만나<br class="hidden md:block"/>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">혁신</span>이 되다
-            </h1>
-
-            <p class="text-slate-100 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-12 font-medium drop-shadow-md">
-                AI 기술 연수부터 VIP 가족 여행까지,<br>
-                (주)투어메이커는 <strong>기획력 하나로 완벽한 여행</strong>을 만듭니다.
-            </p>
-
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="투어메이커_회사소개서.pdf" download="투어메이커_회사소개서.pdf" class="bg-white text-blue-900 px-10 py-5 rounded-2xl font-black transition hover:bg-blue-50 shadow-2xl flex items-center justify-center gap-3" data-ga="download_company_pdf">
-                    <i class="fas fa-file-pdf"></i> 회사소개서(PDF) 다운로드
-                </a>
-                <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" rel="noopener" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 px-10 py-5 rounded-2xl font-black transition shadow-2xl flex items-center justify-center gap-3" data-ga="click_kakao_chat">
-                    <i class="fas fa-comment"></i> 카톡 실시간 상담
-                </a>
-            </div>
-
-            <div class="mt-16 flex flex-wrap justify-center gap-4 md:gap-8 opacity-90 text-sm font-bold">
-                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
-                    <i class="fas fa-certificate text-yellow-400"></i> 국외/국내 여행업 등록
-                </div>
-                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
-                    <i class="fas fa-shield-alt text-green-400"></i> 서울보증보험 가입
-                </div>
-                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
-                    <i class="fas fa-landmark text-blue-300"></i> S2B / 나라장터 동시 등록
-                </div>
-                <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-sm">
-                    <i class="fas fa-file-signature text-cyan-300"></i> 계약·정산 서류 패키지 제공
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <!-- About / CEO Message -->
-        <section id="about" class="py-24 px-4 bg-white relative -mt-16 z-10 rounded-t-[3rem]">
-            <div class="max-w-4xl mx-auto flex flex-col items-center">
-                <div class="w-32 h-32 rounded-3xl bg-blue-50 overflow-hidden border-4 border-white shadow-xl mb-8 transform -rotate-3 hover:rotate-0 transition-transform">
-                    <img src="https://cdn-icons-png.flaticon.com/512/4042/4042356.png" class="w-full h-full object-cover p-4 opacity-80" alt="CEO Avatar" loading="lazy" decoding="async">
-                </div>
-                <div class="text-center">
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-8 leading-snug">
-                        "기존 여행사가 감성을 팔 때,<br>
-                        투어메이커는 <span class="text-blue-700">전문성</span>과 <span class="text-blue-700">신뢰</span>를 제안합니다."
-                    </h2>
-                    <div class="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 text-left">
-                        <p class="text-slate-600 leading-relaxed text-base md:text-lg">
-                            안녕하세요, <strong>대표이사 이재명</strong>입니다.<br><br>
-                            저는 강원대학교 데이터사이언스 대학원 과정을 통해 습득한 <strong>데이터 분석 역량</strong>을 여행업에 접목했습니다.
-                            공공기관의 깐깐한 기준을 충족하는 기획력으로, 고객의 여행 목적을 정확히 달성해 드립니다.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 기관 담당자 신뢰 섹션 -->
-        <section class="py-16 px-4 bg-white border-t border-slate-50">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-10">
-                    <span class="text-blue-600 font-bold text-xs tracking-widest uppercase">Public-Grade Reliability</span>
-                    <h3 class="text-2xl md:text-3xl font-black text-slate-900 mt-4">공공기관 기준으로 운영합니다</h3>
-                    <p class="text-slate-500 mt-2">계약·정산·증빙까지, 행정 담당자 관점에서 가장 깔끔하게.</p>
-                </div>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 card-shadow">
-                        <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-5">
-                            <i class="fa-solid fa-folder-open"></i>
-                        </div>
-                        <h4 class="font-black text-slate-900 text-lg mb-2">정산 서류 패키지</h4>
-                        <p class="text-sm text-slate-500 leading-relaxed">공문/견적/계약/정산/증빙까지 한 번에 제출 가능한 형태로 정리해 드립니다.</p>
-                    </div>
-                    <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 card-shadow">
-                        <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-5">
-                            <i class="fa-solid fa-shield-halved"></i>
-                        </div>
-                        <h4 class="font-black text-slate-900 text-lg mb-2">안전·리스크 관리</h4>
-                        <p class="text-sm text-slate-500 leading-relaxed">일정 변경/현장 이슈를 대비한 운영 플랜과 커뮤니케이션 체계를 갖추고 있습니다.</p>
-                    </div>
-                    <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 card-shadow">
-                        <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-700 text-2xl mb-5">
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                        </div>
-                        <h4 class="font-black text-slate-900 text-lg mb-2">스마트 가이드북</h4>
-                        <p class="text-sm text-slate-500 leading-relaxed">모바일로 일정·공지·동선을 공유해 현장 문의를 줄이고 만족도를 높입니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Video Curation -->
-        <section id="visuals" class="py-24 px-4 bg-slate-900 text-white overflow-hidden">
-            <div class="max-w-6xl mx-auto text-center mb-16">
-                <span class="text-blue-400 font-bold text-xs tracking-widest uppercase mb-4 block">Official Curation</span>
-                <h2 class="text-3xl md:text-4xl font-black">관광청이 보증하는 완벽한 영감</h2>
-                <p class="text-slate-400 mt-4">투어메이커의 기획력과 관광청의 공신력이 만납니다.</p>
-            </div>
-            <div class="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                <!-- Singapore -->
-                <div class="group">
-                    <div class="video-container shadow-2xl" onclick="loadVideo(this, '7ipKUSzPHt8')" role="button" aria-label="싱가포르 홍보영상 재생">
-                        <img src="https://img.youtube.com/vi/7ipKUSzPHt8/hqdefault.jpg" alt="Singapore Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
-                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
-                    </div>
-                    <div class="px-4 mt-6">
-                        <h4 class="font-black text-lg mb-2 text-blue-400">Singapore</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">스마트 시티와 데이터 경제의 글로벌 허브. 투어메이커가 제안하는 기술 연수의 표본입니다.</p>
-                    </div>
-                </div>
-                <!-- Macau -->
-                <div class="group">
-                    <div class="video-container shadow-2xl" onclick="loadVideo(this, '27dEhlOYKXE')" role="button" aria-label="마카오 홍보영상 재생">
-                        <img src="https://img.youtube.com/vi/27dEhlOYKXE/hqdefault.jpg" alt="Macau Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
-                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
-                    </div>
-                    <div class="px-4 mt-6">
-                        <h4 class="font-black text-lg mb-2 text-yellow-500">Macao</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">복합 리조트 산업의 정수. 강원랜드 협력사 및 지자체 시찰을 위한 최적의 장소입니다.</p>
-                    </div>
-                </div>
-                <!-- Shanghai -->
-                <div class="group">
-                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'Ly6Botr2638')" role="button" aria-label="상해 홍보영상 재생">
-                        <img src="https://img.youtube.com/vi/Ly6Botr2638/hqdefault.jpg" alt="Shanghai Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
-                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
-                    </div>
-                    <div class="px-4 mt-6">
-                        <h4 class="font-black text-lg mb-2 text-red-400">Shanghai</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">아시아의 경제 중심지. 첨단 AI 기술과 과거의 유산이 공존하는 매력적인 연수지입니다.</p>
-                    </div>
-                </div>
-                <!-- Hangzhou -->
-                <div class="group">
-                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'gBLWtXkXHoo')" role="button" aria-label="항주 홍보영상 재생">
-                        <img src="https://img.youtube.com/vi/gBLWtXkXHoo/hqdefault.jpg" alt="Hangzhou Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
-                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
-                    </div>
-                    <div class="px-4 mt-6">
-                        <h4 class="font-black text-lg mb-2 text-teal-400">Hangzhou</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">알리바바의 본고장. 눈부신 자연경관 속에서 피어나는 혁신적인 트래블 테크를 경험하세요.</p>
-                    </div>
-                </div>
-                <!-- Taiwan -->
-                <div class="group">
-                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'X2iPm7GITyM')" role="button" aria-label="대만 홍보영상 재생">
-                        <img src="https://img.youtube.com/vi/X2iPm7GITyM/hqdefault.jpg" alt="Taiwan Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
-                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
-                    </div>
-                    <div class="px-4 mt-6">
-                        <h4 class="font-black text-lg mb-2 text-emerald-400">Taiwan</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">미식과 감성의 힐링 여행. VIP 가족 여행과 프라이빗 투어의 만족도가 가장 높은 목적지입니다.</p>
-                    </div>
-                </div>
-                <!-- Osaka -->
-                <div class="group">
-                    <div class="video-container shadow-2xl" onclick="loadVideo(this, 'Xg2aoWcLiFU')" role="button" aria-label="오사카 홍보영상 재생">
-                        <img src="https://img.youtube.com/vi/Xg2aoWcLiFU/hqdefault.jpg" alt="Osaka Thumbnail" class="video-thumbnail" loading="lazy" decoding="async">
-                        <div class="play-btn"><i class="fas fa-play ml-1"></i></div>
-                    </div>
-                    <div class="px-4 mt-6">
-                        <h4 class="font-black text-lg mb-2 text-purple-400">Osaka</h4>
-                        <p class="text-sm text-slate-400 leading-relaxed line-clamp-2">전통 문화와 현대적 인프라의 조화. 짧은 비행 시간으로 최고의 효율을 내는 핵심 연수 목적지입니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Flagship Project -->
-        <section id="flagship" class="py-24 px-4 bg-white border-t border-slate-50">
-            <div class="max-w-6xl mx-auto">
-                <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl border border-white/5">
-                    <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500 opacity-10 rounded-full blur-[100px] -mr-48 -mt-48"></div>
-                    <div class="relative z-10 flex flex-col lg:flex-row gap-16 items-center">
-                        <div class="flex-1 text-center lg:text-left">
-                            <span class="inline-block bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1 mb-6 text-blue-300 text-xs font-bold tracking-widest uppercase">Global Project</span>
-                            <h2 class="text-4xl md:text-5xl font-black mb-6 leading-tight">
-                                2026 강원대학교<br>
-                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300 italic">글로컬 패스파인더</span>
-                            </h2>
-                            <p class="text-slate-300 text-lg mb-8 leading-relaxed">
-                                상해·항주 AI 첨단 기업 탐방부터 글로벌 해커톤까지, 대학의 교육 목표를 현장에서 완벽히 구현하는 투어메이커만의 독점 기획 모델입니다.
-                            </p>
-                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                                <a href="https://indadady.github.io/260112_kangwon_univ/" target="_blank" rel="noopener" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white text-indigo-900 px-8 py-4 rounded-2xl font-black hover:bg-blue-50 transition transform hover:-translate-y-1 shadow-lg" data-ga="click_portfolio_link">
-                                    <span>디지털 제안서 확인</span> <i class="fas fa-external-link-alt text-sm"></i>
-                                </a>
-                                <a href="https://www.youtube.com/watch?v=1E-Vp61P_Sk" target="_blank" rel="noopener" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-blue-500/20 border border-white/30 text-white px-8 py-4 rounded-2xl font-black hover:bg-blue-500 transition transform hover:-translate-y-1 shadow-lg backdrop-blur-md">
-                                    <i class="fas fa-play text-sm"></i> <span>홍보 영상 보기</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="w-full lg:w-5/12 max-w-sm shrink-0">
-                            <div class="relative mx-auto border-slate-800 bg-slate-800 border-[10px] rounded-[3rem] h-[550px] w-[280px] shadow-2xl overflow-hidden group">
-                                <iframe src="https://indadady.github.io/260112_kangwon_univ/" class="w-full h-full border-none pointer-events-none" title="디지털 제안서 미리보기" loading="lazy"></iframe>
-                                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" onclick="window.open('https://indadady.github.io/260112_kangwon_univ/','_blank')" data-ga="click_portfolio_link">
-                                    <span class="text-white font-bold border-2 border-white px-6 py-3 rounded-full text-sm backdrop-blur-md">Full View</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIP & Family -->
-        <section id="specialty" class="py-24 px-4 bg-white">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row items-center gap-16 mb-24">
-                    <div class="md:w-1/2">
-                        <span class="text-blue-600 font-bold text-xs tracking-widest uppercase mb-4 block">Premium VIP Service</span>
-                        <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-6 leading-tight">
-                            "가족과 같은 마음으로,<br>
-                            <span class="text-blue-600">VIP 맞춤형 인솔</span>을 약속합니다"
-                        </h2>
-                        <p class="text-slate-600 mb-6 leading-relaxed text-lg">
-                            투어메이커의 VIP 서비스는 정해진 일정이 없습니다. 항공부터 호텔, 현지 로컬 맛집 투어까지 <strong>고객의 의사를 100% 반영</strong>하여 설계합니다.<br><br>
-                            현지 가이드에 의존하지 않고 대표가 직접 기획하고 인솔하는 완벽한 프라이빗 여정을 경험해 보세요.
-                        </p>
-                        
-                        <a href="https://indadady.github.io/Taipei_healing_trip/" target="_blank" rel="noopener" class="inline-flex items-center gap-4 bg-slate-50 hover:bg-blue-50 text-blue-800 px-6 py-4 rounded-2xl text-sm transition border border-slate-200 shadow-sm mb-8 group" data-ga="click_vip_guidebook">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 group-hover:scale-110 transition">
-                                <i class="fas fa-mobile-screen-button text-blue-600"></i>
-                            </div>
-                            <div class="text-left">
-                                <span class="block text-[10px] text-slate-400 font-black tracking-widest uppercase mb-0.5">Reference</span>
-                                <strong class="block text-sm">VIP 투어 전용 스마트 가이드북 보기</strong>
-                            </div>
-                            <i class="fas fa-chevron-right ml-2 text-blue-400 group-hover:translate-x-1 transition"></i>
-                        </a>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3 shadow-sm">
-                                <i class="fas fa-crown text-blue-600"></i>
-                                <span class="text-sm font-bold text-slate-800">대표 직접 인솔 서비스</span>
-                            </div>
-                            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3 shadow-sm">
-                                <i class="fas fa-utensils text-blue-600"></i>
-                                <span class="text-sm font-bold text-slate-800">로컬 맛집·데이투어 1:1 매칭</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:w-1/2">
-                        <div class="relative">
-                            <div class="absolute -top-6 -left-6 w-32 h-32 bg-blue-100 rounded-full mix-blend-multiply opacity-70 animate-pulse"></div>
-                            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1974&auto=format&fit=crop" class="rounded-[2.5rem] shadow-2xl relative z-10 border-8 border-white" alt="VIP Experience" loading="lazy" decoding="async">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative border-t border-slate-100 pt-20">
-                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-6 text-slate-400 font-bold text-sm tracking-widest uppercase">
-                        For Private Groups
-                    </div>
-                    <div class="text-center mb-12">
-                        <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-3">공공의 기준을 <span class="text-blue-600">개인의 여행</span>에도 적용합니다</h3>
-                        <p class="text-slate-500">학교와 관공서가 믿고 맡기는 기획력으로, 가족여행과 친목모임도 안전하고 특별하게 준비하세요.</p>
-                    </div>
-                    <div class="grid md:grid-cols-3 gap-8">
-                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-lg hover:shadow-xl transition group">
-                            <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 text-2xl mb-6 group-hover:scale-110 transition">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h4 class="text-xl font-bold text-slate-900 mb-3">가족 & 효도 여행</h4>
-                            <p class="text-sm text-slate-500 leading-relaxed mb-4">
-                                부모님을 위한 편안한 동선과 아이들을 위한 체험 학습. 다른 일행 눈치 볼 필요 없는 <strong>단독 차량 투어</strong>를 설계해 드립니다.
-                            </p>
-                            <span class="inline-block bg-yellow-50 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full">#제주 #해외휴양 #단독행사</span>
-                        </div>
-                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-lg hover:shadow-xl transition group">
-                            <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-6 group-hover:scale-110 transition">
-                                <i class="fas fa-hiking"></i>
-                            </div>
-                            <h4 class="text-xl font-bold text-slate-900 mb-3">친목회 & 동호회</h4>
-                            <p class="text-sm text-slate-500 leading-relaxed mb-4">
-                                <strong>트레킹, 미식 투어, 로컬 체험</strong> 등 모임의 성격에 딱 맞춘 테마 여행. 총무님의 정산 고민을 덜어드리는 투명한 견적과 예약 대행을 약속합니다.
-                            </p>
-                            <span class="inline-block bg-green-50 text-green-700 text-xs font-bold px-3 py-1 rounded-full">#트레킹 #동창회 #맞춤견적</span>
-                        </div>
-                        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-lg hover:shadow-xl transition group">
-                            <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6 group-hover:scale-110 transition">
-                                <i class="fas fa-plane-departure"></i>
-                            </div>
-                            <h4 class="text-xl font-bold text-slate-900 mb-3">제주도 & 국내 패키지</h4>
-                            <p class="text-sm text-slate-500 leading-relaxed mb-4">
-                                렌터카 운전이 부담스러울 땐? 기사님이 포함된 <strong>미니버스/쏠라티 투어</strong>가 정답입니다. 현지 맛집과 숨은 명소를 엮어 알차게 다녀오세요.
-                            </p>
-                            <span class="inline-block bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">#기사포함 #노쇼핑 #안전제일</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Competitiveness -->
-        <section id="competitiveness" class="py-24 px-4 bg-slate-50">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <span class="text-blue-600 font-bold text-xs tracking-widest uppercase">Our Strength</span>
-                    <h2 class="text-3xl font-black text-slate-900 mt-4">투어메이커만의 <span class="text-blue-600">핵심 경쟁력</span></h2>
-                </div>
-                <div class="grid md:grid-cols-4 gap-6 text-center">
-                    <div class="bg-white p-8 rounded-3xl border border-slate-100 card-shadow">
-                        <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6 mx-auto"><i class="fas fa-rocket"></i></div>
-                        <h3 class="font-black text-slate-900 mb-3 text-lg">압도적 실행력</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">단기간 내 50건 이상의 용역 완수. 공공기관 행정 요구에 유연하고 신속하게 대응합니다.</p>
-                    </div>
-                    <div class="bg-white p-8 rounded-3xl border border-slate-100 card-shadow">
-                        <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl mb-6 mx-auto"><i class="fas fa-network-wired"></i></div>
-                        <h3 class="font-black text-slate-900 mb-3 text-lg">데이터 기반 기획</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">데이터 사이언스 역량을 바탕으로 고객 취향과 연수 목적에 최적화된 동선을 설계합니다.</p>
-                    </div>
-                    <div class="bg-white p-8 rounded-3xl border border-slate-100 card-shadow">
-                        <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-6 mx-auto"><i class="fas fa-map-marked-alt"></i></div>
-                        <h3 class="font-black text-slate-900 mb-3 text-lg">지역 전문성</h3>
-                        <p class="text-sm text-slate-500 leading-relaxed">강원 지역을 포함한 국내외 파트너십을 통해 독점적인 로컬 네트워크를 확보하고 있습니다.</p>
-                    </div>
-                    <div class="bg-gradient-to-b from-slate-800 to-slate-900 p-8 rounded-3xl border border-slate-700 card-shadow text-white">
-                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-yellow-400 text-2xl mb-6 mx-auto"><i class="fas fa-mobile-alt"></i></div>
-                        <h3 class="font-black text-white mb-3 text-lg">스마트 가이드북</h3>
-                        <p class="text-sm text-slate-300 leading-relaxed">모바일 일정표 및 디지털 시스템을 통해 실시간 일정 확인 및 밀착 소통이 가능합니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Leadership -->
-        <section class="py-24 px-4 bg-white">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-16">
-                    <span class="text-blue-600 font-bold text-xs tracking-widest uppercase">TOURMAKER LEADERSHIP</span>
-                    <h2 class="text-3xl font-black text-slate-900 mt-4 tracking-tight">책임 있는 운영으로 신뢰를 약속합니다</h2>
-                </div>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 group transition-all duration-300 hover:bg-blue-50 text-center">
-                        <div class="w-24 h-24 mx-auto rounded-3xl bg-white overflow-hidden mb-8 border-2 border-white shadow-md transform group-hover:rotate-6 transition">
-                            <img src="https://cdn-icons-png.flaticon.com/512/4042/4042356.png" class="w-full h-full object-cover p-3 opacity-80" alt="Leadership" loading="lazy" decoding="async">
-                        </div>
-                        <span class="bg-blue-600 text-white text-[10px] font-black px-3 py-1 rounded-full mb-3 inline-block uppercase">PM / Strategy</span>
-                        <h3 class="font-black text-2xl text-slate-900 mb-2">이재명 대표</h3>
-                        <p class="text-xs text-blue-600 font-bold mb-6">데이터 사이언티스트 / 총괄 기획</p>
-                        <p class="text-xs text-slate-500 leading-relaxed">VIP 맞춤 인솔 및 공공기관 정밀 일정 설계를 총괄합니다.</p>
-                    </div>
-                    <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 group transition-all duration-300 hover:bg-green-50 text-center">
-                        <div class="w-24 h-24 mx-auto rounded-3xl bg-white overflow-hidden mb-8 border-2 border-white shadow-md transform group-hover:-rotate-6 transition">
-                            <img src="https://cdn-icons-png.flaticon.com/512/4042/4042422.png" class="w-full h-full object-cover p-3 opacity-80" alt="Admin" loading="lazy" decoding="async">
-                        </div>
-                        <span class="bg-green-600 text-white text-[10px] font-black px-3 py-1 rounded-full mb-3 inline-block uppercase">Admin / Finance</span>
-                        <h3 class="font-black text-2xl text-slate-900 mb-2">허나연 실장</h3>
-                        <p class="text-xs text-green-600 font-bold mb-6">계약 행정 / 예약 관리 총괄</p>
-                        <p class="text-xs text-slate-500 leading-relaxed">S2B, G2B 계약 및 투명한 행정 집행을 담당합니다.</p>
-                    </div>
-                    <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 group transition-all duration-300 hover:bg-purple-50 text-center">
-                        <div class="w-24 h-24 mx-auto rounded-3xl bg-white overflow-hidden mb-8 border-2 border-white shadow-md transform group-hover:rotate-6 transition">
-                            <img src="https://cdn-icons-png.flaticon.com/512/4042/4042356.png" class="w-full h-full object-cover p-3 opacity-80" alt="Field" loading="lazy" decoding="async">
-                        </div>
-                        <span class="bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-full mb-3 inline-block uppercase">Partnership / Field</span>
-                        <h3 class="font-black text-2xl text-slate-900 mb-2">조 혁 이사</h3>
-                        <p class="text-xs text-purple-600 font-bold mb-6">대외 협력 / 현장 운영 총괄</p>
-                        <p class="text-xs text-slate-500 leading-relaxed">국내외 로컬 파트너십 구축과 현장 관리를 전담합니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ✅ Portfolio -->
-        <section id="portfolio" class="py-24 px-4 bg-slate-50">
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-black text-slate-900 mb-4 italic leading-tight">주요 수행 실적<br><span class="text-blue-600 not-italic">데이터로 증명하는 압도적 결과</span></h2>
-                    <p class="text-slate-500">투어메이커의 발자취는 곧 고객의 신뢰입니다. (최근 50건 이상 완수)</p>
-                </div>
-                
-                <div class="flex justify-center flex-wrap gap-2 mb-10" id="filter-container"></div>
-                <!-- 포트폴리오 리스트 컨테이너 -->
-                <div id="portfolio-list" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                
-                <div class="mt-12 text-center" id="load-more-container">
-                    <button onclick="showAllPortfolio()" class="bg-white border border-slate-200 text-slate-600 px-8 py-4 rounded-2xl font-bold hover:bg-slate-50 transition shadow-sm" data-ga="view_portfolio_more">
-                        실적 전체보기 (+20건 이상)
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ -->
-        <section id="faq" class="py-24 px-4 bg-white border-t border-slate-50">
-            <div class="max-w-4xl mx-auto">
-                <div class="text-center mb-12">
-                    <span class="text-blue-600 font-bold text-xs tracking-widest uppercase">FAQ</span>
-                    <h2 class="text-3xl font-black text-slate-900 mt-4">자주 묻는 질문</h2>
-                </div>
-                <div class="space-y-4">
-                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-                        <input type="checkbox" id="q1" class="hidden faq-input" checked>
-                        <label for="q1" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
-                            학교장터(S2B), 나라장터(G2B) 계약이 가능한가요? <i class="fas fa-chevron-down arrow transition-transform"></i>
-                        </label>
-                        <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
-                            <div class="pb-6 border-t border-slate-100 pt-4">네, 정식 등록 업체입니다. 공공기관 및 학교 행정 절차에 특화된 정산 서류 일체를 완벽히 제공하며, 수의계약 및 경쟁 입찰 모두 신속하게 대응합니다.</div>
-                        </div>
-                    </div>
-                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-                        <input type="checkbox" id="q2" class="hidden faq-input">
-                        <label for="q2" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
-                            VIP 고객을 위한 맞춤형 인솔 서비스도 제공하나요? <i class="fas fa-chevron-down arrow transition-transform"></i>
-                        </label>
-                        <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
-                            <div class="pb-6 border-t border-slate-100 pt-4">네, 가능합니다. 지난 10월 대만 행사처럼 항공, 호텔은 물론 현지 로컬 맛집 투어까지 고객의 의사를 100% 반영합니다. 현지 가이드에 의존하지 않고 대표가 직접 인솔하여 자유로운 데이투어와 프라이빗한 여정을 보장해 드립니다.</div>
-                        </div>
-                    </div>
-                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-                        <input type="checkbox" id="q3" class="hidden faq-input">
-                        <label for="q3" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
-                            개인/가족 소규모 단체 예약도 가능한가요? <i class="fas fa-chevron-down arrow transition-transform"></i>
-                        </label>
-                        <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
-                            <div class="pb-6 border-t border-slate-100 pt-4">네, 투어메이커는 기관 연수뿐만 아니라 가족 여행, 동호회 투어 등 소규모 맞춤 여행도 전문으로 진행합니다. 고객님이 원하시는 테마에 맞춰 1:1 일정을 설계해 드립니다.</div>
-                        </div>
-                    </div>
-                    <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-                        <input type="checkbox" id="q4" class="hidden faq-input">
-                        <label for="q4" class="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50 transition font-bold text-sm">
-                            견적/제안 요청은 어떻게 하나요? <i class="fas fa-chevron-down arrow transition-transform"></i>
-                        </label>
-                        <div class="faq-content px-6 text-slate-500 text-sm leading-relaxed">
-                            <div class="pb-6 border-t border-slate-100 pt-4">하단의 안내된 전담 데스크 직통 전화나 공식 이메일(jmlojm@nate.com / siriusjh85@naver.com)로 목적, 인원, 예산, 필수 방문지 등을 남겨주시면 빠르게 초안과 견적을 안내해 드립니다.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ✅ Contact Section (B2B 전담 데스크 컨셉으로 완전 개편) -->
-        <section id="contact" class="py-24 px-4 bg-slate-50">
-            <div class="max-w-4xl mx-auto text-center">
-                <div class="bg-blue-700 rounded-[3rem] p-10 md:p-16 text-white shadow-2xl flex flex-col items-center relative overflow-hidden">
-                    <div class="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                    
-                    <h2 class="text-3xl md:text-4xl font-black mb-4 relative z-10 text-white">성공적인 일정을 위한 첫걸음</h2>
-                    <p class="text-blue-200 mb-10 relative z-10 font-medium text-sm md:text-base">투어메이커 B2B·공공기관 전담 데스크가 빠르고 정확하게 답변해 드립니다.</p>
-                    
-                    <!-- 심플하고 고급스러운 연락처 정보 패널 (버튼 남발 방지) -->
-                    <div class="inline-flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-white/10 p-8 rounded-3xl border border-white/20 backdrop-blur-md relative z-10 w-full md:w-auto">
-                        <div class="flex items-center gap-5 text-left w-full md:w-auto">
-                            <div class="w-14 h-14 bg-blue-600/50 rounded-2xl flex items-center justify-center text-white text-2xl border border-white/10 shadow-inner">
-                                <i class="fas fa-phone-alt"></i>
-                            </div>
-                            <div>
-                                <span class="block text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Official Call</span>
-                                <a href="tel:0335622551" class="text-2xl md:text-3xl font-black text-white hover:text-blue-100 transition tracking_call" data-ga="click_call">033-562-2551</a>
-                            </div>
-                        </div>
-                        
-                        <div class="w-full h-px md:w-px md:h-16 bg-white/20"></div>
-                        
-                        <div class="flex items-center gap-5 text-left w-full md:w-auto">
-                            <div class="w-14 h-14 bg-blue-600/50 rounded-2xl flex items-center justify-center text-white text-2xl border border-white/10 shadow-inner shrink-0">
-                                <i class="fas fa-envelope-open-text"></i>
-                            </div>
-                            <div>
-                                <span class="block text-xs font-bold text-blue-300 uppercase tracking-widest mb-2">Email / Document</span>
-                                <div class="space-y-1">
-                                    <p class="text-base md:text-lg font-bold text-white tracking-wide"><span class="text-[10px] md:text-xs font-black text-blue-200 mr-2 border border-blue-400/30 px-2 py-0.5 rounded bg-blue-900/50">이재명 대표</span>jmlojm@nate.com</p>
-                                    <p class="text-base md:text-lg font-bold text-white tracking-wide"><span class="text-[10px] md:text-xs font-black text-blue-200 mr-2 border border-blue-400/30 px-2 py-0.5 rounded bg-blue-900/50">조 혁 이사</span>siriusjh85@naver.com</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ✅ Footer -->
-        <footer class="bg-slate-900 text-white py-16 px-4">
-            <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 opacity-90">
-                <div>
-                    <!-- ✅ 공식 시스템 로고 적용 -->
-                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" loading="lazy" decoding="async" alt="Footer Logo" class="h-12 md:h-14 mb-8 grayscale brightness-200 opacity-90">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-12 text-[11px] font-medium leading-loose opacity-70">
-                    <ul class="space-y-1">
-                        <li>(주)투어메이커 | 대표: 이재명</li>
-                        <li>사업자등록번호: 473-81-03183</li>
-                        <li>관광사업등록: 제2024-000001호</li>
-                        <li>이메일: jmlojm@nate.com / siriusjh85@naver.com</li>
-                    </ul>
-                    <ul class="space-y-1">
-                        <li>본사: 정선군 정선읍 봉양3길 22-10 3층</li>
-                        <li>지사: 강원특별자치도 태백시</li>
-                        <li>TEL: 033-562-2551</li>
-                    </ul>
-                </div>
-            </div>
-        </footer>
-    </main>
-
-    <!-- Mobile Sticky CTA -->
-    <div class="fixed bottom-6 left-4 right-4 z-[100] md:hidden flex gap-2">
-        <a href="tel:0335622551" class="flex-1 bg-blue-700 text-white py-4 rounded-2xl font-black text-center shadow-2xl border border-blue-600" data-ga="click_call">사무실 전화</a>
-        <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" rel="noopener" class="flex-1 bg-yellow-400 text-slate-900 py-4 rounded-2xl font-black text-center shadow-2xl border border-yellow-300" data-ga="click_kakao_chat">카톡 상담</a>
+    <div class="mobile-tabs no-print" id="mobileTabs">
+        <button id="tabInput" class="active" onclick="switchTab('input')">데이터 입력</button>
+        <button id="tabPreview" onclick="switchTab('preview')">산출내역서 보기</button>
     </div>
 
-    <script>
-        /* =========================
-           ✅ GA4 트래킹 자동화
-        ========================= */
-        (function(){
-            function track(eventName){
-                try { 
-                    gtag('event', eventName); 
-                    console.log('GA4 Tracking:', eventName);
-                } catch(e) {}
-            }
-            document.querySelectorAll('[data-ga]').forEach(el=>{
-                el.addEventListener('click', ()=>{
-                    const name = el.getAttribute('data-ga');
-                    if (name) track(name);
-                });
-            });
-        })();
+    <div class="main-layout" id="mainLayout">
 
-        /* =========================
-           ✅ Intro Control (무조건 노출되도록 수정)
-        ========================= */
-        (function(){
-            const introOverlay = document.getElementById('intro-overlay');
-            const introVideo = document.getElementById('intro-video');
-            const skipBtn = document.getElementById('intro-skip-btn');
+        <div class="panel-input no-print" id="panelInput">
+            <h2>문서 데이터 입력</h2>
 
-            function hideIntro(setSeen){
-                if (!introOverlay) return;
-                introOverlay.style.opacity = '0';
-                setTimeout(()=>{ introOverlay.style.display = 'none'; }, 600);
-            }
+            <!-- 신규 추가: 템플릿 관리 영역 (Save & Load) -->
+            <div class="template-manager">
+                <div class="template-header">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        견적 템플릿 보관함
+                    </span>
+                    <button onclick="clearForm()" class="btn-clear">입력칸 모두 비우기</button>
+                </div>
+                <div class="template-controls">
+                    <select id="preset-select" class="template-select">
+                        <option value="">저장된 템플릿 선택...</option>
+                    </select>
+                    <button onclick="loadPreset()" class="btn-load">불러오기</button>
+                    <button onclick="savePreset()" class="btn-save">현재상태 저장</button>
+                </div>
+            </div>
 
-            window.addEventListener('load', function() {
-                // 이탈률 방지를 위해 1.5초 내외로 빠르게 재생 후 숨김 처리합니다.
-                
-                if (introVideo && introOverlay) {
-                    introVideo.playbackRate = 2.5; // 재생 속도 2.5배속 (약 1.5초만에 완료되도록 조정)
-                    introVideo.addEventListener('ended', ()=> hideIntro(false));
-                    setTimeout(()=> hideIntro(false), 1500); // 최대 1.5초 후 무조건 숨김 (이탈 방지용 안전장치)
-                }
-                
-                if (skipBtn){
-                    skipBtn.addEventListener('click', ()=> hideIntro(false));
-                }
-            });
-        })();
-
-        function loadVideo(container, videoId) {
-            container.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-            container.classList.remove('video-placeholder');
-            container.onclick = null;
-        }
-
-        /* =========================
-           ✅ Portfolio 로직
-        ========================= */
-        let portfolioData = [
-            { category: 'global', date: '2026.01', title: '강원대학교 글로컬 패스파인더 (상해/항주)', desc: '상해·항주 AI 첨단 기업 탐방 및 글로벌 해커톤 단독 기획·운영', link: 'https://indadady.github.io/260112_kangwon_univ/' },
-            { category: 'global', date: '2025.01', title: '해외(싱가포르) 데이터보안·활용 혁신융합 기술연수', desc: '강원대, 아주대 등 5개 대학 연합 기획' },
-            { category: 'global', date: '2025.09', title: '강원대 데이터사이언스학과 일본 연수', desc: 'AI융합 전공 심화 및 선진지 견학' },
-            { category: 'global', date: '2025.08', title: '첨단소재·나노융합 혁신융합대학 일본 교류', desc: '중앙대, 금오공대 등 참여 연수' },
-            { category: 'global', date: '2024.10', title: 'KAIST x NYU 교환학생 한국문화체험', desc: '글로벌 명문대 학생 대상 인바운드 투어' },
-            { category: 'global', date: '2024.07', title: '강원대 지역지능화혁신 인재양성 상해 연수', desc: '중국 상해 단기 해외 기술 연수' },
-            { category: 'global', date: '2025.06', title: '아리랑문화재단 에스토니아 항공 대행', desc: '국제 문화 교류 사업 항공 지원' },
-            { category: 'public', date: '2025.06', title: '정선군 중국 자매도시(구강시) 방문 운영', desc: '공식 외교 행사 기획 및 운영 총괄' },
-            { category: 'public', date: '2025.05', title: '정선군청 모범공무원 해외 선진지 견학', desc: '중국 난징, 구강 행정 우수 사례 시찰' },
-            { category: 'public', date: '2024.11', title: '정선군 이장단 일본 큐슈 선진지 견학', desc: '지역 리더 역량 강화 및 벤치마킹' },
-            { category: 'public', date: '2024.09', title: '정선 시설관리공단 말레이시아 견학', desc: '쿠알라룸푸르 선진 시설 벤치마킹' },
-            { category: 'public', date: '2024.06', title: '정선군청 모범공무원 일본 북해도 연수', desc: '우수 관광자원 조사 및 시찰' },
-            { category: 'public', date: '2024.05', title: '양양전통시장 벤치마킹 대행 용역', desc: '시장 활성화 우수 사례 조사' },
-            { category: 'public', date: '2025.11', title: '정선 시장활성화 사업단 제주 견학', desc: '제주 로컬 상권 활성화 모델 시찰' },
-            { category: 'corp', date: '2025.11', title: '강원랜드 협력사 우수직원 마카오 연수', desc: '마카오 복합리조트 서비스 벤치마킹' },
-            { category: 'corp', date: '2024.11', title: '강원랜드 협력사 우수직원 마카오 연수', desc: '글로벌 서비스 역량 강화 포상 휴가' },
-            { category: 'corp', date: '2025.02', title: 'HCI KOREA 2025 학술대회 지원', desc: '국제 학술 행사 MICE 운영 지원' },
-            { category: 'corp', date: '2024.11', title: '강원랜드 희망재단 일본 힐링 연수', desc: '진폐휴양프로그램 운영 대행' },
-            { category: 'school', date: '2025.12', title: '함백고등학교 3학년 현장체험학습', desc: '졸업 전 추억 만들기 테마 여행' },
-            { category: 'school', date: '2025.10', title: '정선고등학교 제주 테마 학습', desc: '안전 최우선 대규모 학생 연수' },
-            { category: 'school', date: '2025.10', title: '함백중학교 서울역사 문화탐방', desc: '수도권 역사 의식 고취 체험' },
-            { category: 'school', date: '2024.09', title: '태백 황지고등학교 제주 수학여행', desc: '대규모 학생 안전 수송 및 운영' },
-            { category: 'school', date: '2025.09', title: '철암고등학교 제주 테마 학습', desc: '자원 탐방 및 공동체 의식 강화' },
-            { category: 'school', date: '2025.07', title: '영월 신천초등학교 필리핀 연수', desc: '글로벌 어학 및 문화 체험 위탁' }
-        ];
-
-        portfolioData.sort((a, b) => b.date.localeCompare(a.date));
-
-        const catMap = { 'global': '글로벌/연수', 'public': '공공/지자체', 'school': '학교/교육', 'corp': '기업/MICE' };
-        let currentFilter = 'all';
-        let isShowingAll = false;
-
-        function renderPortfolio() {
-            const list = document.getElementById('portfolio-list');
-            const filtered = currentFilter === 'all' ? portfolioData : portfolioData.filter(item => item.category === currentFilter);
-            const displayData = isShowingAll ? filtered : filtered.slice(0, 9);
-            
-            list.innerHTML = displayData.map(item => `
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 card-shadow animate-fade-up flex flex-col justify-between h-full">
+            <div class="form-group">
+                <div class="section-title blue">1. 기본 정보 설정</div>
+                <div class="form-row cols-2">
+                    <div><label class="form-label">고객명 (기관명)</label><input type="text" id="inp-clientName" class="form-input" value="문곡중학교"></div>
+                    <div><label class="form-label">문서 제목 (행사명)</label><input type="text" id="inp-docTitle" class="form-input" value="일본 오사카 여행"></div>
+                </div>
+                <div class="form-row cols-1">
+                    <div><label class="form-label">여행일</label><input type="text" id="inp-travelDate" class="form-input" value="2025.05.12~05.15"></div>
+                </div>
+                <div class="form-row cols-1">
+                    <div><label class="form-label">여행인원 표기</label><input type="text" id="inp-paxStr" class="form-input" value="38명기준(학생 33+ 교사5)"></div>
+                </div>
+                <div class="form-row cols-2">
+                    <div><label class="form-label">발송일자</label><input type="text" id="inp-issueDate" class="form-input" value="2026.03.10"></div>
                     <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-[10px] font-black text-blue-700 bg-blue-50 px-2 py-1 rounded-lg">${catMap[item.category] || item.category}</span>
-                            <span class="text-[11px] font-bold text-slate-400"><i class="far fa-calendar-alt"></i> ${item.date}</span>
-                        </div>
-                        <h4 class="font-black text-slate-900 text-sm md:text-base mb-2 leading-tight">${item.title}</h4>
-                        <p class="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-2">${item.desc}</p>
+                        <label class="form-label">통화/지역 선택</label>
+                        <select id="inp-currency" class="form-select">
+                            <option value="JPY" selected>JPY (해외/엔화)</option>
+                            <option value="USD">USD (해외/달러)</option>
+                            <option value="CNY">CNY (해외/위안화)</option>
+                            <option value="KRW_JEJU">KRW (국내/제주)</option>
+                            <option value="KRW_MAINLAND">KRW (국내/내륙)</option>
+                        </select>
                     </div>
-                    ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-800 transition mt-2" data-ga="click_portfolio_link"><i class="fas fa-link"></i> 상세 제안서 보기</a>` : ''}
                 </div>
-            `).join('');
+                <div class="exrate-row" id="wrap-exRate">
+                    <label>적용 환율:</label>
+                    <input type="number" step="0.1" id="inp-exRate" class="exrate-input" value="9.5">
+                    <span style="font-size:11px;color:#9ca3af;">기준(송금)</span>
+                </div>
+            </div>
 
-            const loadMoreBtn = document.getElementById('load-more-container');
-            if (filtered.length <= 9 || isShowingAll) {
-                loadMoreBtn.style.display = 'none';
-            } else {
-                loadMoreBtn.style.display = 'block';
+            <div class="form-group">
+                <div class="section-title dark" id="title-flight-area">2. 항공료 영역 (원화 직접 입력)</div>
+                <div class="slot-card">
+                    <div class="slot-grid-flight">
+                        <input type="text" id="inp-f1-name" class="slot-input" value="에어로케이" placeholder="항목">
+                        <input type="text" id="inp-f1-desc" class="slot-input" value="인천-오사카-인천" placeholder="내용">
+                        <input type="number" id="inp-f1-qty" class="slot-input" style="text-align:center" value="38" placeholder="수량">
+                        <input type="number" id="inp-f1-krw" class="slot-input" style="text-align:right" value="326900" placeholder="단가(₩)">
+                    </div>
+                    <input type="text" id="inp-f1-note" class="slot-input" style="width:100%" value="그룹가 예상가" placeholder="비고">
+                </div>
+                <div class="slot-card">
+                    <div class="slot-grid-flight">
+                        <input type="text" id="inp-f2-name" class="slot-input" value="발권수수료" placeholder="항목">
+                        <input type="text" id="inp-f2-desc" class="slot-input" value="" placeholder="내용">
+                        <input type="number" id="inp-f2-qty" class="slot-input" style="text-align:center" value="38" placeholder="수량">
+                        <input type="number" id="inp-f2-krw" class="slot-input" style="text-align:right" value="22000" placeholder="단가(₩)">
+                    </div>
+                    <input type="text" id="inp-f2-note" class="slot-input" style="width:100%" value="항공 발권 대리점" placeholder="비고">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="section-title green" id="title-local-expense" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span>3. 해외현지 발생비용 (외화 입력)</span>
+                    <span style="font-size:11px;font-weight:400;color:#9ca3af;">*원화 자동 환산</span>
+                </div>
+                <p class="hint-text">연속된 항목명+내용이 같으면 출력물에서 셀이 자동 병합됩니다.</p>
+                <div id="local-inputs-container"></div>
+            </div>
+
+            <div class="form-group">
+                <div class="section-title orange">4. 국내 발생 비용 (원화 직접 입력)</div>
+                <div class="slot-card">
+                    <div class="slot-grid-flight">
+                        <input type="text" id="inp-d1-name" class="slot-input" value="여행자보험" placeholder="항목">
+                        <input type="text" id="inp-d1-desc" class="slot-input" value="1억원 기준" placeholder="내용">
+                        <input type="number" id="inp-d1-qty" class="slot-input" style="text-align:center" value="38" placeholder="수량">
+                        <input type="number" id="inp-d1-krw" class="slot-input" style="text-align:right" value="5000" placeholder="단가(₩)">
+                    </div>
+                    <input type="text" id="inp-d1-note" class="slot-input" style="width:100%" value="주민번호 필요" placeholder="비고">
+                </div>
+                <div class="slot-card">
+                    <div class="slot-grid-flight">
+                        <input type="text" id="inp-d2-name" class="slot-input" value="진행수수료" placeholder="항목">
+                        <input type="text" id="inp-d2-desc" class="slot-input" value="운영 관리비" placeholder="내용">
+                        <input type="number" id="inp-d2-qty" class="slot-input" style="text-align:center" value="1" placeholder="수량">
+                        <input type="number" id="inp-d2-krw" class="slot-input" style="text-align:right" value="3900000" placeholder="단가(₩)">
+                    </div>
+                    <input type="text" id="inp-d2-note" class="slot-input" style="width:100%" value="" placeholder="비고">
+                </div>
+                <div class="slot-card">
+                    <div class="slot-grid-flight">
+                        <input type="text" id="inp-d3-name" class="slot-input" value="공항수송" placeholder="항목">
+                        <input type="text" id="inp-d3-desc" class="slot-input" value="공항 왕복 차량비" placeholder="내용">
+                        <input type="number" id="inp-d3-qty" class="slot-input" style="text-align:center" value="" placeholder="수량">
+                        <input type="number" id="inp-d3-krw" class="slot-input" style="text-align:right" value="" placeholder="단가(₩)">
+                    </div>
+                    <input type="text" id="inp-d3-note" class="slot-input" style="width:100%" value="" placeholder="비고(빈칸가능)">
+                </div>
+            </div>
+        </div>
+
+        <!-- 미리보기 -->
+        <div class="panel-preview" id="panelPreview">
+            <div class="a4-sheet" id="print-section">
+                <div id="doc-header-area">
+                    <div class="doc-header">
+                        <div class="doc-header-left">
+                            <table class="info-table">
+                                <tr><th>고객명</th><td id="out-clientName" style="font-weight:700;"></td></tr>
+                                <tr><th>행사명</th><td id="out-docTitle" style="font-weight:700;"></td></tr>
+                                <tr><th>여행일</th><td id="out-travelDate"></td></tr>
+                                <tr><th>여행인원</th><td id="out-paxStr"></td></tr>
+                                <tr><th>발송일자/환율</th><td id="out-issueAndRate" style="font-size:11px;"></td></tr>
+                            </table>
+                        </div>
+                        <div class="doc-header-right">
+                            <img src="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" alt="TOURMAKER">
+                        </div>
+                    </div>
+                    <div class="doc-title-area">
+                        <h2>가격 산출 내역서</h2>
+                        <p>Calculation Details</p>
+                    </div>
+                </div>
+
+                <div id="table-area" style="margin-bottom:8px;">
+                    <table class="main-table" id="main-table">
+                        <thead id="main-thead"></thead>
+                        <tbody id="tbody-flight"></tbody>
+                        <tbody id="tbody-local"></tbody>
+                        <tbody id="tbody-domestic"></tbody>
+                        <tbody id="tbody-total"></tbody>
+                    </table>
+                </div>
+
+                <div id="footer-area">
+                    <div class="footer-notes">
+                        <p class="title">1. 세금계산서 발행 관련 안내문</p>
+                        <p class="body">* 본 위탁용역의 특성상 항공권, 숙박비, 현지교통비 등은 당사가 직접 제공하는 서비스가 아닌, 제 3자와의 거래를 통한 수탁 대행 처리 항목으로 분류됩니다. 따라서, 당사는 전체 계약금액 기준의 세금계산서 발행이 불가하며, 국내 과세 대상 경비 중 <span style="font-weight:700;color:#dc2626;font-size:12px;">알선수수료</span> 등 자체수익에 대해서만 세금계산서를 발행함을 사전 안내드립니다.</p>
+                    </div>
+                    <div class="footer-brand">
+                        <p>[System Powered by TOURMAKER] 본 산출 내역서는 <strong style="color:#334155;">투어메이커</strong>의 기획과 트래블 테크 기술 제휴로 제작되었습니다.</p>
+                        <a href="https://tourmaker.kr" target="_blank" rel="noopener noreferrer" class="no-print">투어메이커 홈페이지 바로가기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ===================================================================
+// PDF 1페이지 출력 — PC 최적화
+// ===================================================================
+function printPDF() {
+    const sheet = document.getElementById('print-section');
+    const tableArea = document.getElementById('table-area');
+    const allLevels = [];
+    for (let i = 1; i <= 10; i++) allLevels.push('pc-' + i);
+
+    allLevels.forEach(c => sheet.classList.remove(c));
+    tableArea.style.marginBottom = '8px';
+
+    calculateAndRender();
+
+    requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        const A4_H = 1025;
+        let chosenLevel = null;
+
+        if (sheet.scrollHeight <= A4_H) {
+            chosenLevel = null;
+        } else {
+            for (let i = 0; i < allLevels.length; i++) {
+                if (i > 0) sheet.classList.remove(allLevels[i - 1]);
+                sheet.classList.add(allLevels[i]);
+                void sheet.offsetHeight;
+                if (sheet.scrollHeight <= A4_H) {
+                    chosenLevel = allLevels[i];
+                    break;
+                }
             }
+            if (!chosenLevel) chosenLevel = allLevels[allLevels.length - 1];
         }
 
-        window.filterPortfolio = (cat) => {
-            currentFilter = cat;
-            isShowingAll = false;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                btn.classList.add('bg-white', 'text-slate-500', 'border', 'border-slate-200');
-            });
-            const activeBtn = document.querySelector(`[data-filter="${cat}"]`);
-            if(activeBtn) {
-                activeBtn.classList.remove('bg-white', 'text-slate-500', 'border');
-                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-            }
-            renderPortfolio();
-        };
+        allLevels.forEach(c => sheet.classList.remove(c));
+        if (chosenLevel) sheet.classList.add(chosenLevel);
+        void sheet.offsetHeight;
 
-        window.showAllPortfolio = () => {
-            isShowingAll = true;
-            renderPortfolio();
-        };
+        const remain = A4_H - sheet.scrollHeight;
+        if (remain > 0) {
+            tableArea.style.marginBottom = (8 + remain) + 'px';
+            void sheet.offsetHeight;
+        }
 
-        const filters = [
-            { id: 'all', label: '전체실적' },
-            { id: 'global', label: '글로벌/연수' },
-            { id: 'public', label: '공공/지자체' },
-            { id: 'school', label: '학교/교육' },
-            { id: 'corp', label: '기업/MICE' }
-        ];
+        setTimeout(() => {
+            window.print();
+            allLevels.forEach(c => sheet.classList.remove(c));
+            tableArea.style.marginBottom = '8px';
+        }, 100);
+    });
+    });
+}
 
-        document.getElementById('filter-container').innerHTML = filters.map(f => `
-            <button onclick="filterPortfolio('${f.id}')" data-filter="${f.id}" class="filter-btn px-6 py-2 rounded-full text-[12px] font-black transition ${f.id === 'all' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'}">
-                ${f.label}
-            </button>
-        `).join('');
+// ===== 모바일 탭 =====
+function switchTab(tab) {
+    const input = document.getElementById('panelInput');
+    const preview = document.getElementById('panelPreview');
+    const tabInput = document.getElementById('tabInput');
+    const tabPreview = document.getElementById('tabPreview');
+    if (tab === 'input') {
+        input.classList.remove('panel-hidden');
+        preview.classList.add('panel-hidden');
+        tabInput.classList.add('active');
+        tabPreview.classList.remove('active');
+    } else {
+        calculateAndRender();
+        input.classList.add('panel-hidden');
+        preview.classList.remove('panel-hidden');
+        tabInput.classList.remove('active');
+        tabPreview.classList.add('active');
+        document.getElementById('panelPreview').scrollLeft = 0;
+        window.scrollTo(0, 0);
+    }
+}
 
-        renderPortfolio();
-    </script>
+// ===== 환율 UI 동기화 =====
+function syncCurrencyUI() {
+    const curr = document.getElementById('inp-currency').value;
+    const rW = document.getElementById('wrap-exRate');
+    const rI = document.getElementById('inp-exRate');
+
+    if (curr === 'KRW_MAINLAND' || curr === 'KRW_JEJU') {
+        rW.style.display = 'none';
+        rI.value = 1;
+    } else {
+        rW.style.display = 'flex';
+        const val = Number(rI.value);
+        if (curr === 'JPY' && val > 100) rI.value = 9.5;
+        else if (curr === 'USD' && val < 100) rI.value = 1400;
+        else if (curr === 'CNY' && (val < 100 || val > 300)) rI.value = 195;
+    }
+}
+
+// ===== 초기 데이터 (문곡중 디폴트 셋팅) =====
+const initialLocals = [
+    { name:"호텔", desc:"(2인실) 3박요금", qty:20, fgn:65000, note:"조식포함" },
+    { name:"호텔", desc:"(1인실) 3박요금", qty:"", fgn:52000, note:"" },
+    { name:"차량비", desc:"전용차량", qty:1, fgn:950000, note:"통행료+주차비" },
+    { name:"식비", desc:"중식_1일차", qty:38, fgn:2000, note:"" },
+    { name:"식비", desc:"중식_2일차", qty:38, fgn:2000, note:"" },
+    { name:"식비", desc:"중식_3일차", qty:38, fgn:2000, note:"" },
+    { name:"식비", desc:"석식_1일차", qty:38, fgn:3000, note:"" },
+    { name:"식비", desc:"석식_2일차", qty:38, fgn:3000, note:"" },
+    { name:"식비", desc:"석식_3일차", qty:38, fgn:3000, note:"" },
+    { name:"관광지입장료", desc:"롯코산케이블카", qty:38, fgn:1300, note:"" },
+    { name:"관광지입장료", desc:"청수사", qty:38, fgn:600, note:"" },
+    { name:"관광지입장료", desc:"하루카스전망대", qty:38, fgn:2200, note:"" },
+    { name:"관광지입장료", desc:"동대사", qty:38, fgn:800, note:"" },
+    { name:"가이드비용", desc:"전일정", qty:1, fgn:240000, note:"노쇼핑/*인천공항 미팅" }
+];
+
+function buildLocalInputs() {
+    const c = document.getElementById('local-inputs-container');
+    let h = '';
+    for (let i = 0; i < 20; i++) {
+        const it = initialLocals[i] || { name:'', desc:'', qty:'', fgn:'', note:'' };
+        const qtyVal = (it.qty !== undefined && it.qty !== '') ? it.qty : '';
+        const fgnVal = (it.fgn !== undefined && it.fgn !== '') ? it.fgn : '';
+        
+        h += `<div class="slot-card">
+            <div class="slot-grid">
+                <input type="text" id="inp-l${i}-name" class="slot-input" value="${it.name || ''}" placeholder="항목명">
+                <input type="text" id="inp-l${i}-desc" class="slot-input" value="${it.desc || ''}" placeholder="내용(병합)">
+                <input type="number" id="inp-l${i}-qty" class="slot-input" style="text-align:center" value="${qtyVal}" placeholder="수량">
+                <input type="number" id="inp-l${i}-fgn" class="slot-input" style="text-align:right" value="${fgnVal}" placeholder="단가(외화)">
+            </div>
+            <input type="text" id="inp-l${i}-note" class="slot-input" style="width:100%" value="${it.note || ''}" placeholder="비고(빈칸가능)">
+        </div>`;
+    }
+    c.innerHTML = h;
+}
+
+// ===== SAVE & LOAD (템플릿 기능) 로직 =====
+
+// 모든 인풋 데이터 객체로 추출
+function getFormData() {
+    const data = {};
+    const inputs = document.querySelectorAll('.panel-input input, .panel-input select');
+    inputs.forEach(el => {
+        if(el.id && el.id !== 'preset-select') {
+            data[el.id] = el.value;
+        }
+    });
+    return data;
+}
+
+// 추출한 객체를 폼에 세팅
+function setFormData(data) {
+    Object.keys(data).forEach(key => {
+        const el = document.getElementById(key);
+        if(el) el.value = data[key];
+    });
+}
+
+// 셀렉트 박스(드롭다운) 갱신
+function updatePresetDropdown() {
+    const select = document.getElementById('preset-select');
+    const presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
+    
+    // 기존 옵션 지우고 기본값 추가
+    select.innerHTML = '<option value="">저장된 템플릿 선택...</option>';
+    
+    Object.keys(presets).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key;
+        select.appendChild(option);
+    });
+}
+
+// 템플릿 저장
+function savePreset() {
+    const currentName = document.getElementById('inp-clientName').value || '임시견적';
+    const presetName = prompt("현재 견적을 저장할 이름을 입력하세요.", currentName + " 견적 템플릿");
+    
+    if(!presetName) return; // 취소시 종료
+    
+    const currentData = getFormData();
+    let presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
+    
+    presets[presetName] = currentData;
+    localStorage.setItem('tourmaker_presets', JSON.stringify(presets));
+    
+    updatePresetDropdown();
+    document.getElementById('preset-select').value = presetName; // 방금 저장한 항목 선택
+    alert(`[${presetName}] 견적이 저장되었습니다.\n언제든 불러와 재사용이 가능합니다.`);
+}
+
+// 템플릿 불러오기
+function loadPreset() {
+    const selectedName = document.getElementById('preset-select').value;
+    if(!selectedName) {
+        alert('먼저 불러올 템플릿을 선택해주세요.');
+        return;
+    }
+    
+    const presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
+    const data = presets[selectedName];
+    
+    if(data) {
+        setFormData(data);
+        syncCurrencyUI();
+        calculateAndRender();
+        // alert(`[${selectedName}] 견적을 성공적으로 불러왔습니다.`);
+    }
+}
+
+// 모든 폼 지우기 (초기화)
+function clearForm() {
+    if(confirm('입력된 모든 데이터가 삭제됩니다. 계속하시겠습니까? (미리 저장해두는 것을 권장합니다)')) {
+        const inputs = document.querySelectorAll('.panel-input input:not(#preset-select)');
+        inputs.forEach(el => {
+            if(el.type === 'number') el.value = '';
+            else el.value = '';
+        });
+        
+        // 날짜/환율 등 필수 기본 세팅만 복원
+        document.getElementById('inp-currency').value = 'JPY';
+        document.getElementById('inp-exRate').value = '9.5';
+        
+        syncCurrencyUI();
+        calculateAndRender();
+    }
+}
+
+
+// ===== 렌더링 및 계산 로직 =====
+
+const fmt = n => (n===0||n==='') ? '' : Number(n).toLocaleString();
+const fmtT = n => n===0 ? '0' : Number(n).toLocaleString();
+
+function rs(arr, i, key) {
+    let r = 1;
+    for (let j = i+1; j < arr.length; j++) { if (arr[j][key] === arr[i][key]) r++; else break; }
+    return r;
+}
+function rs2(arr, i) {
+    let r = 1;
+    for (let j = i+1; j < arr.length; j++) {
+        if (arr[j].name === arr[i].name && arr[j].desc === arr[i].desc) r++; else break;
+    }
+    return r;
+}
+
+function calculateAndRender() {
+    const clientName = document.getElementById('inp-clientName').value;
+    const docTitle = document.getElementById('inp-docTitle').value;
+    const travelDate = document.getElementById('inp-travelDate').value;
+    const paxStr = document.getElementById('inp-paxStr').value;
+    const issueDate = document.getElementById('inp-issueDate').value;
+    const currency = document.getElementById('inp-currency').value;
+    const isMainland = currency === 'KRW_MAINLAND';
+    const isJeju = currency === 'KRW_JEJU';
+    const isKRW = isMainland || isJeju;
+    let exRate = isKRW ? 1 : (Number(document.getElementById('inp-exRate').value) || 0);
+
+    document.getElementById('title-flight-area').innerText = isMainland ? '2. 교통비 영역 (원화 직접 입력)' : '2. 항공료 영역 (원화 직접 입력)';
+    const le = document.getElementById('title-local-expense');
+    if (isMainland) le.innerHTML = '<span>3. 행사비용 (원화 직접 입력)</span>';
+    else if (isJeju) le.innerHTML = '<span>3. 제주(현지) 발생비용 (원화 직접 입력)</span>';
+    else le.innerHTML = '<span>3. 해외현지 발생비용 (외화 입력)</span><span style="font-size:11px;font-weight:400;color:#9ca3af;">*원화 자동 환산</span>';
+    for (let i=0;i<20;i++) { const el=document.getElementById(`inp-l${i}-fgn`); if(el) el.placeholder=isKRW?'단가(₩)':'단가(외화)'; }
+
+    document.getElementById('out-clientName').innerText = clientName;
+    document.getElementById('out-docTitle').innerText = docTitle;
+    document.getElementById('out-travelDate').innerText = travelDate;
+    document.getElementById('out-paxStr').innerText = paxStr;
+    document.getElementById('out-issueAndRate').innerText = isKRW ? `${issueDate} / 국내행사 (환율 미적용)` : `${issueDate} / ${currency} ${exRate} 기준(송금)`;
+
+    const cN = currency==='JPY'?'엔화':(currency==='USD'?'달러':(isKRW?'원화':'위안화'));
+    const cS = currency==='USD'?'$':(isKRW?'₩':'¥');
+    const col = isKRW ? 5 : 6;
+
+    document.getElementById('main-thead').innerHTML = `<tr>
+        <th style="width:9%">구분</th>
+        <th style="width:${isKRW?'14%':'11%'}">항목</th>
+        <th style="width:${isKRW?'24%':'18%'}">내용</th>
+        <th style="width:9%;font-size:10px;line-height:1.3">인원/객실수<br>차량대수</th>
+        ${!isKRW?`<th style="width:11%;background:#fef08a;color:#0f172a">${cN} 단가<br><span style="font-weight:400;color:#475569">${currency}</span></th>`:''}
+        <th style="width:${isKRW?'15%':'12%'}">원화 단가<br><span style="font-weight:400">KRW</span></th>
+        <th style="width:${isKRW?'16%':'14%'}">총금액<br><span style="font-weight:400">KRW</span></th>
+        <th style="width:${isKRW?'13%':'16%'}">비고</th>
+    </tr>`;
+
+    let tF=0, tL=0, tD=0;
+
+    // --- 항공/교통 ---
+    const fH = isMainland?'교통비':'항공료';
+    const fSub = isMainland?'(1) 합계 - 교통비':'(1) 합계 - 항공료';
+    const flights=[];
+    for(let i=1;i<=2;i++){
+        const n=document.getElementById(`inp-f${i}-name`).value;
+        if(n.trim()){
+            const d=document.getElementById(`inp-f${i}-desc`).value;
+            const q=Number(document.getElementById(`inp-f${i}-qty`).value)||0;
+            const k=Number(document.getElementById(`inp-f${i}-krw`).value)||0;
+            const nt=document.getElementById(`inp-f${i}-note`).value;
+            tF+=k*q;
+            flights.push({name:n,desc:d,qty:q,krw:k,tot:k*q,note:nt});
+        }
+    }
+    
+    let h='';
+    if (flights.length === 0) {
+        h += `<tr><td class="text-center font-bold bg-gray-50">${fH}</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
+    } else {
+        for(let i=0;i<flights.length;i++){
+            h+='<tr>';
+            if(i===0)h+=`<td rowspan="${flights.length}" class="text-center font-bold bg-gray-50">${fH}</td>`;
+            if(i===0||flights[i].name!==flights[i-1].name)h+=`<td rowspan="${rs(flights,i,'name')}" class="text-center">${flights[i].name}</td>`;
+            if(i===0||flights[i].name!==flights[i-1].name||flights[i].desc!==flights[i-1].desc)h+=`<td rowspan="${rs2(flights,i)}">${flights[i].desc}</td>`;
+            h+=`<td class="text-center">${fmt(flights[i].qty)}</td>`;
+            if(!isKRW)h+='<td class="text-right bg-gray-50"></td>';
+            h+=`<td class="text-right" style="white-space:nowrap">${fmt(flights[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(flights[i].tot)}</td><td class="text-center">${flights[i].note}</td></tr>`;
+        }
+    }
+    h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${fSub}</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tF)}</td><td></td></tr>`;
+    document.getElementById('tbody-flight').innerHTML=h;
+
+    // --- 현지비용 ---
+    const lH=isMainland?'행사비용':(isJeju?'제주(현지)<br>발생비용':'해외현지<br>발생비용');
+    const lSub=isMainland?'(2) 합계 - 행사 비용':(isJeju?'(2) 합계 - 제주(현지) 발생 비용':'(2) 합계 - 해외현지 발생 비용');
+    const locals=[];
+    for(let i=0;i<20;i++){
+        const n=document.getElementById(`inp-l${i}-name`).value;
+        if(n.trim()){
+            const d=document.getElementById(`inp-l${i}-desc`).value;
+            const q=Number(document.getElementById(`inp-l${i}-qty`).value)||0;
+            const f=Number(document.getElementById(`inp-l${i}-fgn`).value)||0;
+            const k=isKRW?f:Math.round(f*exRate);
+            tL+=k*q;
+            locals.push({name:n,desc:d,qty:q,fgn:f,krw:k,tot:k*q,note:document.getElementById(`inp-l${i}-note`).value});
+        }
+    }
+    
+    h='';
+    if (locals.length === 0) {
+        h += `<tr><td class="text-center font-bold bg-gray-50">${lH}</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
+    } else {
+        for(let i=0;i<locals.length;i++){
+            h+='<tr>';
+            if(i===0)h+=`<td rowspan="${locals.length}" class="text-center font-bold bg-gray-50">${lH}</td>`;
+            if(i===0||locals[i].name!==locals[i-1].name)h+=`<td rowspan="${rs(locals,i,'name')}" class="text-center">${locals[i].name}</td>`;
+            if(i===0||locals[i].name!==locals[i-1].name||locals[i].desc!==locals[i-1].desc)h+=`<td rowspan="${rs2(locals,i)}">${locals[i].desc}</td>`;
+            h+=`<td class="text-center">${fmt(locals[i].qty)}</td>`;
+            if(!isKRW)h+=`<td class="text-right bg-yellow-50"><span style="float:left;font-size:9px;color:#9ca3af">${cS}</span>${fmt(locals[i].fgn)}</td>`;
+            h+=`<td class="text-right" style="white-space:nowrap">${fmt(locals[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(locals[i].tot)}</td><td class="text-center">${locals[i].note}</td></tr>`;
+        }
+    }
+    h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${lSub}</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tL)}</td><td></td></tr>`;
+    document.getElementById('tbody-local').innerHTML=h;
+
+    // --- 국내비용 ---
+    const doms=[];
+    for(let i=1;i<=3;i++){
+        const n=document.getElementById(`inp-d${i}-name`).value;
+        if(n.trim()){
+            const d=document.getElementById(`inp-d${i}-desc`).value;
+            const q=Number(document.getElementById(`inp-d${i}-qty`).value)||0;
+            const k=Number(document.getElementById(`inp-d${i}-krw`).value)||0;
+            tD+=k*q;
+            doms.push({name:n,desc:d,qty:q,krw:k,tot:k*q,note:document.getElementById(`inp-d${i}-note`).value});
+        }
+    }
+    
+    h='';
+    if (doms.length === 0) {
+        h += `<tr><td class="text-center font-bold bg-gray-50">국내 발생 비용</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
+    } else {
+        for(let i=0;i<doms.length;i++){
+            h+='<tr>';
+            if(i===0)h+=`<td rowspan="${doms.length}" class="text-center font-bold bg-gray-50">국내 발생 비용</td>`;
+            if(i===0||doms[i].name!==doms[i-1].name)h+=`<td rowspan="${rs(doms,i,'name')}" class="text-center">${doms[i].name}</td>`;
+            if(i===0||doms[i].name!==doms[i-1].name||doms[i].desc!==doms[i-1].desc)h+=`<td rowspan="${rs2(doms,i)}">${doms[i].desc}</td>`;
+            h+=`<td class="text-center">${fmt(doms[i].qty)}</td>`;
+            if(!isKRW)h+='<td class="text-right bg-gray-50"></td>';
+            h+=`<td class="text-right" style="white-space:nowrap">${fmt(doms[i].krw)}</td><td class="text-right font-semibold" style="white-space:nowrap">${fmtT(doms[i].tot)}</td><td class="text-center">${doms[i].note}</td></tr>`;
+        }
+    }
+    h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">(3) 합계 - 국내 발생 비용</td><td class="text-right text-blue-800" style="white-space:nowrap">${fmtT(tD)}</td><td></td></tr>`;
+    document.getElementById('tbody-domestic').innerHTML=h;
+
+    // --- 총합계 ---
+    const gT=tF+tL+tD, nF=tL+tD;
+    const ex=isMainland?'(교통비 제외)':'(항공료 제외)';
+    document.getElementById('tbody-total').innerHTML=`
+        <tr class="grand-row"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(1)+(2)+(3) 전체 합계 금액</td><td class="text-right text-blue-800 grand-amount" style="white-space:nowrap">₩${fmtT(gT)}</td><td></td></tr>
+        <tr class="grand-row grand-row-last"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(2)+(3) 행사 비용 합계 <span style="font-size:10px;font-weight:400;color:#64748b">${ex}</span></td><td class="text-right text-red-700 grand-amount" style="white-space:nowrap">₩${fmtT(nF)}</td><td></td></tr>`;
+}
+
+// ===== 초기화 및 이벤트 등록 =====
+document.addEventListener('DOMContentLoaded', function() {
+    buildLocalInputs();
+    updatePresetDropdown(); // 로컬 스토리지에 저장된 목록 불러오기
+    syncCurrencyUI();
+    calculateAndRender();
+
+    document.getElementById('inp-currency').addEventListener('change', function() {
+        syncCurrencyUI();
+        calculateAndRender();
+    });
+
+    document.getElementById('panelInput').addEventListener('input', function(e) {
+        if (e.target.id !== 'inp-currency') {
+            calculateAndRender();
+        }
+    });
+});
+</script>
 </body>
 </html>
