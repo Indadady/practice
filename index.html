@@ -83,10 +83,13 @@
         .btn-clear:hover { background: #f1f5f9; color: #dc2626; border-color: #dc2626; }
         .template-controls { display: flex; gap: 6px; }
         .template-select { flex: 1; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; font-size: 12px; outline: none; }
+        .template-search { width: 120px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; font-size: 12px; outline: none; background: #fff; }
         .btn-load { background: #334155; color: #fff; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
         .btn-load:hover { background: #0f172a; }
         .btn-save { background: #2563eb; color: #fff; border: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
         .btn-save:hover { background: #1d4ed8; }
+        .btn-delete { background: #fff; color: #dc2626; border: 1px solid #dc2626; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-delete:hover { background: #fef2f2; }
 
         /* ===== 입력 폼 ===== */
         .section-title { font-size: 13px; font-weight: 700; padding-left: 8px; border-left: 4px solid; margin-bottom: 8px; }
@@ -386,11 +389,13 @@
                     <button onclick="clearForm()" class="btn-clear">입력칸 모두 비우기</button>
                 </div>
                 <div class="template-controls">
+                    <input type="text" id="preset-search" class="template-search" placeholder="🔍 제목 검색..." oninput="filterPresets()">
                     <select id="preset-select" class="template-select">
                         <option value="">저장된 템플릿 선택...</option>
                     </select>
                     <button onclick="loadPreset()" class="btn-load">불러오기</button>
-                    <button onclick="savePreset()" class="btn-save">현재상태 저장</button>
+                    <button onclick="savePreset()" class="btn-save">저장</button>
+                    <button onclick="deletePreset()" class="btn-delete">삭제</button>
                 </div>
             </div>
 
@@ -692,19 +697,31 @@ function setFormData(data) {
     });
 }
 
-// 셀렉트 박스(드롭다운) 갱신
-function updatePresetDropdown() {
+// 셀렉트 박스(드롭다운) 갱신 (가나다순 정렬 및 검색 기능 추가)
+function updatePresetDropdown(filterText = '') {
     const select = document.getElementById('preset-select');
     const presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
     
+    // 저장된 이름들을 가나다순으로 정렬
+    const keys = Object.keys(presets).sort();
+    
     select.innerHTML = '<option value="">저장된 템플릿 선택...</option>';
     
-    Object.keys(presets).forEach(key => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = key;
-        select.appendChild(option);
+    keys.forEach(key => {
+        // 검색어가 포함된 항목만 드롭다운에 표시
+        if (key.toLowerCase().includes(filterText.toLowerCase())) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = key;
+            select.appendChild(option);
+        }
     });
+}
+
+// 검색창 입력 시 작동하는 필터 함수
+function filterPresets() {
+    const text = document.getElementById('preset-search').value;
+    updatePresetDropdown(text);
 }
 
 // 템플릿 저장
@@ -740,6 +757,25 @@ function loadPreset() {
         setFormData(data);
         syncCurrencyUI();
         calculateAndRender();
+    }
+}
+
+// 템플릿 삭제 기능
+function deletePreset() {
+    const selectedName = document.getElementById('preset-select').value;
+    if(!selectedName) {
+        alert('목록에서 삭제할 템플릿을 먼저 선택해주세요.');
+        return;
+    }
+    
+    if(confirm(`[ ${selectedName} ] 견적을 보관함에서 영구 삭제하시겠습니까?`)) {
+        let presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
+        delete presets[selectedName]; // 데이터 삭제
+        localStorage.setItem('tourmaker_presets', JSON.stringify(presets)); // 로컬스토리지 업데이트
+        
+        document.getElementById('preset-search').value = ''; // 검색창 초기화
+        updatePresetDropdown(); // 목록 갱신
+        alert('삭제가 완료되었습니다.');
     }
 }
 
