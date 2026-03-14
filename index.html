@@ -72,7 +72,7 @@
             display: flex; justify-content: center; align-items: flex-start; padding: 32px 16px;
         }
 
-        /* ===== 견적 템플릿 관리 툴바 ===== */
+        /* ===== 견적 템플릿 관리 툴바 (심플 버전) ===== */
         .template-manager {
             background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;
             padding: 12px; margin-bottom: 20px;
@@ -376,7 +376,7 @@
         <div class="panel-input no-print" id="panelInput">
             <h2>문서 데이터 입력</h2>
 
-            <!-- 신규 추가: 템플릿 관리 영역 (Save & Load) -->
+            <!-- 심플 버전: 템플릿 관리 영역 -->
             <div class="template-manager">
                 <div class="template-header">
                     <span>
@@ -670,7 +670,7 @@ function buildLocalInputs() {
     c.innerHTML = h;
 }
 
-// ===== SAVE & LOAD (템플릿 기능) 로직 =====
+// ===== SAVE & LOAD (브라우저 자체 템플릿 기능) 로직 =====
 
 // 모든 인풋 데이터 객체로 추출
 function getFormData() {
@@ -697,7 +697,6 @@ function updatePresetDropdown() {
     const select = document.getElementById('preset-select');
     const presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
     
-    // 기존 옵션 지우고 기본값 추가
     select.innerHTML = '<option value="">저장된 템플릿 선택...</option>';
     
     Object.keys(presets).forEach(key => {
@@ -711,9 +710,9 @@ function updatePresetDropdown() {
 // 템플릿 저장
 function savePreset() {
     const currentName = document.getElementById('inp-clientName').value || '임시견적';
-    const presetName = prompt("현재 견적을 저장할 이름을 입력하세요.", currentName + " 견적 템플릿");
+    const presetName = prompt("현재 견적을 브라우저에 저장할 이름을 입력하세요.\n(예: 오사카 3박4일 기본폼)", currentName + " 견적");
     
-    if(!presetName) return; // 취소시 종료
+    if(!presetName) return; 
     
     const currentData = getFormData();
     let presets = JSON.parse(localStorage.getItem('tourmaker_presets') || '{}');
@@ -722,8 +721,8 @@ function savePreset() {
     localStorage.setItem('tourmaker_presets', JSON.stringify(presets));
     
     updatePresetDropdown();
-    document.getElementById('preset-select').value = presetName; // 방금 저장한 항목 선택
-    alert(`[${presetName}] 견적이 저장되었습니다.\n언제든 불러와 재사용이 가능합니다.`);
+    document.getElementById('preset-select').value = presetName;
+    alert(`[${presetName}] 견적이 내 브라우저에 저장되었습니다.\n상단 목록에서 언제든 불러올 수 있습니다.`);
 }
 
 // 템플릿 불러오기
@@ -741,20 +740,19 @@ function loadPreset() {
         setFormData(data);
         syncCurrencyUI();
         calculateAndRender();
-        // alert(`[${selectedName}] 견적을 성공적으로 불러왔습니다.`);
     }
 }
 
 // 모든 폼 지우기 (초기화)
 function clearForm() {
-    if(confirm('입력된 모든 데이터가 삭제됩니다. 계속하시겠습니까? (미리 저장해두는 것을 권장합니다)')) {
+    if(confirm('입력된 모든 데이터가 삭제되고 빈 칸으로 초기화됩니다.\n계속하시겠습니까? (필요시 먼저 저장해주세요)')) {
         const inputs = document.querySelectorAll('.panel-input input:not(#preset-select)');
         inputs.forEach(el => {
             if(el.type === 'number') el.value = '';
             else el.value = '';
         });
         
-        // 날짜/환율 등 필수 기본 세팅만 복원
+        // 날짜/환율 등 필수 기본 세팅만 기본값 복원
         document.getElementById('inp-currency').value = 'JPY';
         document.getElementById('inp-exRate').value = '9.5';
         
