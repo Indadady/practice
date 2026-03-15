@@ -254,10 +254,10 @@
         .sender-logo img { height: 24px; object-fit: contain; }
         
         /* ★ 직인(도장) 이미지 처리 - 위치를 이름 위로 겹치게 완벽 보정 ★ */
-        .stamp-wrapper { position: relative; display: inline-block; padding-right: 15px; white-space: nowrap; }
+        .stamp-wrapper { position: relative; display: inline-block; padding-right: 5px; white-space: nowrap; isolation: isolate; }
         .stamp-image {
-            position: absolute; right: -8px; top: 50%;
-            transform: translateY(-50%) rotate(-3deg);
+            position: absolute; right: 0; top: 50%;
+            transform: translate(-40%, -50%) rotate(-3deg); /* (인) 글자와 완벽히 겹치도록 좌측으로 당김 */
             width: 60px; height: 60px;
             object-fit: contain;
             mix-blend-mode: multiply; /* 도장의 흰 배경을 투명하게 날리고 글씨와 잉크처럼 겹치게 함 */
