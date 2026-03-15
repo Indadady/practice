@@ -238,36 +238,38 @@
         .simple-header { text-align: center; margin-bottom: 30px; margin-top: 10px; }
         .simple-header h1 { font-size: 36px; font-weight: 900; letter-spacing: 0.8em; padding-left: 0.8em; color: #000; border-bottom: 2px solid #000; display: inline-block; padding-bottom: 10px;} 
         
-        .simple-info-grid { display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 12px; color: #000; }
+        .simple-info-grid { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; font-size: 12px; color: #000; }
         .simple-info-left { line-height: 1.8; }
         .simple-info-left span { display: inline-block; width: 130px; font-weight: 600; }
+        .simple-info-right img { height: 32px; object-fit: contain; margin-bottom: 4px; }
         
         .simple-sender-receiver { display: flex; justify-content: space-between; margin-bottom: 24px; font-size: 12px; color: #000; }
-        .sr-box { width: 48%; border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 12px 0; display: flex; }
+        .sr-box { width: 48%; border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 12px 0; display: flex; align-items: center; } /* 위아래 센터 정렬 추가 */
         .sr-label { width: 60px; text-align: center; font-weight: 800; background: #f8fafc; display: flex; align-items: center; justify-content: center; margin-right: 12px; letter-spacing: 2px; }
         .sr-content { flex: 1; line-height: 1.8; }
         .sr-content-row { display: flex; align-items: center; }
         .sr-content-row span:first-child { width: 15px; text-align: center; } 
         .sr-content-row span:last-child { flex: 1; padding-left: 5px; }
         .sr-content-row.bold span:last-child { font-weight: 800; font-size: 14px; }
-        .sender-logo { text-align: right; margin-bottom: 8px; }
-        .sender-logo img { height: 24px; object-fit: contain; }
         
-        /* ★ 직인(도장) 이미지 처리 - PDF 오류를 원천 차단하는 Flex 마진 기법 ★ */
+        /* ★ 직인(도장) 이미지 처리 - 전화번호까지 자연스럽게 덮도록 절대 좌표 지정 ★ */
         .stamp-overlap-container { 
+            position: relative; /* 도장 위치의 기준점 */
             display: inline-flex; 
             align-items: center; 
             white-space: nowrap;
         }
         .stamp-image {
-            width: 58px; height: 58px;
+            position: absolute;
+            left: -15px;         /* 글자 왼쪽으로 과감히 침범 */
+            bottom: -10px;       /* 텍스트 아래선 기준. 크기가 크기 때문에 위쪽 전화번호 줄까지 자연스럽게 덮음 */
+            width: 68px; height: 68px; /* 도장 크기를 살짝 키워 리얼리티 부여 */
             object-fit: contain;
-            mix-blend-mode: multiply; /* 도장의 흰 배경을 투명하게 날리고 글씨가 비치게 유지 */
-            margin-left: -46px; /* ★ 핵심: 절대위치를 버리고 마이너스 마진으로 물리적으로 당김. PDF에서 절대 도망가지 못함 ★ */
-            margin-top: 2px;
+            mix-blend-mode: multiply; /* 투명 잉크 효과 유지 */
             pointer-events: none;
-            opacity: 0.90; /* 너무 진하지 않은 인주 느낌 */
-            transform: rotate(-2deg);
+            opacity: 0.85; 
+            transform: rotate(-3deg);
+            z-index: 10;
         }
 
         .simple-subject { font-size: 14px; font-weight: 800; margin-bottom: 16px; display: flex; color: #000; }
@@ -611,10 +613,14 @@
                         <h1>견 적 서</h1>
                     </div>
 
+                    <!-- ★ 로고가 우측 상단으로 이동하여 밸런스 확보 ★ -->
                     <div class="simple-info-grid">
                         <div class="simple-info-left">
                             <div><span>Date of Departure</span>: <span id="out-sim-dep"></span></div>
                             <div><span>Invoice Date</span>: <span id="out-sim-inv"></span></div>
+                        </div>
+                        <div class="simple-info-right">
+                            <img src="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" alt="TOURMAKER">
                         </div>
                     </div>
 
@@ -625,22 +631,19 @@
                             <div class="sr-content">
                                 <div class="sr-content-row"><span>:</span><span id="out-sim-toName"></span></div>
                                 <div class="sr-content-row"><span>:</span><span id="out-sim-toAddr"></span></div>
-                                <div class="sr-content-row"><span>:</span></div> <!-- 간격용 빈 줄 -->
-                                <div class="sr-content-row bold"><span>:</span><span id="out-sim-toPerson"></span></div>
+                                <!-- 빈 줄을 없애고 마진으로 간격을 주어 발신 칸과 높이(3줄)를 완벽히 일치시킴 -->
+                                <div class="sr-content-row bold" style="margin-top: 10px;"><span>:</span><span id="out-sim-toPerson"></span></div>
                             </div>
                         </div>
                         <!-- 발신 -->
                         <div class="sr-box">
                             <div class="sr-label">발 신</div>
                             <div class="sr-content">
-                                <div class="sender-logo">
-                                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" alt="TOURMAKER">
-                                </div>
                                 <div class="sr-content-row"><span>:</span><span>강원도 정선군 정선읍 봉양3길 22-10, 3층</span></div>
                                 <div class="sr-content-row"><span>:</span><span>033-562-2551</span></div>
-                                <div class="sr-content-row bold">
+                                <div class="sr-content-row bold" style="margin-top: 10px;">
                                     <span>:</span>
-                                    <!-- ★ 직인(도장) 이미지가 이름 위로 겹치게 보정된 래퍼 (Flex 적용) ★ -->
+                                    <!-- ★ 직인(도장) 이미지가 이름 및 전화번호 위로 자연스럽게 겹침 ★ -->
                                     <span class="stamp-overlap-container">
                                         이 재 명 (인)
                                         <img class="stamp-image" src="https://blogger.googleusercontent.com/img/a/AVvXsEiweUsH71be_Y3skDUBOVzZE0M4HnXmgllJq7c1JgatYy5eROHYdkvE9rMIcqVl0DQ2ypgr8fkZSQclgQjWOk8yZA5wiF326Ldf4KTrfd_YEsD2zZjyqsRLS65uv50SLZcLFqIvwZly49lEN3sheIMq4HV_VWLs1irf4o8g3-ajXCA7CaOlSvpKCT4Q2XA=w200-h200" alt="직인">
