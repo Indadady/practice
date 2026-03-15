@@ -261,14 +261,14 @@
         }
         .stamp-image {
             position: absolute;
-            left: -15px;         /* 글자 왼쪽으로 과감히 침범 */
-            bottom: -10px;       /* 텍스트 아래선 기준. 크기가 크기 때문에 위쪽 전화번호 줄까지 자연스럽게 덮음 */
+            left: 48px;          /* ★ 수정: 수치를 확 높여서 도장을 오른쪽으로 밀어냄 ('명' 끝부분에 살짝 걸치고 '(인)' 쪽으로 치우침) ★ */
+            bottom: -12px;       /* 텍스트 아래선 기준. 위쪽 전화번호 줄까지 자연스럽게 덮음 */
             width: 68px; height: 68px; /* 도장 크기를 살짝 키워 리얼리티 부여 */
             object-fit: contain;
             mix-blend-mode: multiply; /* 투명 잉크 효과 유지 */
             pointer-events: none;
             opacity: 0.85; 
-            transform: rotate(-3deg);
+            transform: rotate(-4deg); /* 사람이 직접 찍은 듯한 리얼리티를 위해 미세한 회전 추가 */
             z-index: 10;
         }
 
