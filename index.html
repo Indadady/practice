@@ -253,25 +253,21 @@
         .sender-logo { text-align: right; margin-bottom: 8px; }
         .sender-logo img { height: 24px; object-fit: contain; }
         
-        /* ★ 직인(도장) 이미지 처리 - PDF 렌더링 무시 오류를 막기 위해 구조와 CSS 전면 보정 ★ */
-        .stamp-wrapper { 
-            position: relative; 
-            display: inline-block; 
-            white-space: nowrap; 
-            padding-right: 5px; /* 도장 우측으로 약간의 여유 공간 */
+        /* ★ 직인(도장) 이미지 처리 - PDF 오류를 원천 차단하는 Flex 마진 기법 ★ */
+        .stamp-overlap-container { 
+            display: inline-flex; 
+            align-items: center; 
+            white-space: nowrap;
         }
         .stamp-image {
-            position: absolute; 
-            right: 18px;             /* ★ 핵심: 텍스트의 끝을 기준으로 왼쪽으로 18px 강제로 밀어넣음 ('명'과 '인'을 완벽히 덮음) ★ */
-            top: 50%;
-            margin-top: -30px;       /* 60px 높이의 절반을 빼서 세로 중앙 정렬 */
-            width: 60px; height: 60px;
+            width: 58px; height: 58px;
             object-fit: contain;
-            mix-blend-mode: multiply; /* 도장의 흰 배경을 투명하게 날리고 글씨와 잉크처럼 겹치게 함 */
+            mix-blend-mode: multiply; /* 도장의 흰 배경을 투명하게 날리고 글씨가 비치게 유지 */
+            margin-left: -46px; /* ★ 핵심: 절대위치를 버리고 마이너스 마진으로 물리적으로 당김. PDF에서 절대 도망가지 못함 ★ */
+            margin-top: 2px;
             pointer-events: none;
-            opacity: 0.90;
-            z-index: 10;
-            transform: rotate(-3deg); 
+            opacity: 0.90; /* 너무 진하지 않은 인주 느낌 */
+            transform: rotate(-2deg);
         }
 
         .simple-subject { font-size: 14px; font-weight: 800; margin-bottom: 16px; display: flex; color: #000; }
@@ -644,8 +640,8 @@
                                 <div class="sr-content-row"><span>:</span><span>033-562-2551</span></div>
                                 <div class="sr-content-row bold">
                                     <span>:</span>
-                                    <!-- ★ 직인(도장) 이미지가 이름 위로 겹치게 완벽 보정된 래퍼 ★ -->
-                                    <span class="stamp-wrapper">
+                                    <!-- ★ 직인(도장) 이미지가 이름 위로 겹치게 보정된 래퍼 (Flex 적용) ★ -->
+                                    <span class="stamp-overlap-container">
                                         이 재 명 (인)
                                         <img class="stamp-image" src="https://blogger.googleusercontent.com/img/a/AVvXsEiweUsH71be_Y3skDUBOVzZE0M4HnXmgllJq7c1JgatYy5eROHYdkvE9rMIcqVl0DQ2ypgr8fkZSQclgQjWOk8yZA5wiF326Ldf4KTrfd_YEsD2zZjyqsRLS65uv50SLZcLFqIvwZly49lEN3sheIMq4HV_VWLs1irf4o8g3-ajXCA7CaOlSvpKCT4Q2XA=w200-h200" alt="직인">
                                     </span>
