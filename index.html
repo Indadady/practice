@@ -258,12 +258,12 @@
             position: relative; 
             display: inline-block; 
             white-space: nowrap; 
+            padding-right: 5px; /* 도장 우측으로 약간의 여유 공간 */
         }
         .stamp-image {
             position: absolute; 
-            left: 50%;               /* (인) 글자의 정중앙을 기준점으로 삼음 */
+            right: 18px;             /* ★ 핵심: 텍스트의 끝을 기준으로 왼쪽으로 18px 강제로 밀어넣음 ('명'과 '인'을 완벽히 덮음) ★ */
             top: 50%;
-            margin-left: -48px;      /* ★ 수정: 정중앙(-30px)에서 왼쪽으로 확 당겨서 '명'과 '(인)' 사이에 자연스럽게 걸치게 함 ★ */
             margin-top: -30px;       /* 60px 높이의 절반을 빼서 세로 중앙 정렬 */
             width: 60px; height: 60px;
             object-fit: contain;
@@ -271,7 +271,7 @@
             pointer-events: none;
             opacity: 0.90;
             z-index: 10;
-            transform: rotate(-3deg); /* 인쇄기가 무시하더라도 margin-left/top이 중앙을 완벽히 잡아줌 */
+            transform: rotate(-3deg); 
         }
 
         .simple-subject { font-size: 14px; font-weight: 800; margin-bottom: 16px; display: flex; color: #000; }
@@ -645,9 +645,8 @@
                                 <div class="sr-content-row bold">
                                     <span>:</span>
                                     <!-- ★ 직인(도장) 이미지가 이름 위로 겹치게 완벽 보정된 래퍼 ★ -->
-                                    <span style="margin-right: 4px;">이 재 명</span>
                                     <span class="stamp-wrapper">
-                                        (인)
+                                        이 재 명 (인)
                                         <img class="stamp-image" src="https://blogger.googleusercontent.com/img/a/AVvXsEiweUsH71be_Y3skDUBOVzZE0M4HnXmgllJq7c1JgatYy5eROHYdkvE9rMIcqVl0DQ2ypgr8fkZSQclgQjWOk8yZA5wiF326Ldf4KTrfd_YEsD2zZjyqsRLS65uv50SLZcLFqIvwZly49lEN3sheIMq4HV_VWLs1irf4o8g3-ajXCA7CaOlSvpKCT4Q2XA=w200-h200" alt="직인">
                                     </span>
                                 </div>
