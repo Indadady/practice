@@ -261,10 +261,10 @@
         }
         .stamp-image {
             position: absolute; 
-            left: 50%;              /* (인) 글자의 정중앙을 기준점으로 삼음 */
+            left: 50%;               /* (인) 글자의 정중앙을 기준점으로 삼음 */
             top: 50%;
-            margin-left: -30px;      /* 60px 너비의 절반을 빼서 완벽한 중앙 정렬 */
-            margin-top: -30px;       /* 60px 높이의 절반을 빼서 완벽한 중앙 정렬 */
+            margin-left: -48px;      /* ★ 수정: 정중앙(-30px)에서 왼쪽으로 확 당겨서 '명'과 '(인)' 사이에 자연스럽게 걸치게 함 ★ */
+            margin-top: -30px;       /* 60px 높이의 절반을 빼서 세로 중앙 정렬 */
             width: 60px; height: 60px;
             object-fit: contain;
             mix-blend-mode: multiply; /* 도장의 흰 배경을 투명하게 날리고 글씨와 잉크처럼 겹치게 함 */
