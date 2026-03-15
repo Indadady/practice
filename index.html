@@ -253,16 +253,23 @@
         .sender-logo { text-align: right; margin-bottom: 8px; }
         .sender-logo img { height: 24px; object-fit: contain; }
         
-        /* ★ 직인(도장) 이미지 처리 - 위치를 이름 위로 겹치게 완벽 보정 ★ */
-        .stamp-wrapper { position: relative; display: inline-block; padding-right: 5px; white-space: nowrap; isolation: isolate; }
+        /* ★ 직인(도장) 이미지 처리 - PDF 렌더링 무시 오류를 막기 위해 구조와 CSS 전면 보정 ★ */
+        .stamp-wrapper { 
+            position: relative; 
+            display: inline-block; 
+            white-space: nowrap; 
+        }
         .stamp-image {
-            position: absolute; right: 0; top: 50%;
-            transform: translate(-40%, -50%) rotate(-3deg); /* (인) 글자와 완벽히 겹치도록 좌측으로 당김 */
-            width: 60px; height: 60px;
+            position: absolute; 
+            left: 100%;             /* 텍스트의 제일 끝(오른쪽) 위치를 기준점으로 삼음 */
+            margin-left: -48px;     /* 기준점에서 왼쪽으로 48px 강제로 끌어옴 -> '(인)' 글자 완벽히 덮음 */
+            top: 50%;
+            margin-top: -28px;      /* translateY 대신 margin을 써서 PDF 변환기 호환성 100% 확보 */
+            width: 56px; height: 56px;
             object-fit: contain;
             mix-blend-mode: multiply; /* 도장의 흰 배경을 투명하게 날리고 글씨와 잉크처럼 겹치게 함 */
             pointer-events: none;
-            opacity: 0.90; /* 너무 진하지 않게 인쇄된 잉크 느낌 부여 */
+            opacity: 0.90;
             z-index: 10;
         }
 
@@ -636,7 +643,7 @@
                                 <div class="sr-content-row"><span>:</span><span>033-562-2551</span></div>
                                 <div class="sr-content-row bold">
                                     <span>:</span>
-                                    <!-- ★ 직인(도장) 이미지가 이름 위로 겹치게 보정된 래퍼 ★ -->
+                                    <!-- ★ 직인(도장) 이미지가 이름 위로 겹치게 완벽 보정된 래퍼 ★ -->
                                     <span class="stamp-wrapper">
                                         이 재 명 (인)
                                         <img class="stamp-image" src="https://blogger.googleusercontent.com/img/a/AVvXsEiweUsH71be_Y3skDUBOVzZE0M4HnXmgllJq7c1JgatYy5eROHYdkvE9rMIcqVl0DQ2ypgr8fkZSQclgQjWOk8yZA5wiF326Ldf4KTrfd_YEsD2zZjyqsRLS65uv50SLZcLFqIvwZly49lEN3sheIMq4HV_VWLs1irf4o8g3-ajXCA7CaOlSvpKCT4Q2XA=w200-h200" alt="직인">
