@@ -81,7 +81,7 @@
         }
         .panel-input-scroll {
             flex: 1; overflow-y: auto; scroll-behavior: smooth;
-            padding-bottom: 80px; /* 실시간 요약바 공간 확보 */
+            padding-bottom: 80px; 
         }
         .panel-input h2 {
             font-size: 18px; font-weight: 800; border-bottom: 2px solid #0f172a;
@@ -113,7 +113,6 @@
         .btn-delete { background: #fff; color: #ef4444; border: 1px solid #fca5a5; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-delete:hover { background: #fef2f2; border-color: #ef4444; }
         
-        /* 백업/복구 버튼 */
         .backup-controls { display: flex; gap: 8px; justify-content: flex-end; padding-top: 8px; border-top: 1px dashed #cbd5e1; }
         .btn-backup { background: #fff; color: #059669; border: 1px solid #6ee7b7; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-backup:hover { background: #ecfdf5; }
@@ -340,26 +339,6 @@
         }
         .footer-brand a:hover { background: #f1f5f9; color: #0f172a; border-color: #94a3b8; }
 
-        /* ★ 수정 가능 웹문서(인터랙티브)용 셀 스타일 (수치 입력용) ★ */
-        .c-qty, .c-krw, .c-tot, .c-fgn {
-            width: 100%; border: 1px solid transparent; background: transparent; font-family: inherit;
-            font-size: inherit; color: inherit; font-weight: inherit; outline: none; transition: 0.2s; box-sizing: border-box;
-        }
-        .c-qty { text-align: center; }
-        .c-krw, .c-tot, .c-fgn { text-align: right; }
-        .c-qty:hover, .c-krw:hover, .c-tot:hover, .c-fgn:hover,
-        .c-qty:focus, .c-krw:focus, .c-tot:focus, .c-fgn:focus {
-            background: #e0f2fe; border: 1px solid #93c5fd; border-radius: 4px; box-shadow: inset 0 0 0 1px #93c5fd;
-        }
-
-        /* ★ 한글 텍스트(구분, 항목, 내용 등) 에디터용 CSS ★ */
-        .editable-text { 
-            outline: none; border-radius: 4px; transition: background 0.2s, box-shadow 0.2s; cursor: text; min-height: 16px;
-        }
-        .editable-text:hover, .editable-text:focus { 
-            background: #e0f2fe; box-shadow: inset 0 0 0 1px #93c5fd; 
-        }
-
         /* ===== 모바일 ===== */
         @media (max-width: 1023px) {
             .mobile-tabs { display: flex; }
@@ -412,9 +391,6 @@
             .st-grandtotal { background: #f1f5f9 !important; }
             .highlight-bg { background-color: #fef08a !important; }
             .sfn-graybox { background: #e2e8f0 !important; }
-            
-            .c-qty, .c-krw, .c-tot, .c-fgn { border: none !important; background: transparent !important; box-shadow: none !important; }
-            .editable-text { background: transparent !important; box-shadow: none !important; outline: none !important; } /* PDF 저장 시 텍스트 박스 흔적 제거 */
 
             @page { size: A4 portrait; margin: 8mm; }
         }
@@ -435,7 +411,8 @@
             <h1>가격 산출 내역 시스템</h1>
         </div>
         <div class="header-right">
-            <button class="btn-html" onclick="downloadInteractiveHTML()">🌐 기관 전달용 양식 저장</button>
+            <!-- ★ 다운로드 버튼 모든 통화에서 항시 노출 ★ -->
+            <button id="btn-export-html" class="btn-html" onclick="downloadInteractiveHTML()">🌐 기관 전달용 양식 저장</button>
             <button class="btn-pdf" onclick="printPDF()">PDF 내보내기</button>
         </div>
     </div>
@@ -647,7 +624,7 @@
 
         </div> <!-- // panel-input -->
 
-        <!-- 미리보기 패널 -->
+        <!-- 미리보기 패널 (메인 웹에서는 읽기 전용으로 유지) -->
         <div class="panel-preview" id="panelPreview">
             <div class="a4-sheet" id="print-section">
                 
@@ -657,11 +634,11 @@
                         <div class="doc-header">
                             <div class="doc-header-left">
                                 <table class="info-table">
-                                    <tr><th>고객명</th><td id="out-clientName" style="font-weight:800;" class="editable-text" contenteditable="true"></td></tr>
-                                    <tr><th>행사명</th><td id="out-docTitle" style="font-weight:800;" class="editable-text" contenteditable="true"></td></tr>
-                                    <tr><th>여행일</th><td id="out-travelDate" class="editable-text" contenteditable="true"></td></tr>
-                                    <tr><th>여행인원</th><td id="out-paxStr" class="editable-text" contenteditable="true"></td></tr>
-                                    <tr><th>발송일자/환율</th><td id="out-issueAndRate" style="font-size:11px;" class="editable-text" contenteditable="true"></td></tr>
+                                    <tr><th>고객명</th><td id="out-clientName" style="font-weight:800;" class="export-text"></td></tr>
+                                    <tr><th>행사명</th><td id="out-docTitle" style="font-weight:800;" class="export-text"></td></tr>
+                                    <tr><th>여행일</th><td id="out-travelDate" class="export-text"></td></tr>
+                                    <tr><th>여행인원</th><td id="out-paxStr" class="export-text"></td></tr>
+                                    <tr><th>발송일자/환율</th><td id="out-issueAndRate" style="font-size:11px;" class="export-text"></td></tr>
                                 </table>
                             </div>
                             <div class="doc-header-right">
@@ -700,8 +677,8 @@
 
                     <div class="simple-info-grid">
                         <div class="simple-info-left">
-                            <div><span>Date of Departure</span>: <span id="out-sim-dep" class="editable-text" contenteditable="true"></span></div>
-                            <div><span>Invoice Date</span>: <span id="out-sim-inv" class="editable-text" contenteditable="true"></span></div>
+                            <div><span>Date of Departure</span>: <span id="out-sim-dep" class="export-text"></span></div>
+                            <div><span>Invoice Date</span>: <span id="out-sim-inv" class="export-text"></span></div>
                         </div>
                         <div class="simple-info-right">
                             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="TOURMAKER">
@@ -712,9 +689,9 @@
                         <div class="sr-box">
                             <div class="sr-label">수 신</div>
                             <div class="sr-content">
-                                <div class="sr-content-row"><span>:</span><span id="out-sim-toName" class="editable-text" contenteditable="true"></span></div>
-                                <div class="sr-content-row"><span>:</span><span id="out-sim-toAddr" class="editable-text" contenteditable="true"></span></div>
-                                <div class="sr-content-row bold" style="margin-top: 10px;"><span>:</span><span id="out-sim-toPerson" class="editable-text" contenteditable="true"></span></div>
+                                <div class="sr-content-row"><span>:</span><span id="out-sim-toName" class="export-text"></span></div>
+                                <div class="sr-content-row"><span>:</span><span id="out-sim-toAddr" class="export-text"></span></div>
+                                <div class="sr-content-row bold" style="margin-top: 10px;"><span>:</span><span id="out-sim-toPerson" class="export-text"></span></div>
                             </div>
                         </div>
                         <div class="sr-box">
@@ -735,7 +712,7 @@
 
                     <div class="simple-subject">
                         <div class="simple-subject-label">내 용</div>
-                        <div>: <span id="out-sim-subject" class="editable-text" contenteditable="true"></span></div>
+                        <div>: <span id="out-sim-subject" class="export-text"></span></div>
                     </div>
 
                     <table class="simple-table" id="simple-table">
@@ -755,24 +732,24 @@
 
                     <div class="simple-footer-bank">
                         <p style="margin-bottom:10px;">입금 계좌 정보 (Make All check payable to ;)</p>
-                        <p><span class="label">은행 (Bank)</span><span class="colon">:</span><span class="val editable-text" id="out-sim-bankName" contenteditable="true"></span></p>
-                        <p><span class="label">계좌번호 (Bank Account)</span><span class="colon">:</span><span class="val editable-text" id="out-sim-bankNum" contenteditable="true"></span></p>
-                        <p><span class="label">소유자 (Holder Name)</span><span class="colon">:</span><span class="val editable-text" id="out-sim-bankHolder" contenteditable="true"></span></p>
-                        <p style="margin-top:4px;"><span class="label">입금 기한 (By Due)</span><span class="colon">:</span><span class="val highlight-bg editable-text" id="out-sim-due" contenteditable="true"></span></p>
+                        <p><span class="label">은행 (Bank)</span><span class="colon">:</span><span class="val export-text" id="out-sim-bankName"></span></p>
+                        <p><span class="label">계좌번호 (Bank Account)</span><span class="colon">:</span><span class="val export-text" id="out-sim-bankNum"></span></p>
+                        <p><span class="label">소유자 (Holder Name)</span><span class="colon">:</span><span class="val export-text" id="out-sim-bankHolder"></span></p>
+                        <p style="margin-top:4px;"><span class="label">입금 기한 (By Due)</span><span class="colon">:</span><span class="val highlight-bg export-text" id="out-sim-due"></span></p>
                     </div>
 
                     <div class="simple-footer-notes">
                         <div class="sfn-row">
                             <div class="sfn-label">포함사항</div><div class="sfn-colon">:</div>
-                            <div class="sfn-content editable-text" id="out-sim-inc" contenteditable="true"></div>
+                            <div class="sfn-content export-text" id="out-sim-inc"></div>
                         </div>
                         <div class="sfn-row">
                             <div class="sfn-label">불포함사항</div><div class="sfn-colon">:</div>
-                            <div class="sfn-content editable-text" id="out-sim-exc" contenteditable="true"></div>
+                            <div class="sfn-content export-text" id="out-sim-exc"></div>
                         </div>
                         <div class="sfn-row" id="wrap-sim-taxNote" style="display:none; margin-top:8px; color:#b91c1c;">
                             <div class="sfn-label">특이사항</div><div class="sfn-colon">:</div>
-                            <div class="sfn-content editable-text" id="out-sim-taxNote" style="font-weight:700; line-height: 1.4;" contenteditable="true"></div>
+                            <div class="sfn-content export-text" id="out-sim-taxNote" style="font-weight:700; line-height: 1.4;"></div>
                         </div>
                         <div class="sfn-graybox"></div>
                     </div>
@@ -906,12 +883,16 @@ function toggleDocMode() {
 function syncCurrencyUI() {
     const curr = document.getElementById('inp-currency').value;
     const rW = document.getElementById('wrap-exRate');
+    const btnHtml = document.getElementById('btn-export-html');
     
     if (curr === 'KRW_MAINLAND' || curr === 'KRW_JEJU' || curr === 'SIMPLE_QUOTE') {
         rW.style.display = 'none';
     } else {
         rW.style.display = 'flex';
     }
+    
+    // ★ 어떤 통화/양식을 선택하든 기관 전달용 양식 내보내기 활성화 ★
+    if (btnHtml) btnHtml.style.display = 'inline-block';
 
     const isKRW = (curr === 'KRW_MAINLAND' || curr === 'KRW_JEJU');
     document.querySelectorAll('.l-fgn').forEach(el => {
@@ -1100,14 +1081,37 @@ function scheduleValidation() {
 // ===================================================================
 
 function downloadInteractiveHTML() {
+    calculateAndRender(); 
+    
     const warnings = validateRows();
     if (warnings.length > 0) {
         if (!confirm("⚠️ 입력된 데이터에 확인이 필요한 항목이 있습니다.\n이대로 내보내기를 진행하시겠습니까?")) return;
     }
 
-    const sheetHtml = document.getElementById('print-section').outerHTML;
+    const clone = document.getElementById('print-section').cloneNode(true);
     
-    // ★ 인터랙티브 문서 전용 CSS (은밀한 삭제 버튼 스타일 추가) ★
+    clone.querySelectorAll('.export-qty').forEach(el => {
+        el.innerHTML = `<input type="text" class="c-qty" value="${el.textContent}" data-group="${el.dataset.group}">`;
+        el.classList.remove('export-qty');
+    });
+    clone.querySelectorAll('.export-krw').forEach(el => {
+        el.innerHTML = `<input type="text" class="c-krw" value="${el.textContent}" data-group="${el.dataset.group}">`;
+        el.classList.remove('export-krw');
+    });
+    clone.querySelectorAll('.export-tot').forEach(el => {
+        const idAttr = el.id ? `id="${el.id}"` : '';
+        el.removeAttribute('id');
+        el.innerHTML = `<input type="text" class="c-tot" ${idAttr} value="${el.textContent}" data-group="${el.dataset.group}">`;
+        el.classList.remove('export-tot');
+    });
+    clone.querySelectorAll('.export-text').forEach(el => {
+        el.classList.add('editable-text');
+        el.setAttribute('contenteditable', 'true');
+        el.classList.remove('export-text');
+    });
+
+    const sheetHtml = clone.outerHTML;
+
     const styles = `
         body { background: #f1f5f9; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; font-family: 'Pretendard', 'Malgun Gothic', '맑은 고딕', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         .a4-sheet { background: #fff; width: 100%; max-width: 850px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 4px; margin-bottom: 40px; position: relative; }
@@ -1153,8 +1157,10 @@ function downloadInteractiveHTML() {
         .highlight-bg { background-color: #fef08a; display: inline-block; padding: 0 12px; border-radius: 2px; }
         .simple-footer-notes { font-size: 12px; line-height: 1.6; display: flex; flex-direction: column; gap: 10px; }
         .sfn-row { display: flex; } .sfn-label { width: 110px; text-align: center; font-weight: 800; } .sfn-colon { width: 20px; text-align: center; } .sfn-content { flex: 1; }
+        .sfn-graybox { background: #e2e8f0; height: 30px; width: 100%; margin-top: 24px; border-radius: 4px; }
         .footer-brand { text-align: center; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px; font-size: 11px; color: #64748b; }
-        .footer-brand a { display: inline-block; margin-top: 8px; padding: 6px 16px; border: 1px solid #cbd5e1; border-radius: 6px; color: #475569; text-decoration: none; font-weight: 700; transition: 0.2s; }
+        .footer-brand a { display: inline-block; margin-top: 8px; padding: 6px 16px; border: 1px solid #cbd5e1; border-radius: 6px; color: #475569; text-decoration: none; font-size: 11px; font-weight: 700; transition: 0.2s; }
+        .footer-brand a:hover { background: #f1f5f9; color: #0f172a; border-color: #94a3b8; }
         
         .c-qty, .c-krw, .c-tot, .c-fgn { width: 100%; border: 1px solid transparent; background: transparent; font-family: inherit; font-size: inherit; color: inherit; font-weight: inherit; outline: none; transition: 0.2s; box-sizing: border-box; }
         .c-qty { text-align: center; cursor: pointer; } .c-krw, .c-tot, .c-fgn { text-align: right; cursor: pointer; }
@@ -1164,20 +1170,9 @@ function downloadInteractiveHTML() {
         .editable-text:hover, .editable-text:focus { background: #e0f2fe; box-shadow: inset 0 0 0 1px #93c5fd; }
 
         .top-bar { background: #1e293b; color: white; width: 100%; max-width: 850px; padding: 16px 24px; border-radius: 8px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .top-bar p { margin: 0; font-size: 14px; }
+        .top-bar p { margin: 0; }
         .btn-print { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .btn-print:hover { background: #059669; }
-
-        /* ★ 몰래 지우기 버튼용 CSS (마우스 올릴 때만 우측에 등장) ★ */
-        .del-row-btn {
-            position: absolute; right: -25px; top: 50%; transform: translateY(-50%);
-            background: #ef4444; color: white; border: none; border-radius: 4px;
-            width: 20px; height: 20px; cursor: pointer; display: none; font-size: 10px;
-            line-height: 20px; text-align: center; padding: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background 0.2s;
-        }
-        .del-row-btn:hover { background: #b91c1c; }
-        tr:hover .del-row-btn { display: block; }
         
         @media print {
             body { background: #fff; padding: 0; }
@@ -1191,7 +1186,7 @@ function downloadInteractiveHTML() {
         }
     `;
 
-    // ★ 행 숨기기 기능을 문서 로드 시 자동 세팅하는 스크립트 ★
+    // ★ 행정실 맞춤 로직 : 삭제 기능 제거 및 자동 계산(소계/총계 연동) 완벽 복원 ★
     const scriptLogic = `
         function formatCurrency(val) {
             let num = Number(String(val).replace(/[^0-9.-]/g, ''));
@@ -1200,20 +1195,6 @@ function downloadInteractiveHTML() {
         function parse(val) {
             return Number(String(val).replace(/[^0-9.-]/g, '')) || 0;
         }
-
-        // 문서 로딩 시 일반 데이터 행 끝에 삭제 버튼 몰래 심어두기
-        window.onload = function() {
-            document.querySelectorAll('#main-table tbody tr, #simple-table tbody tr').forEach(tr => {
-                // 합계줄(subtotal-row 등)이 아닌 일반 데이터 행에만 적용
-                if (!tr.classList.contains('subtotal-row') && !tr.classList.contains('st-subtotal') && !tr.classList.contains('st-grandtotal') && !tr.classList.contains('grand-row')) {
-                    const lastTd = tr.lastElementChild;
-                    if(lastTd) {
-                        lastTd.style.position = 'relative';
-                        lastTd.insertAdjacentHTML('beforeend', '<button class="del-row-btn no-print" onclick="this.closest(\\'tr\\').remove(); recalcAll();" title="항목 삭제">✕</button>');
-                    }
-                }
-            });
-        };
 
         document.addEventListener('input', function(e) {
             if (e.target.classList.contains('c-krw') || e.target.classList.contains('c-qty') || e.target.classList.contains('c-tot')) {
@@ -1246,6 +1227,7 @@ function downloadInteractiveHTML() {
                 
                 const grand1 = document.getElementById('grand-1'); if(grand1) grand1.textContent = '₩' + formatCurrency(flightSum + localSum + domSum);
                 const grand2 = document.getElementById('grand-2'); if(grand2) grand2.textContent = '₩' + formatCurrency(localSum + domSum);
+                
             } else if (document.getElementById('simple-table')) {
                 let subTotal = 0;
                 document.querySelectorAll('input.c-tot[data-group="simple"]').forEach(el => subTotal += parse(el.value));
@@ -1272,11 +1254,11 @@ function downloadInteractiveHTML() {
 </head>
 <body>
     <div class="top-bar no-print">
-        <div>
-            <p style="font-size:16px; font-weight:800; margin-bottom:4px;">💡 투어메이커 스마트 견적서 (맞춤 편집용)</p>
-            <p>표 안의 <strong>텍스트(항목/내용)</strong>나 <strong>단가/수량</strong>을 클릭하여 예산에 맞게 수정 가능합니다. <span style="color:#fbbf24;">불필요한 항목은 마우스를 올려 우측의 ✕ 버튼을 누르면 숨겨집니다.</span></p>
+        <div style="flex:1;">
+            <p style="font-size:16px; font-weight:800; margin-bottom:4px;">💡 투어메이커 기관 맞춤 편집용 시스템</p>
+            <p style="font-size:13px; color:#cbd5e1; margin-top:4px;">* 계약 총액은 수정 불가 합니다.</p>
         </div>
-        <button class="btn-print" onclick="window.print()">🖨️ 내부 기안용 PDF 저장</button>
+        <button class="btn-print" onclick="window.print()">🖨️ PDF 저장</button>
     </div>
     ${sheetHtml}
     <script>${scriptLogic}<\/script>
@@ -1288,8 +1270,9 @@ function downloadInteractiveHTML() {
     const a = document.createElement('a');
     
     const currencyVal = document.getElementById('inp-currency').value;
+    const isSimple = currencyVal === 'SIMPLE_QUOTE';
     let fileName = '';
-    if (currencyVal === 'SIMPLE_QUOTE') {
+    if (isSimple) {
         fileName = document.getElementById('inp-sim-toName').value || '고객';
         fileName = `투어메이커_${fileName}_맞춤견적서.html`;
     } else {
@@ -1682,7 +1665,7 @@ function clearForm() {
     if(!confirm('모든 데이터가 삭제되고 초기화됩니다.')) return;
     document.querySelectorAll('input[type="text"]').forEach(el => el.value = '');
     document.querySelectorAll('input[type="number"]').forEach(el => el.value = '');
-    document.getElementById('inp-det-specialNote').value = ''; // 특이사항 초기화
+    document.getElementById('inp-det-specialNote').value = ''; 
     document.getElementById('flight-inputs-container').innerHTML = '';
     document.getElementById('local-inputs-container').innerHTML = '';
     document.getElementById('domestic-inputs-container').innerHTML = '';
@@ -1698,7 +1681,7 @@ function clearForm() {
 }
 
 // ===================================================================
-// 렌더링 및 계산 로직 (입력 필드로 변환 적용)
+// 렌더링 및 계산 로직 (메인 웹 화면은 '읽기 전용'으로 원상복구!)
 // ===================================================================
 
 const fmt = n => (n===0||n==='') ? '' : Number(n).toLocaleString();
@@ -1767,21 +1750,19 @@ function renderDetailed() {
     });
     
     let h='';
-    if (flights.length === 0) h += `<tr><td class="text-center font-bold bg-gray-50 editable-text" contenteditable="true">${fH}</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
+    if (flights.length === 0) h += `<tr><td class="text-center font-bold bg-gray-50 export-text">${fH}</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
     else {
         for(let i=0;i<flights.length;i++){
             h+='<tr>';
-            if(i===0)h+=`<td rowspan="${flights.length}" class="text-center font-bold bg-gray-50 editable-text" contenteditable="true">${fH}</td>`;
-            if(i===0||flights[i].name!==flights[i-1].name)h+=`<td rowspan="${rs(flights,i,'name')}" class="text-center editable-text" contenteditable="true">${escAttr(flights[i].name)}</td>`;
-            if(i===0||flights[i].name!==flights[i-1].name||flights[i].desc!==flights[i-1].desc)h+=`<td rowspan="${rs2(flights,i)}" class="editable-text" contenteditable="true">${escAttr(flights[i].desc)}</td>`;
+            if(i===0)h+=`<td rowspan="${flights.length}" class="text-center font-bold bg-gray-50 export-text">${fH}</td>`;
+            if(i===0||flights[i].name!==flights[i-1].name)h+=`<td rowspan="${rs(flights,i,'name')}" class="text-center export-text">${escAttr(flights[i].name)}</td>`;
+            if(i===0||flights[i].name!==flights[i-1].name||flights[i].desc!==flights[i-1].desc)h+=`<td rowspan="${rs2(flights,i)}" class="export-text">${escAttr(flights[i].desc)}</td>`;
             
-            // 수량, 단가(외화/원화), 총금액은 기존 input 형태 유지
-            h+=`<td class="text-center"><input type="text" class="c-qty" value="${fmt(flights[i].qty)}" data-group="flight"></td>`;
+            h+=`<td class="text-center export-qty" data-group="flight">${fmt(flights[i].qty)}</td>`;
             if(!isKRW)h+='<td class="text-right bg-gray-50"></td>';
-            h+=`<td class="text-right"><input type="text" class="c-krw" value="${fmt(flights[i].krw)}" data-group="flight"></td>`;
-            h+=`<td class="text-right font-semibold"><input type="text" class="c-tot" value="${fmtT(flights[i].tot)}" data-group="flight"></td>`;
-            // 비고란 editable-text 적용
-            h+=`<td class="text-center editable-text" contenteditable="true">${escAttr(flights[i].note)}</td></tr>`;
+            h+=`<td class="text-right export-krw" data-group="flight">${fmt(flights[i].krw)}</td>`;
+            h+=`<td class="text-right font-semibold export-tot" data-group="flight">${fmtT(flights[i].tot)}</td>`;
+            h+=`<td class="text-center export-text">${escAttr(flights[i].note)}</td></tr>`;
         }
     }
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${fSub}</td><td class="text-right text-blue-800" id="sub-flight">₩${fmtT(tF)}</td><td></td></tr>`;
@@ -1802,19 +1783,19 @@ function renderDetailed() {
     });
     
     h='';
-    if (locals.length === 0) h += `<tr><td class="text-center font-bold bg-gray-50 editable-text" contenteditable="true">${lH}</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
+    if (locals.length === 0) h += `<tr><td class="text-center font-bold bg-gray-50 export-text">${lH}</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
     else {
         for(let i=0;i<locals.length;i++){
             h+='<tr>';
-            if(i===0)h+=`<td rowspan="${locals.length}" class="text-center font-bold bg-gray-50 editable-text" contenteditable="true">${lH}</td>`;
-            if(i===0||locals[i].name!==locals[i-1].name)h+=`<td rowspan="${rs(locals,i,'name')}" class="text-center editable-text" contenteditable="true">${escAttr(locals[i].name)}</td>`;
-            if(i===0||locals[i].name!==locals[i-1].name||locals[i].desc!==locals[i-1].desc)h+=`<td rowspan="${rs2(locals,i)}" class="editable-text" contenteditable="true">${escAttr(locals[i].desc)}</td>`;
+            if(i===0)h+=`<td rowspan="${locals.length}" class="text-center font-bold bg-gray-50 export-text">${lH}</td>`;
+            if(i===0||locals[i].name!==locals[i-1].name)h+=`<td rowspan="${rs(locals,i,'name')}" class="text-center export-text">${escAttr(locals[i].name)}</td>`;
+            if(i===0||locals[i].name!==locals[i-1].name||locals[i].desc!==locals[i-1].desc)h+=`<td rowspan="${rs2(locals,i)}" class="export-text">${escAttr(locals[i].desc)}</td>`;
             
-            h+=`<td class="text-center"><input type="text" class="c-qty" value="${fmt(locals[i].qty)}" data-group="local"></td>`;
-            if(!isKRW)h+=`<td class="text-right bg-yellow-50"><span style="float:left;font-size:9px;color:#9ca3af">${cS}</span><input type="text" class="c-fgn" value="${fmt(locals[i].fgn)}" style="width:calc(100% - 15px); float:right;"></td>`;
-            h+=`<td class="text-right"><input type="text" class="c-krw" value="${fmt(locals[i].krw)}" data-group="local"></td>`;
-            h+=`<td class="text-right font-semibold"><input type="text" class="c-tot" value="${fmtT(locals[i].tot)}" data-group="local"></td>`;
-            h+=`<td class="text-center editable-text" contenteditable="true">${escAttr(locals[i].note)}</td></tr>`;
+            h+=`<td class="text-center export-qty" data-group="local">${fmt(locals[i].qty)}</td>`;
+            if(!isKRW)h+=`<td class="text-right bg-yellow-50"><span style="float:left;font-size:9px;color:#9ca3af">${cS}</span><span class="export-fgn">${fmt(locals[i].fgn)}</span></td>`;
+            h+=`<td class="text-right export-krw" data-group="local">${fmt(locals[i].krw)}</td>`;
+            h+=`<td class="text-right font-semibold export-tot" data-group="local">${fmtT(locals[i].tot)}</td>`;
+            h+=`<td class="text-center export-text">${escAttr(locals[i].note)}</td></tr>`;
         }
     }
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">${lSub}</td><td class="text-right text-blue-800" id="sub-local">₩${fmtT(tL)}</td><td></td></tr>`;
@@ -1832,19 +1813,19 @@ function renderDetailed() {
     });
     
     h='';
-    if (doms.length === 0) h += `<tr><td class="text-center font-bold bg-gray-50 editable-text" contenteditable="true">국내 발생 비용</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
+    if (doms.length === 0) h += `<tr><td class="text-center font-bold bg-gray-50 export-text">국내 발생 비용</td><td colspan="${col-1}" class="text-center empty-row-text">입력된 항목이 없습니다.</td></tr>`;
     else {
         for(let i=0;i<doms.length;i++){
             h+='<tr>';
-            if(i===0)h+=`<td rowspan="${doms.length}" class="text-center font-bold bg-gray-50 editable-text" contenteditable="true">국내 발생 비용</td>`;
-            if(i===0||doms[i].name!==doms[i-1].name)h+=`<td rowspan="${rs(doms,i,'name')}" class="text-center editable-text" contenteditable="true">${escAttr(doms[i].name)}</td>`;
-            if(i===0||doms[i].name!==doms[i-1].name||doms[i].desc!==doms[i-1].desc)h+=`<td rowspan="${rs2(doms,i)}" class="editable-text" contenteditable="true">${escAttr(doms[i].desc)}</td>`;
+            if(i===0)h+=`<td rowspan="${doms.length}" class="text-center font-bold bg-gray-50 export-text">국내 발생 비용</td>`;
+            if(i===0||doms[i].name!==doms[i-1].name)h+=`<td rowspan="${rs(doms,i,'name')}" class="text-center export-text">${escAttr(doms[i].name)}</td>`;
+            if(i===0||doms[i].name!==doms[i-1].name||doms[i].desc!==doms[i-1].desc)h+=`<td rowspan="${rs2(doms,i)}" class="export-text">${escAttr(doms[i].desc)}</td>`;
             
-            h+=`<td class="text-center"><input type="text" class="c-qty" value="${fmt(doms[i].qty)}" data-group="domestic"></td>`;
+            h+=`<td class="text-center export-qty" data-group="domestic">${fmt(doms[i].qty)}</td>`;
             if(!isKRW)h+='<td class="text-right bg-gray-50"></td>';
-            h+=`<td class="text-right"><input type="text" class="c-krw" value="${fmt(doms[i].krw)}" data-group="domestic"></td>`;
-            h+=`<td class="text-right font-semibold"><input type="text" class="c-tot" value="${fmtT(doms[i].tot)}" data-group="domestic"></td>`;
-            h+=`<td class="text-center editable-text" contenteditable="true">${escAttr(doms[i].note)}</td></tr>`;
+            h+=`<td class="text-right export-krw" data-group="domestic">${fmt(doms[i].krw)}</td>`;
+            h+=`<td class="text-right font-semibold export-tot" data-group="domestic">${fmtT(doms[i].tot)}</td>`;
+            h+=`<td class="text-center export-text">${escAttr(doms[i].note)}</td></tr>`;
         }
     }
     h+=`<tr class="subtotal-row"><td colspan="${col}" class="text-center">(3) 합계 - 국내 발생 비용</td><td class="text-right text-blue-800" id="sub-domestic">₩${fmtT(tD)}</td><td></td></tr>`;
@@ -1854,12 +1835,13 @@ function renderDetailed() {
     const ex=isMainland?'(교통비 제외)':'(항공료 제외)';
     const specialNote = document.getElementById('inp-det-specialNote').value.trim();
     
+    // ★ 전체 합계 렌더링 (일반 텍스트로 고정) ★
     let totalHtml = `
         <tr class="grand-row"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(1)+(2)+(3) 전체 합계 금액</td><td class="text-right text-blue-800 grand-amount" id="grand-1">₩${fmtT(gT)}</td><td></td></tr>
         <tr class="grand-row ${specialNote ? '' : 'grand-row-last'}"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(2)+(3) 행사 비용 합계 <span style="font-size:10px;font-weight:400;color:#64748b">${ex}</span></td><td class="text-right text-red-700 grand-amount" id="grand-2">₩${fmtT(nF)}</td><td></td></tr>`;
         
     if (specialNote) {
-        totalHtml += `<tr class="grand-row grand-row-last"><td class="text-center font-bold bg-yellow-50 editable-text" style="color:#b91c1c;" contenteditable="true">특이사항</td><td colspan="${col+1}" style="font-weight:700; color:#b91c1c; padding:10px; line-height:1.5;" class="editable-text" contenteditable="true">${specialNote.replace(/\n/g, '<br>')}</td></tr>`;
+        totalHtml += `<tr class="grand-row grand-row-last"><td class="text-center font-bold bg-yellow-50 export-text" style="color:#b91c1c;">특이사항</td><td colspan="${col+1}" style="font-weight:700; color:#b91c1c; padding:10px; line-height:1.5;" class="export-text">${specialNote.replace(/\n/g, '<br>')}</td></tr>`;
     }
 
     document.getElementById('tbody-total').innerHTML=totalHtml;
@@ -1904,14 +1886,14 @@ function renderSimple() {
     for(let i=0; i<Math.max(simples.length, minRows); i++){
         if(i < simples.length) {
             h += `<tr>
-                <td class="text-center editable-text" contenteditable="true">${escAttr(simples[i].name)}</td>
-                <td class="text-center editable-text" contenteditable="true">${escAttr(simples[i].desc)}</td>
-                <td class="text-right"><input type="text" class="c-krw" value="${fmt(simples[i].krw)}" data-group="simple"></td>
-                <td class="text-center"><input type="text" class="c-qty" value="${fmt(simples[i].qty)}" data-group="simple"></td>
-                <td class="text-right"><input type="text" class="c-tot" value="${fmt(simples[i].tot)}" data-group="simple"></td>
+                <td class="text-center export-text">${escAttr(simples[i].name)}</td>
+                <td class="text-center export-text">${escAttr(simples[i].desc)}</td>
+                <td class="text-right export-krw" data-group="simple">${fmt(simples[i].krw)}</td>
+                <td class="text-center export-qty" data-group="simple">${fmt(simples[i].qty)}</td>
+                <td class="text-right export-tot" data-group="simple">${fmt(simples[i].tot)}</td>
             </tr>`;
         } else {
-            h += `<tr><td class="editable-text" contenteditable="true"></td><td class="editable-text" contenteditable="true"></td><td></td><td></td><td></td></tr>`;
+            h += `<tr><td class="export-text"></td><td class="export-text"></td><td></td><td></td><td></td></tr>`;
         }
     }
 
@@ -1932,11 +1914,11 @@ function renderSimple() {
     }
 
     h += `<tr>
-        <td class="text-center editable-text" contenteditable="true">부가세</td>
-        <td class="text-center editable-text" contenteditable="true">${vatLabel}</td>
+        <td class="text-center export-text">부가세</td>
+        <td class="text-center export-text">${vatLabel}</td>
         <td class="text-right">${fmt(vatVal)}</td>
         <td class="text-center">1</td>
-        <td class="text-right"><input type="text" class="c-tot" id="st-vat" value="${fmt(vatVal)}"></td>
+        <td class="text-right export-tot" id="st-vat" data-group="vat">${fmt(vatVal)}</td>
     </tr>`;
 
     const extraFeeOpt = document.getElementById('inp-sim-extraFee').value;
@@ -1944,15 +1926,17 @@ function renderSimple() {
     if (extraFeeOpt === 'auto_50' && vatVal > 0) {
         extraVal = Math.floor(vatVal * 0.5);
         h += `<tr>
-            <td class="text-center editable-text" style="color:#b91c1c; font-weight:bold;" contenteditable="true">기타비용</td>
-            <td class="text-center editable-text" style="color:#b91c1c;" contenteditable="true">종합과세에 따른 세금 보전분</td>
+            <td class="text-center export-text" style="color:#b91c1c; font-weight:bold;">기타비용</td>
+            <td class="text-center export-text" style="color:#b91c1c;">종합과세에 따른 세금 보전분</td>
             <td class="text-right" style="color:#b91c1c;">${fmt(extraVal)}</td>
             <td class="text-center" style="color:#b91c1c;">1</td>
-            <td class="text-right"><input type="text" class="c-tot" id="st-extra" style="color:#b91c1c; font-weight:bold;" value="${fmt(extraVal)}"></td>
+            <td class="text-right export-tot" id="st-extra" data-group="extra" style="color:#b91c1c; font-weight:bold;">${fmt(extraVal)}</td>
         </tr>`;
     }
 
     const grandTotal = subTotal + vatVal + extraVal;
+    
+    // 일반 견적서의 총액 역시 고정
     h += `<tr class="st-grandtotal">
         <td colspan="4">Grand Total (KRW)</td>
         <td><span id="st-grand">${fmtT(grandTotal)}</span></td>
@@ -1973,56 +1957,6 @@ function renderSimple() {
 
     document.getElementById('live-total-amount').textContent = '₩ ' + fmtT(grandTotal);
 }
-
-// ★ 미리보기 화면 내 자동 계산 스크립트 (대표님도, 거래처도 화면에서 바로 숫자 튜닝 가능) ★
-document.addEventListener('input', function(e) {
-    if (e.target.classList.contains('c-krw') || e.target.classList.contains('c-qty') || e.target.classList.contains('c-tot')) {
-        const tr = e.target.closest('tr');
-        if (e.target.classList.contains('c-krw') || e.target.classList.contains('c-qty')) {
-            const krwEl = tr.querySelector('.c-krw');
-            const qtyEl = tr.querySelector('.c-qty');
-            const totEl = tr.querySelector('.c-tot');
-            if (krwEl && qtyEl && totEl) {
-                const krw = parseCurrency(krwEl.value);
-                const qty = parseCurrency(qtyEl.value);
-                totEl.value = fmtT(krw * qty);
-            }
-        }
-        e.target.value = fmtT(parseCurrency(e.target.value));
-        
-        // 전체 합계 업데이트
-        if (document.getElementById('inp-currency').value !== 'SIMPLE_QUOTE') {
-            let flightSum = 0, localSum = 0, domSum = 0;
-            document.querySelectorAll('input.c-tot[data-group="flight"]').forEach(el => flightSum += parseCurrency(el.value));
-            document.querySelectorAll('input.c-tot[data-group="local"]').forEach(el => localSum += parseCurrency(el.value));
-            document.querySelectorAll('input.c-tot[data-group="domestic"]').forEach(el => domSum += parseCurrency(el.value));
-            
-            const subF = document.getElementById('sub-flight'); if(subF) subF.textContent = '₩' + fmtT(flightSum);
-            const subL = document.getElementById('sub-local'); if(subL) subL.textContent = '₩' + fmtT(localSum);
-            const subD = document.getElementById('sub-domestic'); if(subD) subD.textContent = '₩' + fmtT(domSum);
-            
-            const grand1 = document.getElementById('grand-1'); if(grand1) grand1.textContent = '₩' + fmtT(flightSum + localSum + domSum);
-            const grand2 = document.getElementById('grand-2'); if(grand2) grand2.textContent = '₩' + fmtT(localSum + domSum);
-            
-            document.getElementById('live-total-amount').textContent = '₩ ' + fmtT(flightSum + localSum + domSum);
-        } else {
-            let subTotal = 0;
-            document.querySelectorAll('input.c-tot[data-group="simple"]').forEach(el => subTotal += parseCurrency(el.value));
-            const stSub = document.getElementById('st-sub'); if(stSub) stSub.textContent = fmtT(subTotal);
-            
-            const vatEl = document.getElementById('st-vat');
-            const extraEl = document.getElementById('st-extra');
-            let vatVal = vatEl ? parseCurrency(vatEl.value) : 0;
-            let extraVal = extraEl ? parseCurrency(extraEl.value) : 0;
-            
-            const grandTotal = subTotal + vatVal + extraVal;
-            const stGrand = document.getElementById('st-grand'); if(stGrand) stGrand.textContent = fmtT(grandTotal);
-            
-            document.getElementById('live-total-amount').textContent = '₩ ' + fmtT(grandTotal);
-        }
-    }
-});
-
 
 // ===== 초기화 및 이벤트 등록 =====
 document.addEventListener('DOMContentLoaded', function() {
