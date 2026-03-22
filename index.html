@@ -455,9 +455,11 @@
     { name: '현지행사', desc: '호텔, 식사, 입장료, 가이드 등 행사일체', qty: 59, krw: 792235 },
     { name: '국내진행', desc: '여행자보험, 공항수송, 운영관리비', qty: 1, krw: 6427000 }
   ];
+  
+  // 보안 및 포맷팅 처리
   function escAttr(str='') { return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function parseCurrency(str) { return Number(String(str || '').replace(/,/g, '')) || 0; }
-  function fmt(n) { return (n === 0 || n === '') ? '' : Number(n).toLocaleString('en-US', {maximumFractionDigits:2}); }
+  function fmt(n) { return (n === 0 || n === '') ? '' : Number(n).toLocaleString('ko-KR'); } 
   function fmtT(n) { return Number(n || 0).toLocaleString('ko-KR'); }
   function formatCurrencyValue(val) {
     const sanitized = String(val ?? '').replace(/[^0-9.]/g, '');
@@ -634,8 +636,13 @@
     $$('input[type="number"]').forEach(el => el.value = '');
     $('#flight-inputs-container').innerHTML = ''; $('#local-inputs-container').innerHTML = ''; $('#domestic-inputs-container').innerHTML = ''; $('#simple-items-container').innerHTML = '';
     $('#inp-sim-bankName').value = '신협'; $('#inp-sim-bankNum').value = '131-022-382094'; $('#inp-sim-bankHolder').value = '주식회사 투어메이커';
+    
+    $('#inp-currency').value = 'JPY';
+    $('#inp-sim-vat').value = 'auto';
+    $('#inp-sim-extraFee').value = '0';
+    
     addRow('flight', {}, true); addRow('local', {}, true); addRow('domestic', {}, true); addRow('simple', {}, true);
-    setTodayDates(); calculateAndRender(); renderWarnings();
+    setTodayDates(); calculateAndRender(); renderWarnings(); toggleDocMode();
   }
   function rs(arr, i, key) { let r = 1; for (let j=i+1; j<arr.length; j++) { if (arr[j][key] === arr[i][key]) r++; else break; } return r; }
   function rs2(arr, i) { let r = 1; for (let j=i+1; j<arr.length; j++) { if (arr[j].name === arr[i].name && arr[j].desc === arr[i].desc) r++; else break; } return r; }
@@ -646,7 +653,7 @@
     if (isMainland) localTitle.innerHTML = '3. 행사비용 (원화 직접 입력)'; else if (isJeju) localTitle.innerHTML = '3. 제주(현지) 발생비용 (원화 직접 입력)'; else localTitle.innerHTML = '3. 해외현지 발생비용 (외화 입력) <span style="font-size:12px;font-weight:400;color:#64748b;margin-left:8px;">*원화 자동 환산</span>';
     $('#out-clientName').textContent = $('#inp-clientName').value; $('#out-docTitle').textContent = $('#inp-docTitle').value; $('#out-travelDate').textContent = $('#inp-travelDate').value; $('#out-paxStr').textContent = $('#inp-paxStr').value;
     $('#out-issueAndRate').textContent = isKRW ? `${$('#inp-issueDate').value} / 국내행사 (환율 미적용)` : `${$('#inp-issueDate').value} / ${currency} ${exRate} 기준(송금)`;
-    const cN = currency === 'JPY' ? '엔화' : (currency === 'USD' ? '달러' : (isKRW ? '원화' : '위안화')); const cS = currency === 'USD' ? '$' : (isKRW ? '₩' : '¥'); const col = isKRW ? 5 : 6;
+    const cN = currency === 'JPY' ? '엔화' : (currency === 'USD' ? '달러' : (isKRW ? '원화' : '위안화')); const cS = currency === 'USD' ? '$' : (isKRW ? '₩' : (currency === 'JPY' ? '¥' : '¥')); const col = isKRW ? 5 : 6;
     $('#main-thead').innerHTML = `<tr><th style="width:9%">구분</th><th style="width:${isKRW ? '14%' : '11%'}">항목</th><th style="width:${isKRW ? '24%' : '18%'}">내용</th><th style="width:9%;font-size:10px;line-height:1.3">인원/객실수<br>차량대수</th>${!isKRW ? `<th style="width:11%;background:#fef08a;color:#0f172a">${cN} 단가<br><span style="font-weight:400;color:#475569">${currency}</span></th>` : ''}<th style="width:${isKRW ? '15%' : '12%'}">원화 단가<br><span style="font-weight:400">KRW</span></th><th style="width:${isKRW ? '16%' : '14%'}">총금액<br><span style="font-weight:400">KRW</span></th><th style="width:${isKRW ? '13%' : '16%'}">비고</th></tr>`;
     let tF = 0, tL = 0, tD = 0;
     const flights = getRowData('flight').filter(r => r.name.trim()).map(r => ({ ...r, qty:Number(r.qty)||0, krw:Number(r.krw)||0, tot:(Number(r.qty)||0)*(Number(r.krw)||0) })); tF = flights.reduce((s, r) => s + r.tot, 0);
@@ -693,13 +700,20 @@
       }
     }
     h += `<tr class="subtotal-row"><td colspan="${col}" class="text-center">(3) 합계 - 국내 발생 비용</td><td class="text-right" id="sub-domestic">₩${fmtT(tD)}</td><td></td></tr>`; $('#tbody-domestic').innerHTML = h;
-    const grandTotal = tF + tL + tD; const eventOnly = tL + tD; const specialNote = $('#inp-det-specialNote').value.trim(); const ex = isMainland ? '(교통비 제외)' : '(항공료 제외)';
+    const grandTotal = tF + tL + tD; const eventOnly = tL + tD; 
+    
+    const specialNote = escAttr($('#inp-det-specialNote').value.trim()); 
+    const ex = isMainland ? '(교통비 제외)' : '(항공료 제외)';
     let totalHtml = `<tr class="grand-row"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(1)+(2)+(3) 전체 합계 금액</td><td class="text-right grand-amount" id="grand-1">₩${fmtT(grandTotal)}</td><td></td></tr><tr class="grand-row ${specialNote ? '' : 'grand-row-last'}"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(2)+(3) 행사 비용 합계 <span style="font-size:10px;font-weight:400;color:#64748b">${ex}</span></td><td class="text-right grand-amount" id="grand-2" style="color:#b91c1c">₩${fmtT(eventOnly)}</td><td></td></tr>`;
     if (specialNote) totalHtml += `<tr class="grand-row grand-row-last"><td class="text-center font-bold bg-yellow-50 export-text" style="color:#b91c1c;">특이사항</td><td colspan="${col + 1}" style="font-weight:700; color:#b91c1c; padding:10px; line-height:1.5;" class="export-text">${specialNote.replace(/\n/g, '<br>')}</td></tr>`;
     $('#tbody-total').innerHTML = totalHtml; $('#live-total-amount').textContent = `₩ ${fmtT(grandTotal)}`;
   }
   function renderSimple() {
-    $('#out-sim-dep').textContent = $('#inp-sim-dep').value; $('#out-sim-inv').textContent = $('#inp-sim-inv').value; $('#out-sim-subject').textContent = $('#inp-sim-subject').value; $('#out-sim-toName').textContent = $('#inp-sim-toName').value; $('#out-sim-toAddr').textContent = $('#inp-sim-toAddr').value; $('#out-sim-toPerson').textContent = $('#inp-sim-toPerson').value; $('#out-sim-bankName').textContent = $('#inp-sim-bankName').value; $('#out-sim-bankNum').textContent = $('#inp-sim-bankNum').value; $('#out-sim-bankHolder').textContent = $('#inp-sim-bankHolder').value; $('#out-sim-due').textContent = $('#inp-sim-due').value; $('#out-sim-inc').innerHTML = $('#inp-sim-inc').value.replace(/\n/g, '<br>'); $('#out-sim-exc').innerHTML = $('#inp-sim-exc').value.replace(/\n/g, '<br>');
+    $('#out-sim-dep').textContent = $('#inp-sim-dep').value; $('#out-sim-inv').textContent = $('#inp-sim-inv').value; $('#out-sim-subject').textContent = $('#inp-sim-subject').value; $('#out-sim-toName').textContent = $('#inp-sim-toName').value; $('#out-sim-toAddr').textContent = $('#inp-sim-toAddr').value; $('#out-sim-toPerson').textContent = $('#inp-sim-toPerson').value; $('#out-sim-bankName').textContent = $('#inp-sim-bankName').value; $('#out-sim-bankNum').textContent = $('#inp-sim-bankNum').value; $('#out-sim-bankHolder').textContent = $('#inp-sim-bankHolder').value; $('#out-sim-due').textContent = $('#inp-sim-due').value; 
+    
+    $('#out-sim-inc').innerHTML = escAttr($('#inp-sim-inc').value).replace(/\n/g, '<br>'); 
+    $('#out-sim-exc').innerHTML = escAttr($('#inp-sim-exc').value).replace(/\n/g, '<br>');
+    
     const simples = getRowData('simple').filter(r => r.name.trim()).map(r => ({ ...r, qty:Number(r.qty)||0, krw:Number(r.krw)||0, tot:(Number(r.qty)||0)*(Number(r.krw)||0) }));
     let subTotal = simples.reduce((s, r) => s + r.tot, 0); let h = ''; const minRows = 5;
     for (let i=0; i<Math.max(simples.length, minRows); i++) {
@@ -717,7 +731,12 @@
     }
     const grandTotal = subTotal + vatVal + extraVal;
     h += `<tr class="st-grandtotal"><td colspan="4">Grand Total (KRW)</td><td><span id="st-grand">${fmtT(grandTotal)}</span></td></tr>`;
-    $('#tbody-simple').innerHTML = h; const taxNoteText = $('#inp-sim-taxNote').value.trim(); $('#wrap-sim-taxNote').style.display = taxNoteText ? 'flex' : 'none'; $('#out-sim-taxNote').innerHTML = taxNoteText.replace(/\n/g, '<br>'); $('#live-total-amount').textContent = `₩ ${fmtT(grandTotal)}`;
+    $('#tbody-simple').innerHTML = h; 
+    
+    const taxNoteText = escAttr($('#inp-sim-taxNote').value.trim()); 
+    $('#wrap-sim-taxNote').style.display = taxNoteText ? 'flex' : 'none'; 
+    $('#out-sim-taxNote').innerHTML = taxNoteText.replace(/\n/g, '<br>'); 
+    $('#live-total-amount').textContent = `₩ ${fmtT(grandTotal)}`;
   }
   function calculateAndRender() { ($('#inp-currency').value === 'SIMPLE_QUOTE') ? renderSimple() : renderDetailed(); }
   function switchTab(tab) {
@@ -748,32 +767,61 @@
     } else { window.print(); }
   }
 
-  // ★ 맞춤 편집용 HTML 내보내기 로직 (V4 : 실시간 수식 연동 엔진 탑재) ★
+  // ★ V6 버그 픽스: 맞춤 편집용 HTML 내보내기 로직 ★
   function downloadInteractiveHTML() {
     calculateAndRender();
     const warnings = validateRows();
     if (warnings.length && !confirm('⚠️ 입력된 데이터에 확인이 필요한 항목이 있습니다.\n이대로 내보내기를 진행하시겠습니까?')) return;
     
     const clone = $('#print-section').cloneNode(true);
-    // 입력 필드로 변환
+    const currentCurrency = $('#inp-currency').value;
+    const isForeign = ['JPY', 'USD', 'CNY'].includes(currentCurrency);
+    const isSimple = currentCurrency === 'SIMPLE_QUOTE';
+    
+    // ★ 핵심 구조 버그 해결 포인트 ★
+    // 내보내는 HTML에는 '상세 견적서'와 '일반 견적서' HTML 덩어리가 숨긴 채로 둘 다 들어있었습니다.
+    // 그래서 연산 엔진이 무조건 '상세 견적서(main-table)'를 1순위로 인식하고 일반 견적서 계산을 건너뛰었습니다.
+    // 이 문제를 막기 위해, 내보내기 파일 생성 시 현재 보이지 않는 다른 쪽 그룹 HTML은 아예 삭제해 버립니다.
+    if (isSimple) {
+        const detGroup = clone.querySelector('#detailed-preview-group');
+        if (detGroup) detGroup.remove();
+    } else {
+        const simGroup = clone.querySelector('#simple-preview-group');
+        if (simGroup) simGroup.remove();
+    }
+    
     clone.querySelectorAll('.export-qty').forEach(el => { el.innerHTML = `<input type="text" class="c-qty" value="${el.textContent}" data-group="${el.dataset.group || ''}">`; el.classList.remove('export-qty'); });
     clone.querySelectorAll('.export-krw').forEach(el => { el.innerHTML = `<input type="text" class="c-krw" value="${el.textContent}" data-group="${el.dataset.group || ''}">`; el.classList.remove('export-krw'); });
-    clone.querySelectorAll('.export-tot').forEach(el => { const idAttr = el.id ? `id="${el.id}"` : ''; el.removeAttribute('id'); el.innerHTML = `<input type="text" class="c-tot" ${idAttr} value="${el.textContent}" data-group="${el.dataset.group || ''}">`; el.classList.remove('export-tot'); });
-    clone.querySelectorAll('.export-fgn').forEach(el => { el.outerHTML = `<input type="text" class="c-fgn" value="${el.textContent}" style="width:calc(100% - 14px);background:transparent;border:1px solid transparent;font-family:inherit;font-size:inherit;text-align:right;outline:none;transition:.2s;box-sizing:border-box;">`; });
+    
+    clone.querySelectorAll('.export-tot').forEach(el => { 
+        const idAttr = el.id ? `id="${el.id}"` : ''; 
+        el.removeAttribute('id'); 
+        el.innerHTML = `<input type="text" class="c-tot" ${idAttr} value="${el.textContent}" data-group="${el.dataset.group || ''}" readonly tabindex="-1" title="자동 계산 항목">`; 
+        el.classList.remove('export-tot'); 
+    });
+    
+    clone.querySelectorAll('.export-fgn').forEach(el => { 
+        el.outerHTML = `<input type="text" class="c-fgn" value="${el.textContent}" style="width:calc(100% - 14px);background:transparent;border:1px solid transparent;font-family:inherit;font-size:inherit;text-align:right;outline:none;transition:.2s;box-sizing:border-box;">`; 
+    });
+    
     clone.querySelectorAll('.export-text').forEach(el => { el.classList.add('editable-text'); el.setAttribute('contenteditable', 'true'); el.classList.remove('export-text'); });
     
     const sheetHtml = clone.outerHTML;
-    const styles = `body{background:#f1f5f9;display:flex;flex-direction:column;align-items:center;padding:40px 20px;font-family:'Pretendard','Malgun Gothic',sans-serif;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.a4-sheet{background:#fff;width:100%;max-width:850px;padding:40px;box-shadow:0 10px 40px rgba(0,0,0,.1);border-radius:4px;margin-bottom:40px;position:relative}table{width:100%;border-collapse:collapse}th,td{border:1px solid #cbd5e1;padding:6px 8px;font-size:12px}th{background:#f8fafc;font-weight:bold;text-align:center;color:#0f172a}.text-center{text-align:center}.text-right{text-align:right}.font-bold{font-weight:bold}.bg-gray-50{background:#f8fafc}.bg-yellow-50{background:#fef9c3}.subtotal-row td{background:#f1f5f9;font-weight:bold;border-bottom:2px solid #cbd5e1}.grand-row td{background:#f8fafc;font-weight:bold;border-top:2px solid #0f172a}.doc-title-area{text-align:center;margin-bottom:24px}.doc-title-area h2{font-size:28px;border-bottom:3px solid #0f172a;display:inline-block;padding-bottom:6px;margin:0}.doc-title-area p{font-size:11px;color:#64748b;font-weight:700;letter-spacing:.25em;margin-top:6px;text-transform:uppercase}.doc-header{display:flex;justify-content:space-between;margin-bottom:24px}.doc-header-left{width:45%}.doc-header-right{width:40%;text-align:right}.doc-header-right img{height:28px}.info-table th{width:28%}.footer-notes{font-size:11px;color:#475569;padding-top:12px}.footer-notes p.title{font-size:12px;font-weight:700;margin-bottom:6px;color:#1e293b}.simple-header{text-align:center;margin-bottom:30px;margin-top:10px}.simple-header h1{font-size:36px;border-bottom:2px solid #000;display:inline-block;padding-bottom:10px;margin:0;letter-spacing:.8em;padding-left:.8em}.simple-info-grid{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;font-size:12px}.simple-info-left span{display:inline-block;width:130px;font-weight:600}.simple-info-right img{height:18px}.simple-sender-receiver{display:flex;justify-content:space-between;margin-bottom:24px;font-size:12px}.sr-box{width:48%;border-top:2px solid #000;border-bottom:2px solid #000;padding:12px 0;display:flex}.sr-label{width:60px;text-align:center;font-weight:800;background:#f8fafc;display:flex;align-items:center;justify-content:center;margin-right:12px;letter-spacing:2px}.sr-content-row span:first-child{width:15px;text-align:center;display:inline-block}.sr-content-row.bold span:last-child{font-weight:800;font-size:14px}.stamp-overlap-container{position:relative;display:inline-flex;align-items:center}.stamp-image{position:absolute;left:48px;bottom:-18px;width:68px;height:68px;mix-blend-mode:multiply;pointer-events:none;opacity:.85;transform:rotate(-4deg);z-index:10}.simple-subject{display:flex;font-size:14px;font-weight:800;margin-bottom:16px}.simple-subject-label{width:120px;text-align:center;letter-spacing:2px}.simple-table{border:2px solid #000}.simple-table th,.simple-table td{border:1px solid #000}.st-subtotal td,.st-grandtotal td{background:#f1f5f9;text-align:right;font-weight:800}.st-grandtotal td{font-size:15px;font-weight:900}.simple-footer-bank{font-size:12px;line-height:1.8;margin-bottom:30px}.simple-footer-bank p span.label{display:inline-block;width:190px;font-weight:600}.simple-footer-bank p span.colon{display:inline-block;width:20px}.highlight-bg{background-color:#fef08a;display:inline-block;padding:0 12px;border-radius:2px}.simple-footer-notes{font-size:12px;line-height:1.6;display:flex;flex-direction:column;gap:10px}.sfn-row{display:flex}.sfn-label{width:110px;text-align:center;font-weight:800}.sfn-colon{width:20px;text-align:center}.sfn-content{flex:1}.sfn-graybox{background:#e2e8f0;height:30px;width:100%;margin-top:24px;border-radius:4px}.footer-brand{text-align:center;margin-top:24px;border-top:1px solid #e2e8f0;padding-top:16px;font-size:11px;color:#64748b}.footer-brand a{display:inline-block;margin-top:8px;padding:6px 16px;border:1px solid #cbd5e1;border-radius:6px;color:#475569;text-decoration:none;font-size:11px;font-weight:700;transition:.2s}.c-qty,.c-krw,.c-tot,.c-fgn{width:100%;border:1px solid transparent;background:transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;outline:none;transition:.2s;box-sizing:border-box}.c-qty{text-align:center}.c-krw,.c-tot,.c-fgn{text-align:right}.c-qty:hover,.c-krw:hover,.c-tot:hover,.c-fgn:hover,.c-qty:focus,.c-krw:focus,.c-tot:focus,.c-fgn:focus{background:#e0f2fe;border:1px solid #93c5fd;border-radius:4px;box-shadow:inset 0 0 0 1px #93c5fd}.editable-text{outline:none;border-radius:4px;transition:background .2s,box-shadow .2s;cursor:text;min-height:16px}.editable-text:hover,.editable-text:focus{background:#e0f2fe;box-shadow:inset 0 0 0 1px #93c5fd}.top-bar{background:#1e293b;color:#fff;width:100%;max-width:850px;padding:16px 24px;border-radius:8px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 6px rgba(0,0,0,.1)}.btn-print{background:#10b981;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:14px}@media print{body{background:#fff;padding:0}.a4-sheet{box-shadow:none;padding:0;margin:0;max-width:100%}.top-bar{display:none}.footer-brand a{display:none}.c-qty,.c-krw,.c-tot,.c-fgn{border:none!important;background:transparent!important;box-shadow:none!important}.editable-text{background:transparent!important;box-shadow:none!important;outline:none!important}.no-print{display:none!important}@page{size:A4 portrait;margin:8mm}}`;
     
-    // 현재 시스템의 환율 및 부가세 상태를 캡쳐하여 전달용 HTML에 심어줍니다.
-    const currentCurrency = $('#inp-currency').value;
-    const isForeign = ['JPY', 'USD', 'CNY'].includes(currentCurrency);
+    const styles = `body{background:#f1f5f9;display:flex;flex-direction:column;align-items:center;padding:40px 20px;font-family:'Pretendard','Malgun Gothic',sans-serif;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.a4-sheet{background:#fff;width:100%;max-width:850px;padding:40px;box-shadow:0 10px 40px rgba(0,0,0,.1);border-radius:4px;margin-bottom:40px;position:relative}table{width:100%;border-collapse:collapse}th,td{border:1px solid #cbd5e1;padding:6px 8px;font-size:12px}th{background:#f8fafc;font-weight:bold;text-align:center;color:#0f172a}.text-center{text-align:center}.text-right{text-align:right}.font-bold{font-weight:bold}.bg-gray-50{background:#f8fafc}.bg-yellow-50{background:#fef9c3}.subtotal-row td{background:#f1f5f9;font-weight:bold;border-bottom:2px solid #cbd5e1}.grand-row td{background:#f8fafc;font-weight:bold;border-top:2px solid #0f172a}.doc-title-area{text-align:center;margin-bottom:24px}.doc-title-area h2{font-size:28px;border-bottom:3px solid #0f172a;display:inline-block;padding-bottom:6px;margin:0}.doc-title-area p{font-size:11px;color:#64748b;font-weight:700;letter-spacing:.25em;margin-top:6px;text-transform:uppercase}.doc-header{display:flex;justify-content:space-between;margin-bottom:24px}.doc-header-left{width:45%}.doc-header-right{width:40%;text-align:right}.doc-header-right img{height:28px}.info-table th{width:28%}.footer-notes{font-size:11px;color:#475569;padding-top:12px}.footer-notes p.title{font-size:12px;font-weight:700;margin-bottom:6px;color:#1e293b}.simple-header{text-align:center;margin-bottom:30px;margin-top:10px}.simple-header h1{font-size:36px;border-bottom:2px solid #000;display:inline-block;padding-bottom:10px;margin:0;letter-spacing:.8em;padding-left:.8em}.simple-info-grid{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;font-size:12px}.simple-info-left span{display:inline-block;width:130px;font-weight:600}.simple-info-right img{height:18px}.simple-sender-receiver{display:flex;justify-content:space-between;margin-bottom:24px;font-size:12px}.sr-box{width:48%;border-top:2px solid #000;border-bottom:2px solid #000;padding:12px 0;display:flex}.sr-label{width:60px;text-align:center;font-weight:800;background:#f8fafc;display:flex;align-items:center;justify-content:center;margin-right:12px;letter-spacing:2px}.sr-content-row span:first-child{width:15px;text-align:center;display:inline-block}.sr-content-row.bold span:last-child{font-weight:800;font-size:14px}.stamp-overlap-container{position:relative;display:inline-flex;align-items:center}.stamp-image{position:absolute;left:48px;bottom:-18px;width:68px;height:68px;mix-blend-mode:multiply;pointer-events:none;opacity:.85;transform:rotate(-4deg);z-index:10}.simple-subject{display:flex;font-size:14px;font-weight:800;margin-bottom:16px}.simple-subject-label{width:120px;text-align:center;letter-spacing:2px}.simple-table{border:2px solid #000}.simple-table th,.simple-table td{border:1px solid #000}.st-subtotal td,.st-grandtotal td{background:#f1f5f9;text-align:right;font-weight:800}.st-grandtotal td{font-size:15px;font-weight:900}.simple-footer-bank{font-size:12px;line-height:1.8;margin-bottom:30px}.simple-footer-bank p span.label{display:inline-block;width:190px;font-weight:600}.simple-footer-bank p span.colon{display:inline-block;width:20px}.highlight-bg{background-color:#fef08a;display:inline-block;padding:0 12px;min-width:200px;border-radius:2px}.simple-footer-notes{font-size:12px;line-height:1.6;display:flex;flex-direction:column;gap:10px}.sfn-row{display:flex}.sfn-label{width:110px;text-align:center;font-weight:800}.sfn-colon{width:20px;text-align:center}.sfn-content{flex:1}.sfn-graybox{background:#e2e8f0;height:30px;width:100%;margin-top:24px;border-radius:4px}.footer-brand{text-align:center;margin-top:24px;border-top:1px solid #e2e8f0;padding-top:16px;font-size:11px;color:#64748b}.footer-brand a{display:inline-block;margin-top:8px;padding:6px 16px;border:1px solid #cbd5e1;border-radius:6px;color:#475569;text-decoration:none;font-size:11px;font-weight:700;transition:.2s}.footer-brand a:hover{background:#f1f5f9;color:#0f172a;border-color:#94a3b8}.c-qty,.c-krw,.c-fgn{width:100%;border:1px solid transparent;background:transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;outline:none;transition:.2s;box-sizing:border-box}.c-tot{width:100%;border:none;background:transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;outline:none;text-align:right}.c-qty{text-align:center}.c-krw,.c-fgn{text-align:right}.c-qty:hover,.c-krw:hover,.c-fgn:hover,.c-qty:focus,.c-krw:focus,.c-fgn:focus{background:#e0f2fe;border:1px solid #93c5fd;border-radius:4px;box-shadow:inset 0 0 0 1px #93c5fd}.editable-text{outline:none;border-radius:4px;transition:background .2s,box-shadow .2s;cursor:text;min-height:16px}.editable-text:hover,.editable-text:focus{background:#e0f2fe;box-shadow:inset 0 0 0 1px #93c5fd}.top-bar{background:#1e293b;color:#fff;width:100%;max-width:850px;padding:16px 24px;border-radius:8px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 6px rgba(0,0,0,.1)}.btn-print{background:#10b981;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:14px}@media print{body{background:#fff;padding:0}.a4-sheet{box-shadow:none;padding:0;margin:0;max-width:100%}.top-bar{display:none}.footer-brand a{display:none}.c-qty,.c-krw,.c-tot,.c-fgn{border:none!important;background:transparent!important;box-shadow:none!important}.editable-text{background:transparent!important;box-shadow:none!important;outline:none!important}.no-print{display:none!important}@page{size:A4 portrait;margin:8mm}}`;
+    
     const exRate = parseCurrency($('#inp-exRate').value) || 1;
     const vatType = $('#inp-sim-vat').value;
     const extraType = $('#inp-sim-extraFee').value;
 
+    let topBarSubText = '';
+    if (isSimple) {
+        topBarSubText = `부가세: ${vatType === 'auto' ? '10% (자동 연동)' : (vatType === 'manual' ? '수동 입력' : '불포함')}`;
+    } else if (isForeign) {
+        topBarSubText = `적용 환율: ${exRate}`;
+    }
+
     const scriptLogic = `
-      // 시스템 설정값 (내보낼 당시 기준)
       const EX_RATE = ${isForeign ? exRate : 1};
       const VAT_TYPE = '${vatType}';
       const EXTRA_TYPE = '${extraType}';
@@ -782,48 +830,48 @@
       function formatCurrency(v){
           const n = parse(v);
           if(String(v).trim() === '') return '';
-          return n.toLocaleString('en-US', {maximumFractionDigits:2});
+          return n.toLocaleString('ko-KR');
       }
 
-      // 1. 입력 감지 및 수식 연동 (외화 -> 원화단가 -> 총액)
       document.addEventListener('input', e => {
         const t = e.target;
-        if(t.classList.contains('c-krw') || t.classList.contains('c-qty') || t.classList.contains('c-tot') || t.classList.contains('c-fgn')) {
+        if(t.classList.contains('c-krw') || t.classList.contains('c-qty')) {
             const tr = t.closest('tr');
             if(tr) {
-                // 외화 변경 시 -> 원화 단가 동기화
-                if(t.classList.contains('c-fgn')) {
-                    const fgnVal = parse(t.value);
-                    const krwEl = tr.querySelector('.c-krw');
-                    if(krwEl) krwEl.value = formatCurrency(Math.round(fgnVal * EX_RATE));
-                }
-                
-                // 원화 단가 또는 수량이 변경되었거나, 외화변경으로 원화단가가 바뀐 경우 -> 총액(원화) 동기화
-                if(t.classList.contains('c-fgn') || t.classList.contains('c-krw') || t.classList.contains('c-qty')) {
-                    const krwEl = tr.querySelector('.c-krw');
-                    const qtyEl = tr.querySelector('.c-qty');
-                    const totEl = tr.querySelector('.c-tot');
-                    if(krwEl && qtyEl && totEl) {
-                        totEl.value = formatCurrency(parse(krwEl.value) * parse(qtyEl.value));
-                    }
+                const krwEl = tr.querySelector('.c-krw');
+                const qtyEl = tr.querySelector('.c-qty');
+                const totEl = tr.querySelector('.c-tot');
+                if(krwEl && qtyEl && totEl) {
+                    totEl.value = formatCurrency(parse(krwEl.value) * parse(qtyEl.value));
                 }
             }
             recalcAll();
         }
       });
 
-      // 2. 포커스를 잃을 때 콤마 찍기 (입력 중 커서 튐 및 소수점 잘림 방지)
       document.addEventListener('change', e => {
          const t = e.target;
-         if(t.classList.contains('c-krw') || t.classList.contains('c-qty') || t.classList.contains('c-tot') || t.classList.contains('c-fgn')) {
+         if(t.classList.contains('c-fgn')) {
+             const tr = t.closest('tr');
+             if(tr) {
+                 const fgnVal = parse(t.value);
+                 const krwEl = tr.querySelector('.c-krw');
+                 const qtyEl = tr.querySelector('.c-qty');
+                 const totEl = tr.querySelector('.c-tot');
+                 if(krwEl) {
+                     krwEl.value = formatCurrency(Math.round(fgnVal * EX_RATE));
+                     if(qtyEl && totEl) totEl.value = formatCurrency(parse(krwEl.value) * parse(qtyEl.value));
+                 }
+             }
+             recalcAll();
+             t.value = formatCurrency(t.value);
+         } else if(t.classList.contains('c-krw') || t.classList.contains('c-qty')) {
              if(t.value) t.value = formatCurrency(t.value);
          }
       });
 
-      // 3. 전체 합계 재계산 및 부가세 연동
       function recalcAll() {
         if(document.getElementById('main-table')) {
-            // 상세 견적서
             let flightSum = 0, localSum = 0, domSum = 0;
             document.querySelectorAll('input.c-tot[data-group="flight"]').forEach(el => flightSum += parse(el.value));
             document.querySelectorAll('input.c-tot[data-group="local"]').forEach(el => localSum += parse(el.value));
@@ -835,12 +883,10 @@
             const grand1 = document.getElementById('grand-1'); if(grand1) grand1.textContent = '₩' + formatCurrency(flightSum + localSum + domSum);
             const grand2 = document.getElementById('grand-2'); if(grand2) grand2.textContent = '₩' + formatCurrency(localSum + domSum);
         } else if(document.getElementById('simple-table')) {
-            // 일반 견적서
             let subTotal = 0;
             document.querySelectorAll('input.c-tot[data-group="simple"]').forEach(el => subTotal += parse(el.value));
             const stSub = document.getElementById('st-sub'); if(stSub) stSub.textContent = formatCurrency(subTotal);
 
-            // 부가세 자동 연동
             const vatEl = document.getElementById('st-vat');
             let vatVal = vatEl ? parse(vatEl.tagName==='INPUT'? vatEl.value : vatEl.textContent) : 0;
             if(VAT_TYPE === 'auto' && vatEl) {
@@ -849,7 +895,6 @@
                 else vatEl.textContent = formatCurrency(vatVal);
             }
 
-            // 기타비용 자동 연동
             const extraEl = document.getElementById('st-extra');
             let extraVal = extraEl ? parse(extraEl.tagName==='INPUT'? extraEl.value : extraEl.textContent) : 0;
             if(EXTRA_TYPE === 'auto_50' && extraEl) {
@@ -864,11 +909,11 @@
       }
     `;
     
-    const fullHtml = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>스마트 산출내역서 - 맞춤 편집용</title><style>${styles}</style></head><body><div class="top-bar no-print"><div style="flex:1"><p style="font-size:16px;font-weight:800;margin-bottom:0">💡 스마트 산출내역서 (맞춤 편집용)</p><p style="font-size:12px;color:#94a3b8;margin-top:4px;">단가 또는 수량을 수정하면 환율과 부가세 규칙에 따라 총액이 실시간 자동 계산됩니다.</p></div><button class="btn-print" onclick="window.print()">🖨️ PDF 저장</button></div>${sheetHtml}<script>${scriptLogic}<\/script></body></html>`;
+    const fullHtml = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>스마트 산출내역서 - 맞춤 편집용</title><style>${styles}</style></head><body><div class="top-bar no-print"><div style="flex:1"><p style="font-size:16px;font-weight:800;margin-bottom:0">💡 스마트 산출내역서 (맞춤 편집용)</p>${topBarSubText ? `<p style="font-size:13px;color:#94a3b8;margin-top:6px;font-weight:600;">${topBarSubText}</p>` : ''}</div><button class="btn-print" onclick="window.print()">🖨️ PDF 저장</button></div>${sheetHtml}<script>${scriptLogic}<\/script></body></html>`;
     const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const fileName = currentCurrency === 'SIMPLE_QUOTE' ? `투어메이커_${$('#inp-sim-toName').value || '고객'}_맞춤견적서.html` : `투어메이커_${$('#inp-clientName').value || '고객'}_${$('#inp-docTitle').value || '산출내역'}.html`;
+    const fileName = isSimple ? `투어메이커_${$('#inp-sim-toName').value || '고객'}_맞춤견적서.html` : `투어메이커_${$('#inp-clientName').value || '고객'}_${$('#inp-docTitle').value || '산출내역'}.html`;
     a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   }
 
