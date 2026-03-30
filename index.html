@@ -7,7 +7,7 @@
     <!-- 카카오톡 공유 썸네일 -->
     <meta property="og:title" content="투어메이커 스마트 명단/루밍 통합 관리">
     <meta property="og:description" content="담당자님, 안전하게 여권 사본 업로드 및 명단 정리를 진행해주세요.">
-    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png">
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8">
     
     <title>투어메이커 스마트 여권/명단 시스템</title>
 
@@ -50,7 +50,7 @@
             body { background-color: white !important; padding: 0 !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             
-            /* 명단 인쇄용 (thead/tfoot 반복 처리) */
+            /* 명단 인쇄용 (답답한 박스 제거, 가로선 위주의 넓고 시원한 디자인) */
             .print-traveler-list {
                 width: 100% !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important;
                 @page { size: A4 portrait; margin: 15mm; }
@@ -59,8 +59,19 @@
             .print-traveler-list thead { display: table-header-group; }
             .print-traveler-list tfoot { display: table-footer-group; }
             .print-traveler-list tr { page-break-inside: avoid; page-break-after: auto; }
-            .print-traveler-list th, .print-traveler-list td { border: 1px solid #333 !important; padding: 6px !important; font-size: 10pt !important; }
-            .print-traveler-list th.no-border-top, .print-traveler-list td.no-border-top { border: none !important; }
+            .print-traveler-list th, .print-traveler-list td { 
+                border: none !important; /* 세로선 완벽 제거 */
+                border-bottom: 1px solid #e2e8f0 !important; /* 부드러운 가로선만 유지 */
+                padding: 12px 4px !important; /* A4 용지 꽉 차게 위아래 여백 확대 */
+                font-size: 10pt !important; 
+            }
+            .print-traveler-list th { 
+                border-top: 2px solid #1e293b !important; /* 헤더 상단 굵은 선 */
+                border-bottom: 2px solid #1e293b !important; /* 헤더 하단 굵은 선 */
+                background-color: transparent !important; 
+                color: #1e293b !important;
+            }
+            .print-traveler-list th.no-border-top, .print-traveler-list td.no-border-top { border: none !important; padding: 0 !important; }
             
             /* 루밍리스트 인쇄용 */
             .print-rooming-list {
@@ -75,9 +86,14 @@
         }
 
         /* 드래그 앤 드롭 시각적 효과 */
-        .dragging { opacity: 0.5; background-color: #e2e8f0; }
+        .dragging { opacity: 0.5; background-color: #f1f5f9; }
         .drag-handle { cursor: grab; }
         .drag-handle:active { cursor: grabbing; }
+
+        /* 투어메이커 메인 로고 변수화 */
+        :root {
+            --tm-logo-url: url('https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8');
+        }
     </style>
 </head>
 <body>
@@ -86,6 +102,8 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo } = React;
+
+        const TM_LOGO = "https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8";
 
         // --- 공통 헬퍼 함수 (영문 변환기) ---
         const getRomanization = (char) => {
@@ -108,7 +126,6 @@
         };
 
         const App = () => {
-            // 메인 탭 상태 ('traveler' = 여권명단, 'rooming' = 방배정)
             const [activeMainTab, setActiveMainTab] = useState('traveler');
 
             // ==========================================
@@ -118,10 +135,7 @@
             const [importText, setImportText] = useState("");
             const [isProcessing, setIsProcessing] = useState(false);
             const [headerInfo, setHeaderInfo] = useState({
-                groupName: "",
-                date: "",
-                nation: "",
-                number: ""
+                groupName: "", date: "", nation: "", number: ""
             });
 
             // 드래그 앤 드롭 Refs
@@ -159,41 +173,48 @@
                 return { color: "text-slate-700", warning: false };
             };
 
-            // 다중 파일 업로드 처리 (Multiple)
+            // 실시간 피드백이 적용된 다중 파일 업로드 (Progressive Update)
             const handlePassportUpload = async (e) => {
                 const files = Array.from(e.target.files);
                 if (files.length === 0) return;
                 
                 setIsProcessing(true);
-                setImportText(`총 ${files.length}개의 파일을 안전하게 순차 분석하고 있습니다. 잠시만 기다려주세요...`);
-
-                let combinedText = "";
+                let currentProgressText = `[시스템 안내] 총 ${files.length}개의 파일을 안전하게 분석 시작합니다...\n\n`;
+                setImportText(currentProgressText);
 
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
+                    currentProgressText += `▶ [${i + 1}/${files.length}] "${file.name}" 분석 중... (잠시 대기)\n`;
+                    setImportText(currentProgressText);
+
                     try {
                         if (file.type === 'application/pdf') {
                             const arrayBuffer = await file.arrayBuffer();
                             const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                            let pdfText = "";
                             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                                 const page = await pdf.getPage(pageNum);
                                 const textContent = await page.getTextContent();
-                                textContent.items.forEach(item => combinedText += item.str + ' ');
+                                textContent.items.forEach(item => pdfText += item.str + ' ');
                             }
-                            combinedText += '\n';
+                            currentProgressText += pdfText + '\n\n';
                         } else if (file.type.startsWith('image/')) {
-                            const worker = await Tesseract.createWorker('kor+eng');
+                            const worker = await Tesseract.createWorker('eng+kor');
                             const ret = await worker.recognize(file);
-                            combinedText += ret.data.text + '\n';
+                            currentProgressText += ret.data.text + '\n\n';
                             await worker.terminate();
+                        } else {
+                            currentProgressText += `(지원하지 않는 파일 형식 스킵)\n\n`;
                         }
                     } catch (error) {
-                        console.error("파일 처리 중 오류:", file.name, error);
+                        currentProgressText += `(파일 분석 오류 발생: 텍스트 추출 실패)\n\n`;
                     }
+                    
+                    setImportText(currentProgressText);
                 }
 
-                setImportText(combinedText);
-                alert(`✅ 총 ${files.length}개 파일의 분석이 완료되었습니다.\n우측 텍스트를 확인하고 [하단 명단 표에 반영하기]를 눌러주세요.`);
+                currentProgressText += `✅ 분석 완료! 위 텍스트를 확인하시고 [하단 명단 표에 반영하기]를 클릭하세요.`;
+                setImportText(currentProgressText);
                 setIsProcessing(false);
                 e.target.value = '';
             };
@@ -206,7 +227,7 @@
                 lines.forEach((line, idx) => {
                     const cols = line.split(/[\t,]+| {2,}/).map(c => c.trim()).filter(c => c.length > 0);
                     if (cols.length < 2) return; 
-                    if (cols[0].includes('성명') || cols[0].includes('NAME') || cols[0].includes('NO')) return;
+                    if (cols[0].includes('성명') || cols[0].includes('NAME') || cols[0].includes('NO') || cols[0].includes('분석')) return;
 
                     let offset = (!isNaN(parseInt(cols[0])) && cols[0].length < 4) ? 1 : 0;
                     if (!cols[offset]) return;
@@ -233,7 +254,6 @@
                 });
 
                 setTravelers([...travelers, ...newEntries]);
-                setImportText("");
             };
 
             const addEmptyTraveler = () => setTravelers([...travelers, { id: Date.now() + Math.random(), nameKor: "", nameEng: "", birth: "", gender: "M", passportNo: "", expiry: "", nation: "KOR", remark: "" }]);
@@ -362,12 +382,12 @@
             return (
                 <div className="min-h-screen flex flex-col">
                     {/* 상단 탭 컨트롤러 */}
-                    <div className="no-print bg-slate-900 border-b shadow-md sticky top-0 z-50">
+                    <div className="no-print bg-[#1e293b] border-b shadow-md sticky top-0 z-50">
                         <div className="max-w-[1200px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center h-auto md:h-14 py-2 md:py-0 gap-3">
                             <div className="flex items-center gap-3">
-                                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" className="h-6 filter brightness-0 invert" alt="Logo" />
+                                <img src={TM_LOGO} className="h-6 filter brightness-0 invert" alt="Tourmaker Logo" />
                                 <div className="h-4 w-[1px] bg-slate-600"></div>
-                                <h1 className="font-bold text-white tracking-wide text-sm hidden sm:block">투어메이커 통합 관리 센터</h1>
+                                <h1 className="font-bold text-white tracking-wide text-sm hidden sm:block">통합 관리 센터</h1>
                             </div>
                             
                             <div className="flex h-full gap-2">
@@ -400,13 +420,12 @@
                                     </h2>
                                     <p className="text-xs text-slate-500 mb-4 leading-relaxed">
                                         담당자님, 이곳은 안전하게 보호되는 <b>투어메이커 전용 명단 수집 페이지</b>입니다.<br/>
-                                        보유하신 여러 장의 여권 사본(사진)이나 명단 PDF를 <b>한꺼번에 드래그</b>하여 업로드해 주세요. 시스템이 차례대로 내용을 인식합니다. (개인정보는 서버에 일절 저장되지 않습니다.)
+                                        보유하신 여러 장의 여권 사본(사진)이나 명단 PDF를 <b>한꺼번에 드래그</b>하여 업로드해 주세요. (개인정보는 서버에 저장되지 않습니다.)
                                     </p>
                                     
                                     <div className="mt-auto">
-                                        {/* multiple 속성 추가로 다중 파일 업로드 지원 */}
-                                        <input type="file" id="passport-upload" accept=".pdf, image/*" multiple className="hidden" onChange={handlePassportUpload} />
-                                        <label htmlFor="passport-upload" className="w-full bg-slate-100 hover:bg-slate-200 border-2 border-dashed border-slate-300 text-slate-700 font-bold py-4 rounded-lg flex flex-col items-center justify-center cursor-pointer transition shadow-sm gap-2">
+                                        <input type="file" id="passport-upload" accept=".pdf, image/*" multiple className="hidden" onChange={handlePassportUpload} disabled={isProcessing} />
+                                        <label htmlFor="passport-upload" className={`w-full ${isProcessing ? 'bg-slate-50 border-slate-200 cursor-not-allowed' : 'bg-slate-100 hover:bg-slate-200 border-slate-300 cursor-pointer'} border-2 border-dashed text-slate-700 font-bold py-4 rounded-lg flex flex-col items-center justify-center transition shadow-sm gap-2`}>
                                             {isProcessing ? (
                                                 <><i className="fas fa-spinner fa-spin text-xl text-blue-500"></i><span className="text-sm">보안 분석 중...</span></>
                                             ) : (
@@ -416,14 +435,14 @@
                                     </div>
                                 </div>
 
-                                {/* 추출된 텍스트 확인 영역 */}
+                                {/* 추출된 텍스트 확인 영역 (UI 단순화) */}
                                 <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                                     <h2 className="text-sm font-black text-slate-800 tracking-widest mb-3 flex items-center justify-between">
-                                        <span><i className="fas fa-file-lines text-blue-600 mr-2"></i>추출된 데이터 확인 및 수정</span>
+                                        <span><i className="fas fa-file-lines text-blue-600 mr-2"></i>추출된 여권 데이터 확인 및 수정</span>
                                     </h2>
                                     <textarea 
                                         className="w-full h-28 p-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition font-mono"
-                                        placeholder="파일을 업로드하면 추출된 데이터가 이곳에 표시됩니다. 내용이 맞는지 확인 후 아래 [표에 반영하기]를 눌러주세요."
+                                        placeholder="여권 이미지 또는 PDF를 업로드하면 추출된 데이터가 이곳에 순차적으로 표시됩니다. 진행 상황을 실시간으로 확인하실 수 있습니다."
                                         value={importText}
                                         onChange={(e) => setImportText(e.target.value)}
                                     ></textarea>
@@ -431,69 +450,69 @@
                                         <button onClick={() => setTravelers([])} className="bg-white border border-slate-200 text-slate-500 px-4 py-2.5 rounded-lg text-sm hover:bg-slate-50 font-bold transition">
                                             명단 초기화
                                         </button>
-                                        <button onClick={handlePassportImport} className="flex-1 bg-slate-800 text-white font-bold py-2.5 rounded-lg hover:bg-black transition flex justify-center items-center gap-2 shadow-sm">
+                                        <button onClick={handlePassportImport} className="flex-1 bg-slate-800 text-white font-bold py-2.5 rounded-lg hover:bg-black transition flex justify-center items-center gap-2 shadow-sm" disabled={isProcessing}>
                                             <i className="fas fa-arrow-down"></i> 하단 명단 표에 반영하기
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* 다중 페이지 인쇄를 완벽하게 지원하는 Table 구조 */}
-                            <div className="print-container print-traveler-list bg-white max-w-[210mm] mx-auto shadow-xl p-4 md:p-[15mm] min-h-[297mm] flex flex-col border border-slate-200">
-                                <div className="no-print mb-2 flex justify-between items-end">
+                            {/* 답답한 박스를 걷어낸 보고서형 Table 구조 */}
+                            <div className="print-container print-traveler-list bg-white max-w-full lg:max-w-[210mm] mx-auto shadow-xl p-4 md:p-[10mm] min-h-[297mm] flex flex-col border border-slate-200">
+                                <div className="no-print mb-3 flex justify-between items-end px-2">
                                     <p className="text-xs text-blue-600 font-bold"><i className="fas fa-hand-pointer"></i> 표 좌측의 ≡ 아이콘을 위아래로 드래그하여 순서를 변경할 수 있습니다.</p>
                                     <span className="text-xs font-bold text-slate-500">총 인원: {travelers.length}명</span>
                                 </div>
 
-                                <table className="w-full text-xs border-collapse border border-slate-800">
+                                <table className="w-full text-sm border-collapse">
                                     <thead className="print:table-header-group">
                                         {/* 헤더 인포메이션 (모든 인쇄 페이지 상단에 반복 출력됨) */}
                                         <tr>
                                             <th colSpan="11" className="no-border-top bg-white p-0 pt-2 pb-6 text-left">
-                                                <div className="flex justify-between items-start border-b-2 border-slate-900 pb-4">
+                                                <div className="flex justify-between items-end border-b-4 border-slate-900 pb-4 mb-2">
                                                     <div className="space-y-4 flex-1">
-                                                        <h2 className="text-3xl font-black tracking-tighter text-slate-900 border-b-4 border-slate-900 pb-2 inline-block">OVERSEAS TRAVELERS LIST</h2>
-                                                        <div className="grid grid-cols-1 gap-1 text-sm font-bold text-slate-700">
+                                                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 mt-2">OVERSEAS TRAVELERS LIST</h2>
+                                                        <div className="grid grid-cols-1 gap-1.5 text-sm font-bold text-slate-700">
                                                             <HeaderField label="GROUP NAME" value={headerInfo.groupName} onChange={(v) => setHeaderInfo({...headerInfo, groupName: v})} />
                                                             <HeaderField label="DATE" value={headerInfo.date} onChange={(v) => setHeaderInfo({...headerInfo, date: v})} />
                                                             <HeaderField label="NATION/LOCAL" value={headerInfo.nation} onChange={(v) => setHeaderInfo({...headerInfo, nation: v})} />
                                                             <HeaderField label="NUMBER" value={headerInfo.number} onChange={(v) => setHeaderInfo({...headerInfo, number: v})} />
                                                         </div>
                                                     </div>
-                                                    <div className="text-right flex flex-col items-end">
-                                                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" className="h-10 mb-2" alt="Tourmaker Logo" />
-                                                        <div className="text-[10px] text-red-500 font-bold italic">여권 만료일 출발일 기준 최소 6개월 이상 필수</div>
+                                                    {/* 우측 상단 로고 완전히 삭제, 텍스트 정보만 깔끔하게 유지 */}
+                                                    <div className="text-right flex flex-col items-end justify-end">
+                                                        <div className="text-[11px] text-red-500 font-bold italic">여권 만료일 출발일 기준 최소 6개월 이상 필수</div>
                                                     </div>
                                                 </div>
                                             </th>
                                         </tr>
-                                        {/* 테이블 컬럼명 */}
-                                        <tr className="bg-slate-100 border-b-2 border-slate-800 text-slate-900">
-                                            <th className="no-print p-2 w-8">순서</th>
-                                            <th className="p-2 border border-slate-300 w-10 text-center">NO</th>
-                                            <th className="p-2 border border-slate-300 text-left">성명</th>
-                                            <th className="p-2 border border-slate-300 text-left">NAME</th>
-                                            <th className="p-2 border border-slate-300 text-left">생년월일</th>
-                                            <th className="p-2 border border-slate-300 w-12 text-center">성별</th>
-                                            <th className="p-2 border border-slate-300 text-left">여권번호</th>
-                                            <th className="p-2 border border-slate-300 text-left">여권만료일</th>
-                                            <th className="p-2 border border-slate-300 text-center">국적</th>
-                                            <th className="p-2 border border-slate-300 text-left">비고</th>
-                                            <th className="p-2 no-print w-10 border border-slate-300 text-center">삭제</th>
+                                        {/* 테이블 컬럼명 (세로선 제거, 가로선 강조) */}
+                                        <tr className="text-slate-800 border-t-2 border-b-2 border-slate-800 bg-transparent">
+                                            <th className="no-print p-2 w-8 text-center"><i className="fas fa-sort text-slate-300"></i></th>
+                                            <th className="p-2 w-10 text-center font-bold">NO</th>
+                                            <th className="p-2 text-left font-bold">성명</th>
+                                            <th className="p-2 text-left font-bold">NAME</th>
+                                            <th className="p-2 text-left font-bold">생년월일</th>
+                                            <th className="p-2 w-12 text-center font-bold">성별</th>
+                                            <th className="p-2 text-left font-bold">여권번호</th>
+                                            <th className="p-2 text-left font-bold">여권만료일</th>
+                                            <th className="p-2 text-center font-bold">국적</th>
+                                            <th className="p-2 text-left font-bold">비고</th>
+                                            <th className="p-2 no-print w-10 text-center font-bold">삭제</th>
                                         </tr>
                                     </thead>
                                     
-                                    <tbody className="print:table-row-group">
+                                    <tbody className="print:table-row-group text-slate-800">
                                         {travelers.length === 0 ? (
                                             <tr>
-                                                <td colSpan="11" className="p-12 text-center text-slate-400 italic border border-slate-300">상단 업로드 또는 '명단 수동 추가' 버튼을 눌러 인원을 구성해주세요.</td>
+                                                <td colSpan="11" className="p-16 text-center text-slate-400 italic border-b border-slate-200">데이터를 업로드 하거나 '명단 수동 추가' 버튼을 눌러주세요.</td>
                                             </tr>
                                         ) : travelers.map((t, idx) => {
                                             const status = getExpiryStatus(t.expiry);
                                             return (
                                                 <tr 
                                                     key={t.id} 
-                                                    className="border-b border-slate-300 hover:bg-blue-50 transition group bg-white"
+                                                    className="border-b border-slate-200 hover:bg-slate-50 transition group bg-white"
                                                     draggable
                                                     onDragStart={(e) => dragStart(e, idx)}
                                                     onDragEnter={(e) => dragEnter(e, idx)}
@@ -501,28 +520,28 @@
                                                     onDrop={drop}
                                                     onDragOver={(e) => e.preventDefault()}
                                                 >
-                                                    <td className="no-print p-2 text-center text-slate-300 hover:text-blue-500 drag-handle border border-slate-300" title="드래그하여 순서 변경">
+                                                    <td className="no-print p-2 text-center text-slate-300 hover:text-blue-500 drag-handle" title="드래그하여 순서 변경">
                                                         <i className="fas fa-bars"></i>
                                                     </td>
-                                                    <td className="p-2 text-center border border-slate-300 text-slate-500 font-bold">{idx + 1}</td>
-                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.nameKor} onChange={(v) => updateField(t.id, 'nameKor', v)} bold /></td>
-                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.nameEng} onChange={(v) => updateField(t.id, 'nameEng', v.toUpperCase())} uppercase /></td>
-                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.birth} onChange={(v) => updateField(t.id, 'birth', v)} placeholder="YYYY-MM-DD" /></td>
-                                                    <td className="p-2 border border-slate-300 text-center">
+                                                    <td className="p-2 text-center text-slate-500 font-bold">{idx + 1}</td>
+                                                    <td className="p-2"><EditableCell val={t.nameKor} onChange={(v) => updateField(t.id, 'nameKor', v)} bold /></td>
+                                                    <td className="p-2"><EditableCell val={t.nameEng} onChange={(v) => updateField(t.id, 'nameEng', v.toUpperCase())} uppercase /></td>
+                                                    <td className="p-2"><EditableCell val={t.birth} onChange={(v) => updateField(t.id, 'birth', v)} placeholder="YYYY-MM-DD" /></td>
+                                                    <td className="p-2 text-center">
                                                         <select className="bg-transparent border-none outline-none cursor-pointer text-slate-700 font-bold" value={t.gender} onChange={(e) => updateField(t.id, 'gender', e.target.value)}>
                                                             <option value="M">M</option><option value="F">F</option>
                                                         </select>
                                                     </td>
-                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.passportNo} onChange={(v) => updateField(t.id, 'passportNo', v.toUpperCase())} uppercase /></td>
-                                                    <td className={`p-2 border border-slate-300 ${status.color}`}>
+                                                    <td className="p-2"><EditableCell val={t.passportNo} onChange={(v) => updateField(t.id, 'passportNo', v.toUpperCase())} uppercase /></td>
+                                                    <td className={`p-2 ${status.color}`}>
                                                         <div className="flex items-center justify-between">
                                                             <EditableCell val={t.expiry} onChange={(v) => updateField(t.id, 'expiry', v)} placeholder="YYYY-MM-DD" />
                                                             {status.warning && <i className="fas fa-exclamation-triangle text-orange-400 no-print ml-1" title={status.msg}></i>}
                                                         </div>
                                                     </td>
-                                                    <td className="p-2 border border-slate-300 text-center"><EditableCell val={t.nation} onChange={(v) => updateField(t.id, 'nation', v)} center /></td>
-                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.remark} onChange={(v) => updateField(t.id, 'remark', v)} /></td>
-                                                    <td className="p-2 no-print text-center border border-slate-300">
+                                                    <td className="p-2 text-center"><EditableCell val={t.nation} onChange={(v) => updateField(t.id, 'nation', v)} center /></td>
+                                                    <td className="p-2"><EditableCell val={t.remark} onChange={(v) => updateField(t.id, 'remark', v)} /></td>
+                                                    <td className="p-2 no-print text-center">
                                                         <button onClick={() => removeTraveler(t.id)} className="text-slate-300 hover:text-red-500 transition px-2"><i className="fas fa-trash-alt"></i></button>
                                                     </td>
                                                 </tr>
@@ -533,15 +552,16 @@
                                     {/* 푸터 영역 (모든 인쇄 페이지 하단에 반복 출력됨) */}
                                     <tfoot className="print:table-footer-group">
                                         <tr>
-                                            <td colSpan="11" className="no-border-top bg-white p-0 pt-6">
-                                                <div className="border-t border-slate-200 pt-4">
+                                            <td colSpan="11" className="no-border-top bg-white p-0 pt-8">
+                                                <div className="border-t border-slate-300 pt-4">
                                                     <div className="flex justify-between items-end mb-4">
-                                                        <div className="text-[10px] text-slate-400">제출일: {new Date().toLocaleDateString()}</div>
+                                                        <div className="text-[11px] font-bold text-slate-500">제출일: {new Date().toLocaleDateString()}</div>
                                                         <div className="text-right">
-                                                            <div className="text-xs font-bold text-slate-800">TOURMAKER Smart System</div>
+                                                            {/* 우측 하단 푸터: 공식 로고만 깔끔하게 적용 */}
+                                                            <img src={TM_LOGO} className="h-6 opacity-80" alt="Tourmaker Logo" />
                                                         </div>
                                                     </div>
-                                                    <div className="bg-[#f8f9fa] py-4 px-6 rounded-lg text-center">
+                                                    <div className="bg-slate-50 py-4 px-6 rounded-lg text-center border border-slate-100">
                                                         <p className="text-[11px] text-[#6c757d] leading-relaxed m-0">
                                                             [System Powered by <a href="https://tourmaker.kr" target="_blank" rel="noreferrer" className="font-bold underline text-[#6c757d]">TOURMAKER</a>] 본 여행자 명단 시스템은 투어메이커의 기획과 트래블 테크 기술 제휴로 제작되었습니다.<br/>모든 개인정보는 브라우저 내에서만 안전하게 처리되며 외부 서버에 저장되지 않습니다.
                                                         </p>
@@ -553,8 +573,8 @@
                                 </table>
                                 
                                 <div className="no-print mt-6 flex justify-center">
-                                    <button onClick={addEmptyTraveler} className="border-2 border-dashed border-blue-300 text-blue-600 font-bold text-sm px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-50 transition shadow-sm">
-                                        <i className="fas fa-user-plus"></i> 이름 미정 명단 1줄 수동 추가
+                                    <button onClick={addEmptyTraveler} className="border border-slate-300 text-slate-600 font-bold text-sm px-6 py-2.5 rounded-lg flex items-center gap-2 hover:bg-slate-100 transition shadow-sm">
+                                        <i className="fas fa-plus"></i> 이름 미정 빈칸 1줄 추가
                                     </button>
                                 </div>
                             </div>
@@ -660,7 +680,20 @@
                                                     </div>
                                                 </div>
 
-                                                <TourmakerFooterRooming />
+                                                {/* 푸터 영역: 공식 로고만 깔끔하게 유지 */}
+                                                <div className="mt-12 pt-6 border-t border-slate-100">
+                                                    <div className="flex justify-between items-end mb-4">
+                                                        <div className="text-[11px] font-bold text-slate-500">제출일: {new Date().toLocaleDateString()}</div>
+                                                        <div className="text-right">
+                                                            <img src={TM_LOGO} className="h-6 opacity-80" alt="Tourmaker Logo" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-[#f8f9fa] py-4 px-6 rounded-lg text-center">
+                                                        <p className="text-[11px] text-[#6c757d] leading-relaxed m-0">
+                                                            [System Powered by <a href="https://tourmaker.kr" target="_blank" rel="noreferrer" className="font-bold underline text-[#6c757d]">TOURMAKER</a>] 본 시스템은 투어메이커의 기획과 트래블 테크 기술 제휴로 제작되었습니다.<br/>모든 개인정보는 브라우저 내에서만 안전하게 처리되며 외부 서버에 저장되지 않습니다.
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         );
                                     })}
@@ -682,10 +715,10 @@
         // --- 재사용 컴포넌트 ---
         const HeaderField = ({ label, value, onChange, isMain = false }) => (
             <div className="flex items-center gap-2 w-full">
-                <span className={`w-20 md:w-24 text-[9px] font-black text-slate-500 tracking-widest uppercase flex-shrink-0 ${isMain ? 'text-[11px]' : ''}`}>{label}</span>
+                <span className={`w-20 md:w-24 text-[10px] font-black text-slate-500 tracking-widest uppercase flex-shrink-0 ${isMain ? 'text-[11px]' : ''}`}>{label}</span>
                 <input 
                     type="text" 
-                    className={`flex-1 border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none px-2 transition-all text-slate-800 ${isMain ? 'font-black text-lg md:text-xl py-0.5' : 'font-bold text-xs py-1'}`}
+                    className={`flex-1 border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none px-2 transition-all text-slate-800 ${isMain ? 'font-black text-lg md:text-xl py-0.5' : 'font-bold text-sm py-1'}`}
                     value={value} 
                     onChange={(e) => onChange(e.target.value)} 
                 />
@@ -743,22 +776,6 @@
                         </div>
                     );
                 })}
-            </div>
-        );
-
-        const TourmakerFooterRooming = () => (
-            <div className="mt-12 pt-6 border-t border-slate-100">
-                <div className="flex justify-between items-end mb-4">
-                    <div className="text-[10px] text-slate-400">제출일: {new Date().toLocaleDateString()}</div>
-                    <div className="text-right">
-                        <div className="text-xs font-bold text-slate-800">TOURMAKER Smart System</div>
-                    </div>
-                </div>
-                <div className="bg-[#f8f9fa] py-4 px-6 rounded-lg text-center">
-                    <p className="text-[11px] text-[#6c757d] leading-relaxed m-0">
-                        [System Powered by <a href="https://tourmaker.kr" target="_blank" rel="noreferrer" className="font-bold underline text-[#6c757d]">TOURMAKER</a>] 본 시스템은 투어메이커의 기획과 트래블 테크 기술 제휴로 제작되었습니다.<br/>모든 개인정보는 브라우저 내에서만 안전하게 처리되며 외부 서버에 저장되지 않습니다.
-                    </p>
-                </div>
             </div>
         );
 
