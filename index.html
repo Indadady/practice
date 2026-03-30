@@ -1,956 +1,769 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>고객 제출용 가격 산출 내역서 - TOURMAKER</title>
-  <meta property="og:title" content="투어메이커 가격 산출 내역서">
-  <meta property="og:description" content="고객 제출용 공식 행사비 산출 내역서 (국내/해외 통합)">
-  <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8">
-  <meta property="og:type" content="website">
-  <!-- GA4 Tracking Code -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-JLH9GD9SVR');
-  </script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #334155; -webkit-text-size-adjust: 100%; }
-    .top-header { background: #ffffff; color: #0f172a; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-    .top-header img { height: 32px; object-fit: contain; }
-    .top-header h1 { font-size: 16px; font-weight: 700; margin-left: 12px; color: #475569; white-space: nowrap; border-left: 2px solid #e2e8f0; padding-left: 12px; }
-    .header-left, .header-right { display: flex; align-items: center; }
-    .header-right { gap: 8px; }
-    .btn-pdf, .btn-html { color:#fff; border:none; padding:8px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; transition:all .2s; }
-    .btn-pdf { background:#1e293b; }
-    .btn-pdf:hover { background:#0f172a; }
-    .btn-html { background:#2563eb; }
-    .btn-html:hover { background:#1d4ed8; }
-    .mobile-tabs { display:none; background:#fff; border-bottom:1px solid #e2e8f0; position:sticky; top:57px; z-index:99; }
-    .mobile-tabs button { flex:1; padding:14px 0; border:none; background:transparent; font-size:14px; font-weight:600; color:#64748b; cursor:pointer; position:relative; }
-    .mobile-tabs button.active { color:#0f172a; }
-    .mobile-tabs button.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:3px; background:#0f172a; }
-    .main-layout { display:flex; height:calc(100vh - 57px); overflow:hidden; }
-    .panel-input { width:520px; flex-shrink:0; background:#fff; border-right:1px solid #e2e8f0; padding:24px; box-shadow:4px 0 10px rgba(0,0,0,.02); z-index:10; display:flex; flex-direction:column; position:relative; }
-    .panel-input-scroll { flex:1; overflow-y:auto; scroll-behavior:smooth; padding-bottom:80px; }
-    .panel-input h2 { font-size:18px; font-weight:800; border-bottom:2px solid #0f172a; padding-bottom:10px; margin-bottom:20px; color:#0f172a; }
-    .panel-preview { flex:1; overflow:auto; background:#e2e8f0; display:flex; justify-content:center; align-items:flex-start; padding:32px 16px; }
-    .template-manager { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px; margin-bottom:24px; }
-    .template-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-    .template-header span { font-size:14px; font-weight:800; color:#1e293b; display:flex; align-items:center; gap:6px; }
-    .btn-clear { background:#fff; border:1px solid #cbd5e1; color:#64748b; padding:6px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; transition:.2s; }
-    .btn-clear:hover { background:#fef2f2; color:#ef4444; border-color:#fca5a5; }
-    .template-controls { display:flex; gap:8px; margin-bottom:8px; }
-    .template-select { flex:1; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; font-size:13px; outline:none; transition:.2s; }
-    .template-search { width:130px; border:1px solid #cbd5e1; border-radius:6px; padding:8px 10px; font-size:13px; outline:none; background:#fff; transition:.2s; }
-    .template-select:focus, .template-search:focus, .form-input:focus, .form-select:focus, .slot-input:focus { border-color:#3b82f6; box-shadow:0 0 0 2px rgba(59,130,246,.1); }
-    .btn-load, .btn-save, .btn-delete, .btn-backup, .btn-restore { border:none; padding:8px 14px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition:.2s; }
-    .btn-load { background:#334155; color:#fff; } .btn-load:hover { background:#0f172a; }
-    .btn-save { background:#2563eb; color:#fff; } .btn-save:hover { background:#1d4ed8; }
-    .btn-delete { background:#fff; color:#ef4444; border:1px solid #fca5a5; } .btn-delete:hover { background:#fef2f2; border-color:#ef4444; }
-    .backup-controls { display:flex; gap:8px; justify-content:flex-end; padding-top:8px; border-top:1px dashed #cbd5e1; }
-    .btn-backup { background:#fff; color:#059669; border:1px solid #6ee7b7; padding:6px 12px; font-size:12px; } .btn-backup:hover { background:#ecfdf5; }
-    .btn-restore { background:#fff; color:#d97706; border:1px solid #fcd34d; padding:6px 12px; font-size:12px; } .btn-restore:hover { background:#fffbeb; }
-    .warning-panel { background:#fef2f2; border:1px solid #f87171; border-radius:8px; padding:16px; margin-bottom:24px; color:#991b1b; box-shadow:0 2px 4px rgba(239,68,68,.05); }
-    .warning-panel.hidden { display:none; }
-    .warning-title { font-weight:800; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:6px; color:#b91c1c; }
-    .warning-list { list-style:none; font-size:13px; line-height:1.6; }
-    .warning-list li { position:relative; padding-left:16px; cursor:pointer; transition:color .2s; margin-bottom:4px; }
-    .warning-list li:hover { color:#dc2626; text-decoration:underline; }
-    .warning-list li::before { content:'•'; position:absolute; left:0; color:#ef4444; font-weight:bold; }
-    .error-border { border:2px solid #ef4444 !important; background:#fef2f2 !important; }
-    .error-row-container { border:1px solid #f87171 !important; box-shadow:0 0 0 2px rgba(239,68,68,.2); }
-    .form-group { margin-bottom:28px; background:#fff; padding:16px; border:1px solid #e2e8f0; border-radius:8px; }
-    .form-group.highlight { border-color:#93c5fd; background:#eff6ff; box-shadow:0 2px 4px rgba(0,0,0,.02); }
-    .section-title { font-size:14px; font-weight:800; margin-bottom:16px; color:#0f172a; display:flex; align-items:center; gap:8px; }
-    .section-title::before { content:''; display:block; width:4px; height:16px; border-radius:2px; }
-    .blue::before { background:#2563eb; } .dark::before { background:#334155; } .green::before { background:#059669; } .orange::before { background:#ea580c; } .cyan::before { background:#0891b2; }
-    .form-row { display:grid; gap:12px; margin-bottom:12px; }
-    .form-row.cols-2 { grid-template-columns:1fr 1fr; } .form-row.cols-1 { grid-template-columns:1fr; }
-    .form-label { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:6px; }
-    .form-input, .form-select { width:100%; border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; font-size:13px; font-family:inherit; outline:none; transition:.2s; color:#1e293b; background:#fff; }
-    .form-select { font-weight:700; color:#0f172a; cursor:pointer; }
-    .slot-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:10px; position:relative; transition:all .2s; box-shadow:0 1px 2px rgba(0,0,0,.02); }
-    .slot-card:hover { border-color:#94a3b8; box-shadow:0 2px 4px rgba(0,0,0,.05); }
-    .slot-card-header { display:flex; justify-content:flex-end; margin-bottom:6px; }
-    .btn-delete-row { background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer; padding:0 4px; line-height:1; border-radius:4px; transition:.2s; }
-    .btn-delete-row:hover { color:#ef4444; background:#fee2e2; }
-    .slot-grid { display:grid; grid-template-columns:3fr 3fr 2fr 4fr; gap:8px; margin-bottom:8px; }
-    .slot-grid-flight { display:grid; grid-template-columns:3fr 4fr 2fr 3fr; gap:8px; margin-bottom:8px; }
-    .slot-grid-simple { display:grid; grid-template-columns:3fr 4fr 3fr 2fr; gap:8px; margin-bottom:8px; }
-    .slot-input { width:100%; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px; font-size:12px; font-family:inherit; outline:none; background:#f8fafc; }
-    .slot-input.amount { font-weight:700; color:#0f172a; text-align:right; }
-    .btn-add-item { width:100%; background:#fff; border:1px dashed #cbd5e1; color:#64748b; padding:10px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; margin-top:4px; }
-    .btn-add-item:hover { background:#f8fafc; border-color:#94a3b8; color:#1e293b; }
-    .exrate-row { display:flex; align-items:center; gap:8px; margin-top:8px; padding:12px; background:#fff; border-radius:6px; border:1px solid #bfdbfe; }
-    .exrate-row label { font-size:12px; font-weight:700; color:#1e40af; white-space:nowrap; }
-    .exrate-input { width:100px; border:1px solid #93c5fd; border-radius:6px; padding:6px 10px; font-size:14px; text-align:right; font-weight:800; color:#1e40af; background:#eff6ff; font-family:inherit; }
-    .hint-text { font-size:11px; color:#64748b; margin-bottom:10px; line-height:1.4; }
-    .live-summary-bar { position:absolute; bottom:0; left:0; right:0; background:#0f172a; color:#f8fafc; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 -4px 10px rgba(0,0,0,.1); z-index:50; }
-    .live-summary-bar .label { font-size:13px; font-weight:600; color:#94a3b8; }
-    .live-summary-bar .total-amount { font-size:22px; font-weight:900; color:#fbbf24; }
-    .a4-sheet { background:#fff; width:100%; max-width:850px; padding:40px; box-shadow:0 10px 40px rgba(0,0,0,.1); border-radius:4px; position:relative; }
-    #detailed-input-group, #detailed-preview-group { display:block; }
-    #simple-input-group, #simple-preview-group { display:none; }
-    .doc-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; }
-    .doc-header-left { width:45%; } .doc-header-right { width:40%; display:flex; justify-content:flex-end; padding-top:4px; }
-    .doc-header-right img { height:28px; object-fit:contain; }
-    .doc-title-area { text-align:center; margin-bottom:24px; }
-    .doc-title-area h2 { display:inline-block; font-size:28px; font-weight:900; letter-spacing:.15em; border-bottom:3px solid #0f172a; padding:0 24px 6px; color:#0f172a; }
-    .doc-title-area p { font-size:11px; color:#64748b; font-weight:700; letter-spacing:.25em; margin-top:6px; text-transform:uppercase; }
-    .info-table, .main-table, .simple-table { width:100%; border-collapse:collapse; }
-    .info-table th, .info-table td { border:1px solid #cbd5e1; padding:5px 8px; font-size:12px; }
-    .info-table th { background:#f8fafc; color:#334155; font-weight:700; text-align:center; width:28%; }
-    .info-table td { color:#0f172a; }
-    .main-table { table-layout:fixed; border-top:2px solid #0f172a; border-bottom:2px solid #0f172a; }
-    .main-table th, .main-table td { border:1px solid #cbd5e1; padding:6px 8px; font-size:11px; vertical-align:middle; overflow:hidden; word-break:keep-all; color:#1e293b; }
-    .main-table th { text-align:center; font-weight:700; background:#f8fafc; color:#0f172a; }
-    .main-table tbody tr { height:28px; }
-    .text-center { text-align:center; } .text-right { text-align:right; } .font-bold { font-weight:700; } .font-semibold { font-weight:600; }
-    .bg-gray-50 { background:#f8fafc; } .bg-yellow-50 { background:#fef9c3; }
-    .subtotal-row { background:#f1f5f9; font-weight:700; } .subtotal-row td { border-bottom:2px solid #cbd5e1 !important; padding:8px; }
-    .grand-row { background:#f8fafc; font-weight:800; } .grand-row td { border-top:2px solid #0f172a !important; padding:8px; } .grand-row-last td { border-bottom:none !important; }
-    .grand-amount { font-size:14px; } .grand-label { font-size:12px; }
-    .footer-notes { font-size:11px; color:#475569; padding-top:12px; }
-    .footer-notes p.title { font-size:12px; font-weight:700; margin-bottom:6px; color:#1e293b; }
-    .footer-notes p.body { line-height:1.6; letter-spacing:-.02em; }
-    .simple-header { text-align:center; margin-bottom:30px; margin-top:10px; }
-    .simple-header h1 { font-size:36px; font-weight:900; letter-spacing:.8em; padding-left:.8em; color:#000; border-bottom:2px solid #000; display:inline-block; padding-bottom:10px; }
-    .simple-info-grid { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px; font-size:12px; color:#000; }
-    .simple-info-left { line-height:1.8; } .simple-info-left span { display:inline-block; width:130px; font-weight:600; } .simple-info-right img { height:18px; object-fit:contain; margin-bottom:4px; }
-    .simple-sender-receiver { display:flex; justify-content:space-between; margin-bottom:24px; font-size:12px; color:#000; }
-    .sr-box { width:48%; border-top:2px solid #000; border-bottom:2px solid #000; padding:12px 0; display:flex; align-items:center; }
-    .sr-label { width:60px; text-align:center; font-weight:800; background:#f8fafc; display:flex; align-items:center; justify-content:center; margin-right:12px; letter-spacing:2px; }
-    .sr-content { flex:1; line-height:1.8; } .sr-content-row { display:flex; align-items:center; } .sr-content-row span:first-child { width:15px; text-align:center; } .sr-content-row span:last-child { flex:1; padding-left:5px; } .sr-content-row.bold span:last-child { font-weight:800; font-size:14px; }
-    .stamp-overlap-container { position:relative; display:inline-flex; align-items:center; white-space:nowrap; }
-    .stamp-image { position:absolute; left:48px; bottom:-18px; width:68px; height:68px; object-fit:contain; mix-blend-mode:multiply; pointer-events:none; opacity:.85; transform:rotate(-4deg); z-index:10; }
-    .simple-subject { font-size:14px; font-weight:800; margin-bottom:16px; display:flex; color:#000; } .simple-subject-label { width:120px; text-align:center; letter-spacing:2px; }
-    .simple-table { border:2px solid #000; margin-bottom:24px; color:#000; }
-    .simple-table th, .simple-table td { border:1px solid #000; padding:10px; font-size:12px; }
-    .simple-table th { background:#f8fafc; text-align:center; font-weight:800; } .simple-table tbody tr { height:32px; }
-    .st-subtotal { text-align:right; font-weight:800; background:#f8fafc; } .st-grandtotal { text-align:right; font-weight:900; font-size:15px; background:#f1f5f9; }
-    .simple-footer-bank { font-size:12px; line-height:1.8; margin-bottom:30px; color:#000; }
-    .simple-footer-bank p { margin:0; display:flex; } .simple-footer-bank p span.label { width:190px; font-weight:600; } .simple-footer-bank p span.colon { width:20px; } .simple-footer-bank p span.val { font-weight:800; }
-    .highlight-bg { background-color:#fef08a; display:inline-block; padding:0 12px; min-width:200px; border-radius:2px; }
-    .simple-footer-notes { font-size:12px; line-height:1.6; display:flex; flex-direction:column; gap:10px; color:#000; }
-    .sfn-row { display:flex; } .sfn-label { width:110px; text-align:center; font-weight:800; } .sfn-colon { width:20px; text-align:center; } .sfn-content { flex:1; } .sfn-graybox { background:#e2e8f0; height:30px; width:100%; margin-top:24px; border-radius:4px; }
-    .footer-brand { text-align:center; margin-top:24px; border-top:1px solid #e2e8f0; padding-top:16px; }
-    .footer-brand p { font-size:11px; color:#64748b; }
-    .footer-brand a { display:inline-block; margin-top:8px; padding:6px 16px; border:1px solid #cbd5e1; border-radius:6px; color:#475569; text-decoration:none; font-size:11px; font-weight:700; transition:.2s; }
-    .footer-brand a:hover { background:#f1f5f9; color:#0f172a; border-color:#94a3b8; }
-    .pc-1 .doc-header { margin-bottom:16px; } .pc-1 .doc-title-area h2 { font-size:24px; } .pc-1 .main-table th, .pc-1 .main-table td { padding:4px 6px; font-size:10.5px; } .pc-1 .main-table tbody tr { height:26px; }
-    .panel-input-scroll::-webkit-scrollbar, .panel-preview::-webkit-scrollbar { width:6px; }
-    .panel-input-scroll::-webkit-scrollbar-track, .panel-preview::-webkit-scrollbar-track { background:#f8fafc; }
-    .panel-input-scroll::-webkit-scrollbar-thumb, .panel-preview::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
-    .panel-hidden { display:none !important; }
-    @media (max-width:1023px) {
-      .mobile-tabs { display:flex; }
-      .main-layout { flex-direction:column; height:auto; overflow:visible; }
-      .panel-input { width:100%; border-right:none; border-bottom:1px solid #e2e8f0; height:calc(100vh - 110px); padding:20px; display:block; overflow-y:auto; }
-      .panel-input-scroll { overflow-y:visible; padding-bottom:0; }
-      .live-summary-bar { position:relative; margin-top:20px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,.1); }
-      .panel-preview { width:100%; padding:20px 0; overflow-x:scroll; overflow-y:visible; height:auto; min-height:0; display:block; -webkit-overflow-scrolling:touch; }
-      .a4-sheet { min-width:750px; width:750px; padding:24px; margin:0 12px; }
-      .slot-grid, .slot-grid-flight, .slot-grid-simple, .form-row.cols-2 { grid-template-columns:1fr; }
-    }
-    @media (max-width:480px) {
-      .top-header { padding:12px; }
-      .top-header img { height:26px; }
-      .top-header h1 { font-size:13px; }
-      .panel-input { padding:16px; height:calc(100vh - 100px); }
-      .a4-sheet { min-width:680px; width:680px; padding:20px; }
-    }
-    @media print {
-      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      body { background:#fff !important; margin:0 !important; padding:0 !important; }
-      .no-print, .top-header, .mobile-tabs, .panel-input { display:none !important; }
-      .main-layout { display:block !important; height:auto !important; overflow:visible !important; }
-      .panel-preview { background:#fff !important; padding:0 !important; overflow:visible !important; display:flex !important; justify-content:center !important; height:auto !important; }
-      .a4-sheet { box-shadow:none !important; max-width:100% !important; width:100% !important; min-width:0 !important; padding:5mm 8mm !important; margin:0 auto !important; }
-      .footer-brand a { display:none !important; }
-      @page { size:A4 portrait; margin:8mm; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 카카오톡 공유 썸네일 -->
+    <meta property="og:title" content="투어메이커 스마트 명단/루밍 통합 관리">
+    <meta property="og:description" content="담당자님, 안전하게 여권 사본 업로드 및 명단 정리를 진행해주세요.">
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png">
+    
+    <title>투어메이커 스마트 여권/명단 시스템</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- PDF.js & Tesseract.js for File Parsing (OCR) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JLH9GD9SVR');
+    </script>
+
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        
+        /* 인쇄 최적화 (다중 페이지 완벽 대응) */
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white !important; padding: 0 !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* 명단 인쇄용 (thead/tfoot 반복 처리) */
+            .print-traveler-list {
+                width: 100% !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important;
+                @page { size: A4 portrait; margin: 15mm; }
+            }
+            .print-traveler-list table { border-collapse: collapse !important; width: 100% !important; page-break-inside: auto; }
+            .print-traveler-list thead { display: table-header-group; }
+            .print-traveler-list tfoot { display: table-footer-group; }
+            .print-traveler-list tr { page-break-inside: avoid; page-break-after: auto; }
+            .print-traveler-list th, .print-traveler-list td { border: 1px solid #333 !important; padding: 6px !important; font-size: 10pt !important; }
+            .print-traveler-list th.no-border-top, .print-traveler-list td.no-border-top { border: none !important; }
+            
+            /* 루밍리스트 인쇄용 */
+            .print-rooming-list {
+                box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important;
+                @page { size: A4 portrait; margin: 8mm; }
+            }
+            .print-page { page-break-after: always; break-inside: avoid !important; display: flex !important; flex-direction: column !important; }
+            .print-page:last-child { page-break-after: auto; }
+            .room-table-container, .room-row { break-inside: avoid; }
+            
+            input, select { border: none !important; background: transparent !important; appearance: none; -moz-appearance: none; -webkit-appearance: none; }
+        }
+
+        /* 드래그 앤 드롭 시각적 효과 */
+        .dragging { opacity: 0.5; background-color: #e2e8f0; }
+        .drag-handle { cursor: grab; }
+        .drag-handle:active { cursor: grabbing; }
+    </style>
 </head>
 <body>
-<div class="top-header no-print">
-  <div class="header-left">
-    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker">
-    <h1>가격 산출 내역 시스템</h1>
-  </div>
-  <div class="header-right">
-    <button id="btn-export-html" class="btn-html" type="button">🌐 기관 전달용 양식 저장</button>
-    <button id="btn-print-pdf" class="btn-pdf" type="button">PDF 내보내기</button>
-  </div>
-</div>
-<div class="mobile-tabs no-print" id="mobileTabs">
-  <button id="tabInput" class="active" type="button">데이터 입력</button>
-  <button id="tabPreview" type="button">견적서 보기</button>
-</div>
-<div class="main-layout" id="mainLayout">
-  <div class="panel-input no-print" id="panelInput">
-    <div class="panel-input-scroll">
-      <h2>문서 기본 설정 및 템플릿</h2>
-      <div id="warning-panel" class="warning-panel hidden">
-        <div class="warning-title">⚠️ 검수 경고: 확인이 필요한 항목이 있습니다.</div>
-        <ul id="warning-list" class="warning-list"></ul>
-      </div>
-      <div class="template-manager">
-        <div class="template-header">
-          <span>견적 템플릿 보관함</span>
-          <button type="button" class="btn-clear" id="btn-clear-form">입력 초기화</button>
-        </div>
-        <div class="template-controls">
-          <input type="text" id="preset-search" class="template-search" placeholder="🔍 제목 검색...">
-          <select id="preset-select" class="template-select"><option value="">저장된 템플릿 선택...</option></select>
-        </div>
-        <div style="display:flex; gap:8px; margin-top:8px;">
-          <button type="button" id="btn-load-preset" class="btn-load" style="flex:1">불러오기</button>
-          <button type="button" id="btn-save-preset" class="btn-save" style="flex:1">현재 상태 저장</button>
-          <button type="button" id="btn-delete-preset" class="btn-delete">삭제</button>
-        </div>
-        <div class="backup-controls">
-          <input type="file" id="import-file" accept=".json" style="display:none;">
-          <button type="button" id="btn-import" class="btn-restore">📂 데이터 복구(업로드)</button>
-          <button type="button" id="btn-export" class="btn-backup">💾 데이터 백업(다운로드)</button>
-        </div>
-      </div>
-      <div class="form-group highlight">
-        <div class="section-title cyan">통화 지역 선택</div>
-        <select id="inp-currency" class="form-select" style="padding:10px; font-size:14px; color:#2563eb; border-color:#93c5fd;">
-          <optgroup label="[가격 산출 내역서]">
-            <option value="JPY" selected>해외행사 - JPY (엔화)</option>
-            <option value="USD">해외행사 - USD (달러)</option>
-            <option value="CNY">해외행사 - CNY (위안화)</option>
-            <option value="KRW_JEJU">국내행사 - 제주 (KRW)</option>
-            <option value="KRW_MAINLAND">국내행사 - 내륙 (KRW)</option>
-          </optgroup>
-          <optgroup label="[일반 견적서]">
-            <option value="SIMPLE_QUOTE">일반 견적서 (원화 전용)</option>
-          </optgroup>
-        </select>
-        <div class="exrate-row" id="wrap-exRate">
-          <label for="inp-exRate">적용 환율 :</label>
-          <input type="text" id="inp-exRate" class="exrate-input amount" value="9.5">
-          <span style="font-size:12px;color:#64748b;">기준(송금)</span>
-        </div>
-      </div>
-      <div id="detailed-input-group">
-        <div class="form-group">
-          <div class="section-title blue">1. 기본 정보 설정</div>
-          <div class="form-row cols-2">
-            <div><label class="form-label">고객명 (기관명)</label><input type="text" id="inp-clientName" class="form-input" value="사북중학교"></div>
-            <div><label class="form-label">문서 제목 (행사명)</label><input type="text" id="inp-docTitle" class="form-input" value="일본 오사카 여행"></div>
-          </div>
-          <div class="form-row cols-1"><div><label class="form-label">여행일</label><input type="text" id="inp-travelDate" class="form-input" value="2026.05.19~05.22"></div></div>
-          <div class="form-row cols-1"><div><label class="form-label">여행인원 표기 (숫자 포함 시 자동계산)</label><input type="text" id="inp-paxStr" class="form-input" value="59명기준(학생 54+ 교사5)"></div></div>
-          <div class="form-row cols-2"><div><label class="form-label">발송일자</label><input type="text" id="inp-issueDate" class="form-input" value="2026.03.16"></div></div>
-        </div>
-        <div class="form-group">
-          <div class="section-title dark" id="title-flight-area">2. 항공료 영역 (원화 직접 입력)</div>
-          <div id="flight-inputs-container"></div>
-          <button type="button" class="btn-add-item" id="btn-add-flight">+ 항공비 항목 추가</button>
-        </div>
-        <div class="form-group">
-          <div class="section-title green" id="title-local-expense">3. 해외현지 발생비용 (외화 입력)</div>
-          <p class="hint-text">연속된 항목명+내용이 같으면 출력물에서 셀이 자동 병합됩니다.</p>
-          <div id="local-inputs-container"></div>
-          <button type="button" class="btn-add-item" id="btn-add-local">+ 현지 발생비용 항목 추가</button>
-        </div>
-        <div class="form-group">
-          <div class="section-title orange">4. 국내 발생 비용 (원화 직접 입력)</div>
-          <div id="domestic-inputs-container"></div>
-          <button type="button" class="btn-add-item" id="btn-add-domestic">+ 국내 발생비용 항목 추가</button>
-        </div>
-        <div class="form-group">
-          <div class="section-title dark">5. 하단 특이사항 (선택사항)</div>
-          <p class="hint-text" style="margin-bottom:8px;">표 가장 하단에 강조되어 출력됩니다. (예: 여성기업 수의계약 조건 안내 등)</p>
-          <div class="form-row cols-1">
-            <textarea id="inp-det-specialNote" class="form-input" style="height:60px; resize:vertical; font-weight:600; color:#b91c1c;" placeholder="필요 시 기안 및 계약용 특이사항을 자유롭게 입력하세요. (비워두면 출력되지 않습니다.)"></textarea>
-          </div>
-        </div>
-      </div>
-      <div id="simple-input-group">
-        <div class="form-group">
-          <div class="section-title dark">1. 견적서 기본 정보</div>
-          <div class="form-row cols-2">
-            <div><label class="form-label">출발일 코드 (Date of Departure)</label><input type="text" id="inp-sim-dep" class="form-input" value="TM_260519"></div>
-            <div><label class="form-label">발행일 (Invoice Date)</label><input type="text" id="inp-sim-inv" class="form-input" value="2026년 03월 16일"></div>
-          </div>
-          <div class="form-row cols-1"><div><label class="form-label">내용 (Subject)</label><input type="text" id="inp-sim-subject" class="form-input" value="260519_사북중학교 일본 오사카 연수"></div></div>
-        </div>
-        <div class="form-group">
-          <div class="section-title blue">2. 수신 / 발신 정보</div>
-          <div class="form-row cols-1">
-            <div><label class="form-label">수신처 기관명</label><input type="text" id="inp-sim-toName" class="form-input" value="사북중학교"></div>
-            <div><label class="form-label">수신처 주소</label><input type="text" id="inp-sim-toAddr" class="form-input" value="강원도 정선군 사북읍"></div>
-            <div><label class="form-label">수신 담당자명</label><input type="text" id="inp-sim-toPerson" class="form-input" value="담당 선생님"></div>
-          </div>
-          <div style="margin-top:12px; padding:12px; background:#f8fafc; border-radius:6px; font-size:12px; color:#475569; border:1px dashed #cbd5e1;">💡 발신자 정보(투어메이커 주소, 연락처, 대표자 이재명 및 <strong>법인전자직인</strong>)는 양식에 고정되어 자동 출력됩니다.</div>
-        </div>
-        <div class="form-group">
-          <div class="section-title green">3. 견적 항목 (원화 총액 기준)</div>
-          <p class="hint-text">일반 견적서 양식은 항목을 복잡하게 나누지 않고 핵심만 입력합니다.</p>
-          <div id="simple-items-container"></div>
-          <button type="button" class="btn-add-item" id="btn-add-simple">+ 견적 항목 추가</button>
-        </div>
-        <div class="form-group">
-          <div class="section-title orange">4. 하단 부가 정보 및 세무 설정</div>
-          <div style="background:#f1f5f9; padding:12px; border:1px dashed #94a3b8; border-radius:6px; margin-bottom:16px;">
-            <label class="form-label" style="color:#0f172a; margin-bottom:12px; font-size:13px;">입금 계좌 설정 (법인 외 행사 시 변경 가능)</label>
-            <div class="form-row cols-2" style="margin-bottom:8px;">
-              <div><label class="form-label">은행명 (Bank)</label><input type="text" id="inp-sim-bankName" class="form-input" value="신협"></div>
-              <div><label class="form-label">소유자 (Holder Name)</label><input type="text" id="inp-sim-bankHolder" class="form-input" value="주식회사 투어메이커"></div>
-            </div>
-            <div class="form-row cols-1" style="margin-bottom:0;"><div><label class="form-label">계좌번호 (Bank Account)</label><input type="text" id="inp-sim-bankNum" class="form-input" value="131-022-382094"></div></div>
-          </div>
-          <div class="form-row cols-2"><div><label class="form-label">입금 기한 (By Due)</label><input type="text" id="inp-sim-due" class="form-input" value="행사 출발 전 완납"></div></div>
-          <div class="form-row cols-1" style="background:#fff1f2; padding:12px; border:1px dashed #fca5a5; border-radius:6px; margin-top:8px;">
-            <div>
-              <label class="form-label" style="color:#be123c;">부가세 (VAT) 표시</label>
-              <select id="inp-sim-vat" class="form-select" style="border-color:#fca5a5;">
-                <option value="auto" selected>소계의 10% 자동 계산 (기본)</option>
-                <option value="manual">부분 과세 (알선수수료/일부항목 등 직접입력)</option>
-                <option value="0">부가세 불포함</option>
-              </select>
-              <input type="text" id="inp-sim-vat-manual" class="form-input amount" style="display:none; border-color:#fca5a5; margin-top:8px;" placeholder="청구할 부가세 금액(원) 직접 입력">
-            </div>
-            <div style="margin-top:8px;">
-              <label class="form-label" style="color:#be123c;">기타비용 (세무 리스크 보전)</label>
-              <select id="inp-sim-extraFee" class="form-select" style="border-color:#fca5a5;">
-                <option value="0" selected>청구 안 함</option>
-                <option value="auto_50">산출된 부가세의 50% 추가 청구</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row cols-1" style="margin-top:12px;"><div><label class="form-label">특이사항 안내문 (예약 조건, 항공 정보, 세무 안내 등 자유 기재)</label><textarea id="inp-sim-taxNote" class="form-input" style="height:80px; resize:vertical; font-weight:600; color:#b91c1c;">※ 전체 행사비용 세금계산서 발행 시, 당사 수익이 아닌 수탁경비(항공/숙박 등)까지 매출로 과대 계상되어 발생하는 세금 증가분을 보전하기 위해 소정의 기타비용이 추가 청구됨을 양해 부탁드립니다.</textarea></div></div>
-          <div class="form-row cols-1" style="margin-top:12px;">
-            <div><label class="form-label">포함사항 (Inclusions)</label><textarea id="inp-sim-inc" class="form-input" style="height:60px; resize:vertical;">항공료, 항공TAX, 호텔(2인1실), 차량, 식사, 입장료, 기사/가이드 팁, 2억원여행자보험료</textarea></div>
-            <div><label class="form-label">불포함사항 (Exclusions)</label><input type="text" id="inp-sim-exc" class="form-input" value="싱글차지, 기타 개인비용 등"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="live-summary-bar no-print"><span class="label">총 견적 금액 (KRW)</span><span class="total-amount" id="live-total-amount">0</span></div>
-  </div>
-  <div class="panel-preview" id="panelPreview">
-    <div class="a4-sheet" id="print-section">
-      <div id="detailed-preview-group">
-        <div id="doc-header-area">
-          <div class="doc-header">
-            <div class="doc-header-left">
-              <table class="info-table">
-                <tr><th>고객명</th><td id="out-clientName" class="export-text" style="font-weight:800;"></td></tr>
-                <tr><th>행사명</th><td id="out-docTitle" class="export-text" style="font-weight:800;"></td></tr>
-                <tr><th>여행일</th><td id="out-travelDate" class="export-text"></td></tr>
-                <tr><th>여행인원</th><td id="out-paxStr" class="export-text"></td></tr>
-                <tr><th>발송일자/환율</th><td id="out-issueAndRate" class="export-text" style="font-size:11px;"></td></tr>
-              </table>
-            </div>
-            <div class="doc-header-right"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="TOURMAKER"></div>
-          </div>
-          <div class="doc-title-area"><h2>가격 산출 내역서</h2><p>Calculation Details</p></div>
-        </div>
-        <div id="table-area" style="margin-bottom:8px;">
-          <table class="main-table" id="main-table">
-            <thead id="main-thead"></thead>
-            <tbody id="tbody-flight"></tbody>
-            <tbody id="tbody-local"></tbody>
-            <tbody id="tbody-domestic"></tbody>
-            <tbody id="tbody-total"></tbody>
-          </table>
-        </div>
-        <div id="footer-area">
-          <div class="footer-notes">
-            <p class="title">1. 세금계산서 발행 관련 안내문</p>
-            <p class="body">* 본 위탁용역의 특성상 항공권, 숙박비, 현지교통비 등은 당사가 직접 제공하는 서비스가 아닌, 제 3자와의 거래를 통한 수탁 대행 처리 항목으로 분류됩니다. 따라서, 당사는 전체 계약금액 기준의 세금계산서 발행이 불가하며, 국내 과세 대상 경비 중 <span style="font-weight:700;color:#dc2626;font-size:12px;">알선수수료</span> 등 자체수익에 대해서만 세금계산서를 발행함을 사전 안내드립니다.</p>
-          </div>
-        </div>
-      </div>
-      <div id="simple-preview-group">
-        <div class="simple-header"><h1>견 적 서</h1></div>
-        <div class="simple-info-grid">
-          <div class="simple-info-left">
-            <div><span>Date of Departure</span>: <span id="out-sim-dep" class="export-text"></span></div>
-            <div><span>Invoice Date</span>: <span id="out-sim-inv" class="export-text"></span></div>
-          </div>
-          <div class="simple-info-right"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="TOURMAKER"></div>
-        </div>
-        <div class="simple-sender-receiver">
-          <div class="sr-box">
-            <div class="sr-label">수 신</div>
-            <div class="sr-content">
-              <div class="sr-content-row"><span>:</span><span id="out-sim-toName" class="export-text"></span></div>
-              <div class="sr-content-row"><span>:</span><span id="out-sim-toAddr" class="export-text"></span></div>
-              <div class="sr-content-row bold" style="margin-top:10px;"><span>:</span><span id="out-sim-toPerson" class="export-text"></span></div>
-            </div>
-          </div>
-          <div class="sr-box">
-            <div class="sr-label">발 신</div>
-            <div class="sr-content">
-              <div class="sr-content-row"><span>:</span><span>강원도 정선군 정선읍 봉양3길 22-10, 3층</span></div>
-              <div class="sr-content-row"><span>:</span><span>033-562-2551</span></div>
-              <div class="sr-content-row bold" style="margin-top:10px;"><span>:</span><span class="stamp-overlap-container">이 재 명 (인)<img class="stamp-image" src="https://blogger.googleusercontent.com/img/a/AVvXsEiweUsH71be_Y3skDUBOVzZE0M4HnXmgllJq7c1JgatYy5eROHYdkvE9rMIcqVl0DQ2ypgr8fkZSQclgQjWOk8yZA5wiF326Ldf4KTrfd_YEsD2zZjyqsRLS65uv50SLZcLFqIvwZly49lEN3sheIMq4HV_VWLs1irf4o8g3-ajXCA7CaOlSvpKCT4Q2XA=w200-h200" alt="직인"></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="simple-subject"><div class="simple-subject-label">내 용</div><div>: <span id="out-sim-subject" class="export-text"></span></div></div>
-        <table class="simple-table" id="simple-table">
-          <thead><tr><th style="width:15%">Item</th><th style="width:40%">Description</th><th style="width:15%">Unit cost</th><th style="width:10%">Quantity</th><th style="width:20%">Total</th></tr></thead>
-          <tbody id="tbody-simple"></tbody>
-        </table>
-        <div class="simple-footer-bank">
-          <p style="margin-bottom:10px;">입금 계좌 정보 (Make All check payable to ;)</p>
-          <p><span class="label">은행 (Bank)</span><span class="colon">:</span><span class="val export-text" id="out-sim-bankName"></span></p>
-          <p><span class="label">계좌번호 (Bank Account)</span><span class="colon">:</span><span class="val export-text" id="out-sim-bankNum"></span></p>
-          <p><span class="label">소유자 (Holder Name)</span><span class="colon">:</span><span class="val export-text" id="out-sim-bankHolder"></span></p>
-          <p style="margin-top:4px;"><span class="label">입금 기한 (By Due)</span><span class="colon">:</span><span class="val highlight-bg export-text" id="out-sim-due"></span></p>
-        </div>
-        <div class="simple-footer-notes">
-          <div class="sfn-row"><div class="sfn-label">포함사항</div><div class="sfn-colon">:</div><div class="sfn-content export-text" id="out-sim-inc"></div></div>
-          <div class="sfn-row"><div class="sfn-label">불포함사항</div><div class="sfn-colon">:</div><div class="sfn-content export-text" id="out-sim-exc"></div></div>
-          <div class="sfn-row" id="wrap-sim-taxNote" style="display:none; margin-top:8px; color:#b91c1c;"><div class="sfn-label">특이사항</div><div class="sfn-colon">:</div><div class="sfn-content export-text" id="out-sim-taxNote" style="font-weight:700; line-height:1.4;"></div></div>
-          <div class="sfn-graybox"></div>
-        </div>
-      </div>
-      <div class="footer-brand">
-        <p>[System Powered by TOURMAKER] 본 산출 내역서는 <strong style="color:#1e293b;">투어메이커</strong>의 기획과 트래블 테크 기술 제휴로 제작되었습니다.</p>
-        <a href="https://tourmaker.kr" target="_blank" rel="noopener noreferrer" class="no-print">투어메이커 홈페이지 바로가기</a>
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-(() => {
-  const state = { warningTimer: null };
-  const $ = (sel, root=document) => root.querySelector(sel);
-  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-  const initFlights = [
-    { name: '항공료', desc: '에어로케이 청주-오사카-청주', qty: 59, krw: 294600, note: '그룹가 예상가' },
-    { name: '항공료', desc: '발권수수료', qty: 59, krw: 22000, note: '항공 발권 대리점' }
-  ];
-  const initLocals = [
-    { name: '호텔', desc: '(2인실) 3박요금', qty: 29, fgn: 66500, note: '조식포함' },
-    { name: '호텔', desc: '(1인실) 3박요금', qty: 1, fgn: 53200, note: '조식포함' },
-    { name: '차량비', desc: '전용차량 2대', qty: 2, fgn: 670000, note: '통행료+주차비 포함' },
-    { name: '식비', desc: '중식_2일차', qty: 59, fgn: 2000, note: '현지식' },
-    { name: '식비', desc: '중식_3일차', qty: 59, fgn: 2000, note: '현지식' },
-    { name: '식비', desc: '석식_1일차', qty: 59, fgn: 3000, note: '현지식' },
-    { name: '식비', desc: '석식_2일차', qty: 59, fgn: 3000, note: '현지식' },
-    { name: '식비', desc: '석식_3일차', qty: 59, fgn: 3000, note: '현지식' },
-    { name: '관광지입장료', desc: '청수사', qty: 59, fgn: 500, note: '' },
-    { name: '관광지입장료', desc: '유니버셜', qty: 59, fgn: 8000, note: '' },
-    { name: '가이드비용', desc: '전일정 동행(2명)', qty: 2, fgn: 165000, note: '노쇼핑/청주미팅' }
-  ];
-  const initDomestics = [
-    { name: '여행자보험', desc: '1억원 기준', qty: 59, krw: 3000, note: '주민번호 필요' },
-    { name: '공항수송', desc: '공항 왕복 차량료(대형버스)', qty: 2, krw: 1600000, note: '산아리네트웍스' },
-    { name: '알선수수료', desc: '운영 관리비', qty: 1, krw: 3050000, note: '' }
-  ];
-  const initSimples = [
-    { name: '항공료', desc: '청주-오사카 왕복 (발권수수료 포함)', qty: 59, krw: 316600 },
-    { name: '현지행사', desc: '호텔, 식사, 입장료, 가이드 등 행사일체', qty: 59, krw: 792235 },
-    { name: '국내진행', desc: '여행자보험, 공항수송, 운영관리비', qty: 1, krw: 6427000 }
-  ];
-  
-  // 보안 및 포맷팅 처리
-  function escAttr(str='') { return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function parseCurrency(str) { return Number(String(str || '').replace(/,/g, '')) || 0; }
-  function fmt(n) { return (n === 0 || n === '') ? '' : Number(n).toLocaleString('ko-KR'); } 
-  function fmtT(n) { return Number(n || 0).toLocaleString('ko-KR'); }
-  function formatCurrencyValue(val) {
-    const sanitized = String(val ?? '').replace(/[^0-9.]/g, '');
-    if (!sanitized) return '';
-    const parts = sanitized.split('.');
-    parts[0] = Number(parts[0] || 0).toLocaleString('ko-KR');
-    return parts.join('.');
-  }
-  function getFormattedDate(type) {
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const d = String(now.getDate()).padStart(2, '0');
-    return type === 'korean' ? `${y}년 ${m}월 ${d}일` : `${y}.${m}.${d}`;
-  }
-  function setTodayDates() {
-    $('#inp-issueDate').value = getFormattedDate('dot');
-    $('#inp-sim-inv').value = getFormattedDate('korean');
-  }
-  function createCardHTML(type, data={}) {
-    const map = {
-      flight: { rootClass: 'flight-item', gridClass: 'slot-grid-flight', amountKey: 'krw', placeholders: ['항목','내용','수량','단가(₩)','비고'], fields: [['name','f-name'],['desc','f-desc'],['qty','f-qty'],['krw','f-krw'],['note','f-note']] },
-      local: { rootClass: 'local-item', gridClass: 'slot-grid', amountKey: 'fgn', placeholders: ['항목명','내용(병합)','수량','단가(외화)','비고(빈칸가능)'], fields: [['name','l-name'],['desc','l-desc'],['qty','l-qty'],['fgn','l-fgn'],['note','l-note']] },
-      domestic: { rootClass: 'domestic-item', gridClass: 'slot-grid-flight', amountKey: 'krw', placeholders: ['항목','내용','수량','단가(₩)','비고'], fields: [['name','d-name'],['desc','d-desc'],['qty','d-qty'],['krw','d-krw'],['note','d-note']] },
-      simple: { rootClass: 'simple-item', gridClass: 'slot-grid-simple', amountKey: 'krw', placeholders: ['Item (항목)','Description (내용)','Unit cost (단가)','Quantity'], fields: [['name','s-name'],['desc','s-desc'],['krw','s-krw'],['qty','s-qty']] }
-    };
-    const conf = map[type];
-    const amountVal = conf.amountKey ? fmt(data[conf.amountKey]) : '';
-    const inputs = conf.fields.map(([key, cls], idx) => {
-      const value = key === conf.amountKey ? amountVal : (data[key] ?? '');
-      const isQty = key === 'qty';
-      const isAmount = key === conf.amountKey;
-      const inputType = isQty ? 'number' : 'text';
-      const style = isQty ? 'text-align:center' : (isAmount ? 'text-align:right' : '');
-      return `<input type="${inputType}" class="slot-input ${cls}${isAmount ? ' amount' : ''}" ${style ? `style="${style}"` : ''} value="${escAttr(value)}" placeholder="${conf.placeholders[idx]}">`;
-    }).join('');
-    const noteField = type === 'simple' ? '' : `\n<input type="text" class="slot-input ${conf.fields[4][1]}" style="width:100%" value="${escAttr(data.note || '')}" placeholder="${conf.placeholders[4]}">`;
-    return `<div class="slot-card ${conf.rootClass}"><div class="slot-card-header"><button type="button" class="btn-delete-row js-delete-row">✕</button></div><div class="${conf.gridClass}">${inputs}</div>${noteField}</div>`;
-  }
-  function addRow(type, data={}, skipRender=false) {
-    const targets = { flight:'#flight-inputs-container', local:'#local-inputs-container', domestic:'#domestic-inputs-container', simple:'#simple-items-container' };
-    $(targets[type]).insertAdjacentHTML('beforeend', createCardHTML(type, data));
-    if (!skipRender) { calculateAndRender(); scheduleValidation(); }
-  }
-  function buildInitialInputs() {
-    $('#flight-inputs-container').innerHTML = ''; $('#local-inputs-container').innerHTML = ''; $('#domestic-inputs-container').innerHTML = ''; $('#simple-items-container').innerHTML = '';
-    initFlights.forEach(d => addRow('flight', d, true)); initLocals.forEach(d => addRow('local', d, true)); initDomestics.forEach(d => addRow('domestic', d, true)); initSimples.forEach(d => addRow('simple', d, true));
-    $('#inp-det-specialNote').value = '※ 항공료 및 공항수송차량비 별도 계약\n※ 행사 잔여 금액 49,968,900원으로 5천만원 이하 여성기업 수의계약 진행';
-  }
-  function syncCurrencyUI() {
-    const curr = $('#inp-currency').value;
-    $('#wrap-exRate').style.display = (curr === 'KRW_MAINLAND' || curr === 'KRW_JEJU' || curr === 'SIMPLE_QUOTE') ? 'none' : 'flex';
-    $$('.l-fgn').forEach(el => { el.placeholder = (curr === 'KRW_MAINLAND' || curr === 'KRW_JEJU') ? '단가(₩)' : '단가(외화)'; });
-  }
-  function toggleDocMode() {
-    const simple = $('#inp-currency').value === 'SIMPLE_QUOTE';
-    $('#detailed-input-group').style.display = simple ? 'none' : 'block'; $('#detailed-preview-group').style.display = simple ? 'none' : 'block';
-    $('#simple-input-group').style.display = simple ? 'block' : 'none'; $('#simple-preview-group').style.display = simple ? 'block' : 'none';
-    syncCurrencyUI(); toggleVatManual(); calculateAndRender(); scheduleValidation();
-  }
-  function toggleVatManual() { $('#inp-sim-vat-manual').style.display = $('#inp-sim-vat').value === 'manual' ? 'block' : 'none'; }
-  function extractBasePax() {
-    const paxStr = ($('#inp-paxStr').value || '').replace(/\s/g, '');
-    const totalMatch = paxStr.match(/총(\d+)/); if (totalMatch) return Number(totalMatch[1]);
-    const plusMatch = paxStr.match(/(\d+)\+(\d+)/); if (plusMatch) return Number(plusMatch[1]) + Number(plusMatch[2]);
-    const nameMatch = paxStr.match(/(\d+)명/); if (nameMatch) return Number(nameMatch[1]);
-    return null;
-  }
-  function scrollToRow(rowId) {
-    const el = document.getElementById(rowId); if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const orig = el.style.backgroundColor; el.style.backgroundColor = '#fecaca';
-    setTimeout(() => { el.style.backgroundColor = orig; }, 800);
-  }
-  function validateRows() {
-    const warnings = []; const currencyVal = $('#inp-currency').value; const mode = currencyVal === 'SIMPLE_QUOTE' ? 'simple' : 'detailed';
-    $$('.error-border').forEach(el => el.classList.remove('error-border')); $$('.error-row-container').forEach(el => el.classList.remove('error-row-container'));
-    if (mode === 'detailed') {
-      const basePax = extractBasePax(); const exRateInput = $('#inp-exRate'); const exRate = parseCurrency(exRateInput.value);
-      const ranges = { JPY:[5,20], USD:[1000,2000], CNY:[100,300] };
-      if (ranges[currencyVal]) {
-        const [min, max] = ranges[currencyVal];
-        if (exRate < min || exRate > max) { warnings.push({ msg:`환율 경고: ${currencyVal} 환율(${exRate})이 일반적인 범위를 벗어났습니다.`, targetId:'wrap-exRate' }); exRateInput.classList.add('error-border'); }
-      }
-      const isPaxSensitiveItem = name => ['식비','관광지입장료','여행자보험','항공료'].includes(name) || ['중식','석식','입장권'].some(k => name.includes(k));
-      $$('.flight-item, .local-item, .domestic-item').forEach((rowEl, index) => {
-        const rowId = `row-det-${index}`; rowEl.id = rowId; let rowHasError = false;
-        const nameEl = $('.f-name, .l-name, .d-name', rowEl); const descEl = $('.f-desc, .l-desc, .d-desc', rowEl); const qtyEl = $('.f-qty, .l-qty, .d-qty', rowEl); const priceEl = $('.f-krw, .l-fgn, .d-krw', rowEl); const noteEl = $('.f-note, .l-note, .d-note', rowEl);
-        const name = nameEl?.value.trim() || ''; const desc = descEl?.value.trim() || ''; const qtyStr = qtyEl?.value.trim() || ''; const priceStr = priceEl?.value.trim() || ''; const note = noteEl?.value.trim() || '';
-        const qty = Number(qtyStr) || 0; const price = parseCurrency(priceStr);
-        const isAnyFilled = name || desc || qtyStr || priceStr || note; if (!isAnyFilled) return;
-        if (!name && (desc || qtyStr || priceStr || note)) { warnings.push({ msg:`[${index + 1}번째 줄] 항목명이 누락되었습니다.`, targetId:rowId }); nameEl?.classList.add('error-border'); rowHasError = true; }
-        if (name) {
-          if (qtyStr !== '' && priceStr === '') { warnings.push({ msg:`[${name}] 항목: 단가가 누락되었습니다.`, targetId:rowId }); priceEl?.classList.add('error-border'); rowHasError = true; }
-          if (qtyStr === '' && priceStr !== '') { warnings.push({ msg:`[${name}] 항목: 수량이 누락되었습니다.`, targetId:rowId }); qtyEl?.classList.add('error-border'); rowHasError = true; }
-          if (qtyStr !== '' && qty === 0) { warnings.push({ msg:`[${name}] 항목: 수량이 0입니다.`, targetId:rowId }); rowHasError = true; }
-          if (priceStr !== '' && price === 0) { warnings.push({ msg:`[${name}] 항목: 단가가 0입니다.`, targetId:rowId }); rowHasError = true; }
-          if (basePax && qtyStr !== '' && isPaxSensitiveItem(name) && qty > 0 && qty !== basePax) { warnings.push({ msg:`[${name}] 수량 경고: 입력된 수량(${qty})이 기준 인원(${basePax}명)과 다릅니다.`, targetId:rowId }); qtyEl?.classList.add('error-border'); rowHasError = true; }
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // --- 공통 헬퍼 함수 (영문 변환기) ---
+        const getRomanization = (char) => {
+            const CHO = ["G","KK","N","D","TT","R","M","B","PP","S","SS","","J","JJ","CH","K","T","P","H"];
+            const JUNG = ["A","AE","YA","YAE","EO","E","YEO","YE","O","WA","WAE","OE","YO","U","WO","WE","WI","YU","EU","UI","I"];
+            const JONG = ["","K","K","K","N","N","N","T","L","L","M","P","L","L","P","L","M","P","P","T","T","NG","T","T","K","T","P","T"];
+            const code = char.charCodeAt(0) - 0xAC00;
+            if (code < 0 || code > 11171) return char; 
+            return CHO[Math.floor(code / 588)] + JUNG[Math.floor((code % 588) / 28)] + JONG[code % 28];
         }
-        if (rowHasError) rowEl.classList.add('error-row-container');
-      });
-    } else {
-      $$('.simple-item').forEach((rowEl, index) => {
-        const rowId = `row-sim-${index}`; rowEl.id = rowId; let rowHasError = false;
-        const nameEl = $('.s-name', rowEl); const qtyEl = $('.s-qty', rowEl); const priceEl = $('.s-krw', rowEl);
-        const name = nameEl?.value.trim() || ''; const qtyStr = qtyEl?.value.trim() || ''; const priceStr = priceEl?.value.trim() || '';
-        if (!name && !qtyStr && !priceStr) return;
-        if (name && (qtyStr === '' || priceStr === '')) {
-          warnings.push({ msg:`일반 견적 [${name}] 항목: 수량이나 단가가 누락되었습니다.`, targetId:rowId });
-          if (!qtyStr) qtyEl?.classList.add('error-border'); if (!priceStr) priceEl?.classList.add('error-border'); rowHasError = true;
-        }
-        if (!name && (qtyStr !== '' || priceStr !== '')) { warnings.push({ msg:`일반 견적 [${index + 1}번째 줄]: 내용(Item)이 누락되었습니다.`, targetId:rowId }); nameEl?.classList.add('error-border'); rowHasError = true; }
-        if (rowHasError) rowEl.classList.add('error-row-container');
-      });
-    }
-    return warnings;
-  }
-  function renderWarnings() {
-    const warnings = validateRows(); const panel = $('#warning-panel'); const list = $('#warning-list');
-    if (warnings.length) { panel.classList.remove('hidden'); list.innerHTML = warnings.map(w => `<li data-row="${escAttr(w.targetId)}">${w.msg}</li>`).join(''); } 
-    else { panel.classList.add('hidden'); list.innerHTML = ''; }
-    return warnings;
-  }
-  function scheduleValidation() { clearTimeout(state.warningTimer); state.warningTimer = setTimeout(renderWarnings, 300); }
-  function getRowData(type) {
-    const configs = { flight: ['.flight-item','.f-name','.f-desc','.f-qty','.f-krw','.f-note'], local: ['.local-item','.l-name','.l-desc','.l-qty','.l-fgn','.l-note'], domestic: ['.domestic-item','.d-name','.d-desc','.d-qty','.d-krw','.d-note'], simple: ['.simple-item','.s-name','.s-desc','.s-qty','.s-krw',null] };
-    const [rootSel, nameSel, descSel, qtySel, amountSel, noteSel] = configs[type];
-    return $$(rootSel).map(el => ({
-      name: $(nameSel, el)?.value || '', desc: $(descSel, el)?.value || '', qty: $(qtySel, el)?.value || '',
-      [type === 'local' ? 'fgn' : 'krw']: parseCurrency($(amountSel, el)?.value || ''), ...(noteSel ? { note: $(noteSel, el)?.value || '' } : {})
-    }));
-  }
-  function getFormData() {
-    return {
-      currency: $('#inp-currency').value, clientName: $('#inp-clientName').value, docTitle: $('#inp-docTitle').value, travelDate: $('#inp-travelDate').value, paxStr: $('#inp-paxStr').value, issueDate: $('#inp-issueDate').value, exRate: parseCurrency($('#inp-exRate').value), detSpecialNote: $('#inp-det-specialNote').value,
-      flights: getRowData('flight'), locals: getRowData('local'), domestics: getRowData('domestic'),
-      simDep: $('#inp-sim-dep').value, simInv: $('#inp-sim-inv').value, simSubject: $('#inp-sim-subject').value, simToName: $('#inp-sim-toName').value, simToAddr: $('#inp-sim-toAddr').value, simToPerson: $('#inp-sim-toPerson').value, simBankName: $('#inp-sim-bankName').value, simBankNum: $('#inp-sim-bankNum').value, simBankHolder: $('#inp-sim-bankHolder').value, simDue: $('#inp-sim-due').value, simVat: $('#inp-sim-vat').value, simVatManual: parseCurrency($('#inp-sim-vat-manual').value), simExtraFee: $('#inp-sim-extraFee').value, simTaxNote: $('#inp-sim-taxNote').value, simInc: $('#inp-sim-inc').value, simExc: $('#inp-sim-exc').value, simples: getRowData('simple')
-    };
-  }
-  function setFormData(data) {
-    $('#inp-currency').value = data.currency || 'JPY'; toggleDocMode();
-    $('#inp-clientName').value = data.clientName || ''; $('#inp-docTitle').value = data.docTitle || ''; $('#inp-travelDate').value = data.travelDate || ''; $('#inp-paxStr').value = data.paxStr || ''; $('#inp-issueDate').value = data.issueDate || getFormattedDate('dot'); $('#inp-exRate').value = data.exRate ? fmt(data.exRate) : '9.5'; $('#inp-det-specialNote').value = data.detSpecialNote || '';
-    $('#flight-inputs-container').innerHTML = ''; $('#local-inputs-container').innerHTML = ''; $('#domestic-inputs-container').innerHTML = ''; $('#simple-items-container').innerHTML = '';
-    (data.flights || []).forEach(item => addRow('flight', item, true)); (data.locals || []).forEach(item => addRow('local', item, true)); (data.domestics || []).forEach(item => addRow('domestic', item, true));
-    $('#inp-sim-dep').value = data.simDep || ''; $('#inp-sim-inv').value = data.simInv || getFormattedDate('korean'); $('#inp-sim-subject').value = data.simSubject || ''; $('#inp-sim-toName').value = data.simToName || ''; $('#inp-sim-toAddr').value = data.simToAddr || ''; $('#inp-sim-toPerson').value = data.simToPerson || ''; $('#inp-sim-bankName').value = data.simBankName || '신협'; $('#inp-sim-bankNum').value = data.simBankNum || '131-022-382094'; $('#inp-sim-bankHolder').value = data.simBankHolder || '주식회사 투어메이커'; $('#inp-sim-due').value = data.simDue || ''; $('#inp-sim-vat').value = data.simVat || 'auto'; $('#inp-sim-vat-manual').value = data.simVatManual ? fmt(data.simVatManual) : ''; $('#inp-sim-extraFee').value = data.simExtraFee || '0'; $('#inp-sim-taxNote').value = data.simTaxNote ?? ''; $('#inp-sim-inc').value = data.simInc || ''; $('#inp-sim-exc').value = data.simExc || '';
-    (data.simples || []).forEach(item => addRow('simple', item, true));
-    toggleVatManual(); syncCurrencyUI(); calculateAndRender(); renderWarnings();
-  }
-  function updatePresetDropdown(filterText='') {
-    const select = $('#preset-select'); const presets = JSON.parse(lsGet('tourmaker_presets')); const keys = Object.keys(presets).sort();
-    select.innerHTML = '<option value="">저장된 템플릿 선택...</option>'; let matchCount = 0;
-    keys.forEach(key => { if (key.toLowerCase().includes(filterText.toLowerCase())) { const option = document.createElement('option'); option.value = key; option.textContent = key; select.appendChild(option); matchCount++; } });
-    if (filterText && matchCount > 0) select.selectedIndex = 1;
-  }
-  function lsGet(key, fallback = '{}') { try { return localStorage.getItem(key) || fallback; } catch(e) { console.warn('localStorage read error:', e); return fallback; } }
-  function lsSet(key, value) { try { localStorage.setItem(key, value); return true; } catch(e) { console.warn('localStorage write error:', e); alert('⚠️ 저장 실패: 브라우저 저장 공간이 부족하거나 개인정보 보호 모드일 수 있습니다.'); return false; } }
-  function savePreset() {
-    const modeName = $('#inp-currency').value === 'SIMPLE_QUOTE' ? $('#inp-sim-toName').value : $('#inp-clientName').value;
-    const presetName = prompt('현재 견적을 브라우저에 저장할 이름을 입력하세요.', `${modeName || '임시견적'} 견적`); if (!presetName) return;
-    const presets = JSON.parse(lsGet('tourmaker_presets')); presets[presetName] = getFormData();
-    if (lsSet('tourmaker_presets', JSON.stringify(presets))) { $('#preset-search').value = ''; updatePresetDropdown(); $('#preset-select').value = presetName; alert(`[${presetName}] 견적이 저장되었습니다.`); }
-  }
-  function loadPreset() { const selectedName = $('#preset-select').value; if (!selectedName) return alert('먼저 불러올 템플릿을 선택해주세요.'); const presets = JSON.parse(lsGet('tourmaker_presets')); if (presets[selectedName]) setFormData(presets[selectedName]); }
-  function deletePreset() { const selectedName = $('#preset-select').value; if (!selectedName) return; if (!confirm(`[${selectedName}] 견적을 영구 삭제하시겠습니까?`)) return; const presets = JSON.parse(lsGet('tourmaker_presets')); delete presets[selectedName]; lsSet('tourmaker_presets', JSON.stringify(presets)); updatePresetDropdown(); alert('삭제되었습니다.'); }
-  function exportData() { const data = lsGet('tourmaker_presets'); if (!data || data === '{}') return alert('백업할 데이터가 없습니다. 먼저 템플릿을 저장해주세요.'); const blob = new Blob([data], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `tourmaker_presets_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url); }
-  function importData(event) {
-    const file = event.target.files[0]; if (!file) return; const reader = new FileReader();
-    reader.onload = e => { try { const json = JSON.parse(e.target.result); const currentData = JSON.parse(lsGet('tourmaker_presets')); lsSet('tourmaker_presets', JSON.stringify({ ...currentData, ...json })); updatePresetDropdown(); alert('데이터가 성공적으로 복원(병합)되었습니다.'); } catch { alert('잘못된 백업 파일 형식입니다.'); } };
-    reader.readAsText(file); event.target.value = '';
-  }
-  function clearForm() {
-    if (!confirm('모든 데이터가 삭제되고 초기화됩니다.')) return;
-    $$('input[type="text"], textarea').forEach(el => { if (el.id !== 'inp-sim-bankName' && el.id !== 'inp-sim-bankNum' && el.id !== 'inp-sim-bankHolder') el.value = ''; });
-    $$('input[type="number"]').forEach(el => el.value = '');
-    $('#flight-inputs-container').innerHTML = ''; $('#local-inputs-container').innerHTML = ''; $('#domestic-inputs-container').innerHTML = ''; $('#simple-items-container').innerHTML = '';
-    $('#inp-sim-bankName').value = '신협'; $('#inp-sim-bankNum').value = '131-022-382094'; $('#inp-sim-bankHolder').value = '주식회사 투어메이커';
-    
-    $('#inp-currency').value = 'JPY';
-    $('#inp-sim-vat').value = 'auto';
-    $('#inp-sim-extraFee').value = '0';
-    
-    addRow('flight', {}, true); addRow('local', {}, true); addRow('domestic', {}, true); addRow('simple', {}, true);
-    setTodayDates(); calculateAndRender(); renderWarnings(); toggleDocMode();
-  }
-  function rs(arr, i, key) { let r = 1; for (let j=i+1; j<arr.length; j++) { if (arr[j][key] === arr[i][key]) r++; else break; } return r; }
-  function rs2(arr, i) { let r = 1; for (let j=i+1; j<arr.length; j++) { if (arr[j].name === arr[i].name && arr[j].desc === arr[i].desc) r++; else break; } return r; }
-  function renderDetailed() {
-    const currency = $('#inp-currency').value; const isMainland = currency === 'KRW_MAINLAND'; const isJeju = currency === 'KRW_JEJU'; const isKRW = isMainland || isJeju; const exRate = isKRW ? 1 : (parseCurrency($('#inp-exRate').value) || 0);
-    $('#title-flight-area').innerText = isMainland ? '2. 교통비 영역 (원화 직접 입력)' : '2. 항공료 영역 (원화 직접 입력)';
-    const localTitle = $('#title-local-expense');
-    if (isMainland) localTitle.innerHTML = '3. 행사비용 (원화 직접 입력)'; else if (isJeju) localTitle.innerHTML = '3. 제주(현지) 발생비용 (원화 직접 입력)'; else localTitle.innerHTML = '3. 해외현지 발생비용 (외화 입력) <span style="font-size:12px;font-weight:400;color:#64748b;margin-left:8px;">*원화 자동 환산</span>';
-    $('#out-clientName').textContent = $('#inp-clientName').value; $('#out-docTitle').textContent = $('#inp-docTitle').value; $('#out-travelDate').textContent = $('#inp-travelDate').value; $('#out-paxStr').textContent = $('#inp-paxStr').value;
-    $('#out-issueAndRate').textContent = isKRW ? `${$('#inp-issueDate').value} / 국내행사 (환율 미적용)` : `${$('#inp-issueDate').value} / ${currency} ${exRate} 기준(송금)`;
-    const cN = currency === 'JPY' ? '엔화' : (currency === 'USD' ? '달러' : (isKRW ? '원화' : '위안화')); const cS = currency === 'USD' ? '$' : (isKRW ? '₩' : (currency === 'JPY' ? '¥' : '¥')); const col = isKRW ? 5 : 6;
-    $('#main-thead').innerHTML = `<tr><th style="width:9%">구분</th><th style="width:${isKRW ? '14%' : '11%'}">항목</th><th style="width:${isKRW ? '24%' : '18%'}">내용</th><th style="width:9%;font-size:10px;line-height:1.3">인원/객실수<br>차량대수</th>${!isKRW ? `<th style="width:11%;background:#fef08a;color:#0f172a">${cN} 단가<br><span style="font-weight:400;color:#475569">${currency}</span></th>` : ''}<th style="width:${isKRW ? '15%' : '12%'}">원화 단가<br><span style="font-weight:400">KRW</span></th><th style="width:${isKRW ? '16%' : '14%'}">총금액<br><span style="font-weight:400">KRW</span></th><th style="width:${isKRW ? '13%' : '16%'}">비고</th></tr>`;
-    let tF = 0, tL = 0, tD = 0;
-    const flights = getRowData('flight').filter(r => r.name.trim()).map(r => ({ ...r, qty:Number(r.qty)||0, krw:Number(r.krw)||0, tot:(Number(r.qty)||0)*(Number(r.krw)||0) })); tF = flights.reduce((s, r) => s + r.tot, 0);
-    const fH = isMainland ? '교통비' : '항공료'; const fSub = isMainland ? '(1) 합계 - 교통비' : '(1) 합계 - 항공료'; let h = '';
-    if (!flights.length) h += `<tr><td class="text-center font-bold bg-gray-50 export-text">${fH}</td><td colspan="${col - 1}" class="text-center">입력된 항목이 없습니다.</td></tr>`;
-    else {
-      for (let i=0; i<flights.length; i++) {
-        h += '<tr>';
-        if (i === 0) h += `<td rowspan="${flights.length}" class="text-center font-bold bg-gray-50 export-text">${fH}</td>`;
-        if (i === 0 || flights[i].name !== flights[i-1].name) h += `<td rowspan="${rs(flights, i, 'name')}" class="text-center export-text">${escAttr(flights[i].name)}</td>`;
-        if (i === 0 || flights[i].name !== flights[i-1].name || flights[i].desc !== flights[i-1].desc) h += `<td rowspan="${rs2(flights, i)}" class="export-text">${escAttr(flights[i].desc)}</td>`;
-        h += `<td class="text-center export-qty" data-group="flight">${fmt(flights[i].qty)}</td>`;
-        if (!isKRW) h += '<td class="text-right bg-gray-50"></td>';
-        h += `<td class="text-right export-krw" data-group="flight">${fmt(flights[i].krw)}</td><td class="text-right font-semibold export-tot" data-group="flight">${fmtT(flights[i].tot)}</td><td class="text-center export-text">${escAttr(flights[i].note || '')}</td></tr>`;
-      }
-    }
-    h += `<tr class="subtotal-row"><td colspan="${col}" class="text-center">${fSub}</td><td class="text-right" id="sub-flight">₩${fmtT(tF)}</td><td></td></tr>`; $('#tbody-flight').innerHTML = h;
-    const locals = getRowData('local').filter(r => r.name.trim()).map(r => { const qty = Number(r.qty) || 0; const fgn = Number(r.fgn) || 0; const krw = isKRW ? fgn : Math.round(fgn * exRate); return { ...r, qty, fgn, krw, tot:qty * krw }; }); tL = locals.reduce((s, r) => s + r.tot, 0);
-    const lH = isMainland ? '행사비용' : (isJeju ? '제주(현지)<br>발생비용' : '해외현지<br>발생비용'); const lSub = isMainland ? '(2) 합계 - 행사 비용' : (isJeju ? '(2) 합계 - 제주(현지) 발생 비용' : '(2) 합계 - 해외현지 발생 비용'); h = '';
-    if (!locals.length) h += `<tr><td class="text-center font-bold bg-gray-50 export-text">${lH}</td><td colspan="${col - 1}" class="text-center">입력된 항목이 없습니다.</td></tr>`;
-    else {
-      for (let i=0; i<locals.length; i++) {
-        h += '<tr>';
-        if (i === 0) h += `<td rowspan="${locals.length}" class="text-center font-bold bg-gray-50 export-text">${lH}</td>`;
-        if (i === 0 || locals[i].name !== locals[i-1].name) h += `<td rowspan="${rs(locals, i, 'name')}" class="text-center export-text">${escAttr(locals[i].name)}</td>`;
-        if (i === 0 || locals[i].name !== locals[i-1].name || locals[i].desc !== locals[i-1].desc) h += `<td rowspan="${rs2(locals, i)}" class="export-text">${escAttr(locals[i].desc)}</td>`;
-        h += `<td class="text-center export-qty" data-group="local">${fmt(locals[i].qty)}</td>`;
-        if (!isKRW) h += `<td class="text-right bg-yellow-50"><span style="float:left;font-size:9px;color:#9ca3af">${cS}</span><span class="export-fgn">${fmt(locals[i].fgn)}</span></td>`;
-        h += `<td class="text-right export-krw" data-group="local">${fmt(locals[i].krw)}</td><td class="text-right font-semibold export-tot" data-group="local">${fmtT(locals[i].tot)}</td><td class="text-center export-text">${escAttr(locals[i].note || '')}</td></tr>`;
-      }
-    }
-    h += `<tr class="subtotal-row"><td colspan="${col}" class="text-center">${lSub}</td><td class="text-right" id="sub-local">₩${fmtT(tL)}</td><td></td></tr>`; $('#tbody-local').innerHTML = h;
-    const doms = getRowData('domestic').filter(r => r.name.trim()).map(r => ({ ...r, qty:Number(r.qty)||0, krw:Number(r.krw)||0, tot:(Number(r.qty)||0)*(Number(r.krw)||0) })); tD = doms.reduce((s, r) => s + r.tot, 0); h = '';
-    if (!doms.length) h += `<tr><td class="text-center font-bold bg-gray-50 export-text">국내 발생 비용</td><td colspan="${col - 1}" class="text-center">입력된 항목이 없습니다.</td></tr>`;
-    else {
-      for (let i=0; i<doms.length; i++) {
-        h += '<tr>';
-        if (i === 0) h += `<td rowspan="${doms.length}" class="text-center font-bold bg-gray-50 export-text">국내 발생 비용</td>`;
-        if (i === 0 || doms[i].name !== doms[i-1].name) h += `<td rowspan="${rs(doms, i, 'name')}" class="text-center export-text">${escAttr(doms[i].name)}</td>`;
-        if (i === 0 || doms[i].name !== doms[i-1].name || doms[i].desc !== doms[i-1].desc) h += `<td rowspan="${rs2(doms, i)}" class="export-text">${escAttr(doms[i].desc)}</td>`;
-        h += `<td class="text-center export-qty" data-group="domestic">${fmt(doms[i].qty)}</td>`;
-        if (!isKRW) h += '<td class="text-right bg-gray-50"></td>';
-        h += `<td class="text-right export-krw" data-group="domestic">${fmt(doms[i].krw)}</td><td class="text-right font-semibold export-tot" data-group="domestic">${fmtT(doms[i].tot)}</td><td class="text-center export-text">${escAttr(doms[i].note || '')}</td></tr>`;
-      }
-    }
-    h += `<tr class="subtotal-row"><td colspan="${col}" class="text-center">(3) 합계 - 국내 발생 비용</td><td class="text-right" id="sub-domestic">₩${fmtT(tD)}</td><td></td></tr>`; $('#tbody-domestic').innerHTML = h;
-    const grandTotal = tF + tL + tD; const eventOnly = tL + tD; 
-    
-    const specialNote = escAttr($('#inp-det-specialNote').value.trim()); 
-    const ex = isMainland ? '(교통비 제외)' : '(항공료 제외)';
-    let totalHtml = `<tr class="grand-row"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(1)+(2)+(3) 전체 합계 금액</td><td class="text-right grand-amount" id="grand-1">₩${fmtT(grandTotal)}</td><td></td></tr><tr class="grand-row ${specialNote ? '' : 'grand-row-last'}"><td colspan="${col}" class="text-center grand-label" style="font-size:12px">(2)+(3) 행사 비용 합계 <span style="font-size:10px;font-weight:400;color:#64748b">${ex}</span></td><td class="text-right grand-amount" id="grand-2" style="color:#b91c1c">₩${fmtT(eventOnly)}</td><td></td></tr>`;
-    if (specialNote) totalHtml += `<tr class="grand-row grand-row-last"><td class="text-center font-bold bg-yellow-50 export-text" style="color:#b91c1c;">특이사항</td><td colspan="${col + 1}" style="font-weight:700; color:#b91c1c; padding:10px; line-height:1.5;" class="export-text">${specialNote.replace(/\n/g, '<br>')}</td></tr>`;
-    $('#tbody-total').innerHTML = totalHtml; $('#live-total-amount').textContent = `₩ ${fmtT(grandTotal)}`;
-  }
-  function renderSimple() {
-    $('#out-sim-dep').textContent = $('#inp-sim-dep').value; $('#out-sim-inv').textContent = $('#inp-sim-inv').value; $('#out-sim-subject').textContent = $('#inp-sim-subject').value; $('#out-sim-toName').textContent = $('#inp-sim-toName').value; $('#out-sim-toAddr').textContent = $('#inp-sim-toAddr').value; $('#out-sim-toPerson').textContent = $('#inp-sim-toPerson').value; $('#out-sim-bankName').textContent = $('#inp-sim-bankName').value; $('#out-sim-bankNum').textContent = $('#inp-sim-bankNum').value; $('#out-sim-bankHolder').textContent = $('#inp-sim-bankHolder').value; $('#out-sim-due').textContent = $('#inp-sim-due').value; 
-    
-    $('#out-sim-inc').innerHTML = escAttr($('#inp-sim-inc').value).replace(/\n/g, '<br>'); 
-    $('#out-sim-exc').innerHTML = escAttr($('#inp-sim-exc').value).replace(/\n/g, '<br>');
-    
-    const simples = getRowData('simple').filter(r => r.name.trim()).map(r => ({ ...r, qty:Number(r.qty)||0, krw:Number(r.krw)||0, tot:(Number(r.qty)||0)*(Number(r.krw)||0) }));
-    let subTotal = simples.reduce((s, r) => s + r.tot, 0); let h = ''; const minRows = 5;
-    for (let i=0; i<Math.max(simples.length, minRows); i++) {
-      if (i < simples.length) h += `<tr><td class="text-center export-text">${escAttr(simples[i].name)}</td><td class="text-center export-text">${escAttr(simples[i].desc)}</td><td class="text-right export-krw" data-group="simple">${fmt(simples[i].krw)}</td><td class="text-center export-qty" data-group="simple">${fmt(simples[i].qty)}</td><td class="text-right export-tot" data-group="simple">${fmt(simples[i].tot)}</td></tr>`;
-      else h += '<tr><td class="export-text"></td><td class="export-text"></td><td></td><td></td><td></td></tr>';
-    }
-    h += `<tr class="st-subtotal"><td colspan="4">Sub Total (KRW)</td><td><span id="st-sub">${fmtT(subTotal)}</span></td></tr>`;
-    const vatOpt = $('#inp-sim-vat').value; let vatVal = 0; let vatLabel = '부가세 불포함';
-    if (vatOpt === 'auto') { vatVal = Math.floor(subTotal * 0.1); vatLabel = '부가세 (10%)'; } else if (vatOpt === 'manual') { vatVal = parseCurrency($('#inp-sim-vat-manual').value) || 0; vatLabel = '부가세 (부분 과세)'; }
-    h += `<tr><td class="text-center export-text">부가세</td><td class="text-center export-text">${vatLabel}</td><td class="text-right">${fmt(vatVal)}</td><td class="text-center">1</td><td class="text-right export-tot" id="st-vat">${fmt(vatVal)}</td></tr>`;
-    let extraVal = 0;
-    if ($('#inp-sim-extraFee').value === 'auto_50' && vatVal > 0) {
-      extraVal = Math.floor(vatVal * 0.5);
-      h += `<tr><td class="text-center export-text" style="color:#b91c1c; font-weight:bold;">기타비용</td><td class="text-center export-text" style="color:#b91c1c;">종합과세에 따른 세금 보전분</td><td class="text-right" style="color:#b91c1c;">${fmt(extraVal)}</td><td class="text-center" style="color:#b91c1c;">1</td><td class="text-right export-tot" id="st-extra" style="color:#b91c1c; font-weight:bold;">${fmt(extraVal)}</td></tr>`;
-    }
-    const grandTotal = subTotal + vatVal + extraVal;
-    h += `<tr class="st-grandtotal"><td colspan="4">Grand Total (KRW)</td><td><span id="st-grand">${fmtT(grandTotal)}</span></td></tr>`;
-    $('#tbody-simple').innerHTML = h; 
-    
-    const taxNoteText = escAttr($('#inp-sim-taxNote').value.trim()); 
-    $('#wrap-sim-taxNote').style.display = taxNoteText ? 'flex' : 'none'; 
-    $('#out-sim-taxNote').innerHTML = taxNoteText.replace(/\n/g, '<br>'); 
-    $('#live-total-amount').textContent = `₩ ${fmtT(grandTotal)}`;
-  }
-  function calculateAndRender() { ($('#inp-currency').value === 'SIMPLE_QUOTE') ? renderSimple() : renderDetailed(); }
-  function switchTab(tab) {
-    const input = $('#panelInput'); const preview = $('#panelPreview');
-    if (tab === 'input') { input.classList.remove('panel-hidden'); preview.classList.add('panel-hidden'); $('#tabInput').classList.add('active'); $('#tabPreview').classList.remove('active'); } 
-    else { calculateAndRender(); input.classList.add('panel-hidden'); preview.classList.remove('panel-hidden'); $('#tabInput').classList.remove('active'); $('#tabPreview').classList.add('active'); $('#panelPreview').scrollLeft = 0; window.scrollTo(0,0); }
-  }
-  function printPDF() {
-    const warnings = renderWarnings();
-    if (warnings.length) {
-      let msg = '⚠️ 입력된 데이터에 확인이 필요한 항목이 있습니다.\n\n' + warnings.slice(0, 5).map(w => `- ${w.msg}`).join('\n');
-      if (warnings.length > 5) msg += `\n...외 ${warnings.length - 5}건`; msg += '\n\n이대로 PDF 출력을 진행하시겠습니까?';
-      if (!confirm(msg)) { $('#panelInput').scrollTop = 0; return; }
-    }
-    const sheet = $('#print-section'); const tableArea = document.getElementById('table-area'); const allLevels = Array.from({length:10},(_,i)=>'pc-'+(i+1));
-    allLevels.forEach(c => sheet.classList.remove(c)); if (tableArea) tableArea.style.marginBottom = '8px'; calculateAndRender();
-    if ($('#inp-currency').value !== 'SIMPLE_QUOTE' && tableArea) {
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        const A4_H = 1025; let chosenLevel = null;
-        if (sheet.scrollHeight > A4_H) {
-          for (let i = 0; i < allLevels.length; i++) { if (i > 0) sheet.classList.remove(allLevels[i-1]); sheet.classList.add(allLevels[i]); void sheet.offsetHeight; if (sheet.scrollHeight <= A4_H) { chosenLevel = allLevels[i]; break; } }
-          if (!chosenLevel) chosenLevel = allLevels[allLevels.length-1];
-          allLevels.forEach(c => sheet.classList.remove(c)); if (chosenLevel) sheet.classList.add(chosenLevel); void sheet.offsetHeight;
-        }
-        const remain = A4_H - sheet.scrollHeight; if (remain > 0) { tableArea.style.marginBottom = (8 + remain) + 'px'; void sheet.offsetHeight; }
-        setTimeout(() => { window.print(); allLevels.forEach(c => sheet.classList.remove(c)); tableArea.style.marginBottom = '8px'; }, 100);
-      }));
-    } else { window.print(); }
-  }
 
-  // ★ V6 버그 픽스: 맞춤 편집용 HTML 내보내기 로직 ★
-  function downloadInteractiveHTML() {
-    calculateAndRender();
-    const warnings = validateRows();
-    if (warnings.length && !confirm('⚠️ 입력된 데이터에 확인이 필요한 항목이 있습니다.\n이대로 내보내기를 진행하시겠습니까?')) return;
-    
-    const clone = $('#print-section').cloneNode(true);
-    const currentCurrency = $('#inp-currency').value;
-    const isForeign = ['JPY', 'USD', 'CNY'].includes(currentCurrency);
-    const isSimple = currentCurrency === 'SIMPLE_QUOTE';
-    
-    // ★ 핵심 구조 버그 해결 포인트 ★
-    // 내보내는 HTML에는 '상세 견적서'와 '일반 견적서' HTML 덩어리가 숨긴 채로 둘 다 들어있었습니다.
-    // 그래서 연산 엔진이 무조건 '상세 견적서(main-table)'를 1순위로 인식하고 일반 견적서 계산을 건너뛰었습니다.
-    // 이 문제를 막기 위해, 내보내기 파일 생성 시 현재 보이지 않는 다른 쪽 그룹 HTML은 아예 삭제해 버립니다.
-    if (isSimple) {
-        const detGroup = clone.querySelector('#detailed-preview-group');
-        if (detGroup) detGroup.remove();
-    } else {
-        const simGroup = clone.querySelector('#simple-preview-group');
-        if (simGroup) simGroup.remove();
-    }
-    
-    clone.querySelectorAll('.export-qty').forEach(el => { el.innerHTML = `<input type="text" class="c-qty" value="${el.textContent}" data-group="${el.dataset.group || ''}">`; el.classList.remove('export-qty'); });
-    clone.querySelectorAll('.export-krw').forEach(el => { el.innerHTML = `<input type="text" class="c-krw" value="${el.textContent}" data-group="${el.dataset.group || ''}">`; el.classList.remove('export-krw'); });
-    
-    clone.querySelectorAll('.export-tot').forEach(el => { 
-        const idAttr = el.id ? `id="${el.id}"` : ''; 
-        el.removeAttribute('id'); 
-        el.innerHTML = `<input type="text" class="c-tot" ${idAttr} value="${el.textContent}" data-group="${el.dataset.group || ''}" readonly tabindex="-1" title="자동 계산 항목">`; 
-        el.classList.remove('export-tot'); 
-    });
-    
-    clone.querySelectorAll('.export-fgn').forEach(el => { 
-        el.outerHTML = `<input type="text" class="c-fgn" value="${el.textContent}" style="width:calc(100% - 14px);background:transparent;border:1px solid transparent;font-family:inherit;font-size:inherit;text-align:right;outline:none;transition:.2s;box-sizing:border-box;">`; 
-    });
-    
-    clone.querySelectorAll('.export-text').forEach(el => { el.classList.add('editable-text'); el.setAttribute('contenteditable', 'true'); el.classList.remove('export-text'); });
-    
-    const sheetHtml = clone.outerHTML;
-    
-    const styles = `body{background:#f1f5f9;display:flex;flex-direction:column;align-items:center;padding:40px 20px;font-family:'Pretendard','Malgun Gothic',sans-serif;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.a4-sheet{background:#fff;width:100%;max-width:850px;padding:40px;box-shadow:0 10px 40px rgba(0,0,0,.1);border-radius:4px;margin-bottom:40px;position:relative}table{width:100%;border-collapse:collapse}th,td{border:1px solid #cbd5e1;padding:6px 8px;font-size:12px}th{background:#f8fafc;font-weight:bold;text-align:center;color:#0f172a}.text-center{text-align:center}.text-right{text-align:right}.font-bold{font-weight:bold}.bg-gray-50{background:#f8fafc}.bg-yellow-50{background:#fef9c3}.subtotal-row td{background:#f1f5f9;font-weight:bold;border-bottom:2px solid #cbd5e1}.grand-row td{background:#f8fafc;font-weight:bold;border-top:2px solid #0f172a}.doc-title-area{text-align:center;margin-bottom:24px}.doc-title-area h2{font-size:28px;border-bottom:3px solid #0f172a;display:inline-block;padding-bottom:6px;margin:0}.doc-title-area p{font-size:11px;color:#64748b;font-weight:700;letter-spacing:.25em;margin-top:6px;text-transform:uppercase}.doc-header{display:flex;justify-content:space-between;margin-bottom:24px}.doc-header-left{width:45%}.doc-header-right{width:40%;text-align:right}.doc-header-right img{height:28px}.info-table th{width:28%}.footer-notes{font-size:11px;color:#475569;padding-top:12px}.footer-notes p.title{font-size:12px;font-weight:700;margin-bottom:6px;color:#1e293b}.simple-header{text-align:center;margin-bottom:30px;margin-top:10px}.simple-header h1{font-size:36px;border-bottom:2px solid #000;display:inline-block;padding-bottom:10px;margin:0;letter-spacing:.8em;padding-left:.8em}.simple-info-grid{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;font-size:12px}.simple-info-left span{display:inline-block;width:130px;font-weight:600}.simple-info-right img{height:18px}.simple-sender-receiver{display:flex;justify-content:space-between;margin-bottom:24px;font-size:12px}.sr-box{width:48%;border-top:2px solid #000;border-bottom:2px solid #000;padding:12px 0;display:flex}.sr-label{width:60px;text-align:center;font-weight:800;background:#f8fafc;display:flex;align-items:center;justify-content:center;margin-right:12px;letter-spacing:2px}.sr-content-row span:first-child{width:15px;text-align:center;display:inline-block}.sr-content-row.bold span:last-child{font-weight:800;font-size:14px}.stamp-overlap-container{position:relative;display:inline-flex;align-items:center}.stamp-image{position:absolute;left:48px;bottom:-18px;width:68px;height:68px;mix-blend-mode:multiply;pointer-events:none;opacity:.85;transform:rotate(-4deg);z-index:10}.simple-subject{display:flex;font-size:14px;font-weight:800;margin-bottom:16px}.simple-subject-label{width:120px;text-align:center;letter-spacing:2px}.simple-table{border:2px solid #000}.simple-table th,.simple-table td{border:1px solid #000}.st-subtotal td,.st-grandtotal td{background:#f1f5f9;text-align:right;font-weight:800}.st-grandtotal td{font-size:15px;font-weight:900}.simple-footer-bank{font-size:12px;line-height:1.8;margin-bottom:30px}.simple-footer-bank p span.label{display:inline-block;width:190px;font-weight:600}.simple-footer-bank p span.colon{display:inline-block;width:20px}.highlight-bg{background-color:#fef08a;display:inline-block;padding:0 12px;min-width:200px;border-radius:2px}.simple-footer-notes{font-size:12px;line-height:1.6;display:flex;flex-direction:column;gap:10px}.sfn-row{display:flex}.sfn-label{width:110px;text-align:center;font-weight:800}.sfn-colon{width:20px;text-align:center}.sfn-content{flex:1}.sfn-graybox{background:#e2e8f0;height:30px;width:100%;margin-top:24px;border-radius:4px}.footer-brand{text-align:center;margin-top:24px;border-top:1px solid #e2e8f0;padding-top:16px;font-size:11px;color:#64748b}.footer-brand a{display:inline-block;margin-top:8px;padding:6px 16px;border:1px solid #cbd5e1;border-radius:6px;color:#475569;text-decoration:none;font-size:11px;font-weight:700;transition:.2s}.footer-brand a:hover{background:#f1f5f9;color:#0f172a;border-color:#94a3b8}.c-qty,.c-krw,.c-fgn{width:100%;border:1px solid transparent;background:transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;outline:none;transition:.2s;box-sizing:border-box}.c-tot{width:100%;border:none;background:transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;outline:none;text-align:right}.c-qty{text-align:center}.c-krw,.c-fgn{text-align:right}.c-qty:hover,.c-krw:hover,.c-fgn:hover,.c-qty:focus,.c-krw:focus,.c-fgn:focus{background:#e0f2fe;border:1px solid #93c5fd;border-radius:4px;box-shadow:inset 0 0 0 1px #93c5fd}.editable-text{outline:none;border-radius:4px;transition:background .2s,box-shadow .2s;cursor:text;min-height:16px}.editable-text:hover,.editable-text:focus{background:#e0f2fe;box-shadow:inset 0 0 0 1px #93c5fd}.top-bar{background:#1e293b;color:#fff;width:100%;max-width:850px;padding:16px 24px;border-radius:8px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 6px rgba(0,0,0,.1)}.btn-print{background:#10b981;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:14px}@media print{body{background:#fff;padding:0}.a4-sheet{box-shadow:none;padding:0;margin:0;max-width:100%}.top-bar{display:none}.footer-brand a{display:none}.c-qty,.c-krw,.c-tot,.c-fgn{border:none!important;background:transparent!important;box-shadow:none!important}.editable-text{background:transparent!important;box-shadow:none!important;outline:none!important}.no-print{display:none!important}@page{size:A4 portrait;margin:8mm}}`;
-    
-    const exRate = parseCurrency($('#inp-exRate').value) || 1;
-    const vatType = $('#inp-sim-vat').value;
-    const extraType = $('#inp-sim-extraFee').value;
+        const koreanToEnglish = (name) => {
+            if (!name) return "";
+            const fNames = {"김":"KIM", "이":"LEE", "박":"PARK", "최":"CHOI", "정":"JUNG", "강":"KANG", "조":"CHO", "윤":"YOON", "장":"JANG", "임":"LIM", "홍":"HONG", "송":"SONG", "오":"OH", "서":"SEO", "신":"SHIN", "권":"KWON", "황":"HWANG", "안":"AHN", "유":"YOO", "전":"JEON", "배":"BAE", "고":"KO", "문":"MOON", "양":"YANG", "손":"SON", "백":"BAEK", "허":"HEO", "남":"NAM", "심":"SHIM", "노":"NOH", "하":"HA", "곽":"KWAK", "성":"SUNG", "차":"CHA", "주":"JOO", "우":"WOO", "구":"KOO", "나":"NA", "민":"MIN", "엄":"EOM", "채":"CHAE", "원":"WON", "방":"BANG", "공":"KONG"};
+            const char1 = name.charAt(0);
+            const engFamily = fNames[char1] || getRomanization(char1);
+            let engGiven = "";
+            for(let i = 1; i < name.length; i++) engGiven += getRomanization(name.charAt(i));
+            return `${engFamily} ${engGiven}`.trim(); 
+        };
 
-    let topBarSubText = '';
-    if (isSimple) {
-        topBarSubText = `부가세: ${vatType === 'auto' ? '10% (자동 연동)' : (vatType === 'manual' ? '수동 입력' : '불포함')}`;
-    } else if (isForeign) {
-        topBarSubText = `적용 환율: ${exRate}`;
-    }
+        const App = () => {
+            // 메인 탭 상태 ('traveler' = 여권명단, 'rooming' = 방배정)
+            const [activeMainTab, setActiveMainTab] = useState('traveler');
 
-    const scriptLogic = `
-      const EX_RATE = ${isForeign ? exRate : 1};
-      const VAT_TYPE = '${vatType}';
-      const EXTRA_TYPE = '${extraType}';
+            // ==========================================
+            // [TAB 1] 여행자 명단 (투어메이커 내부관리용)
+            // ==========================================
+            const [travelers, setTravelers] = useState([]);
+            const [importText, setImportText] = useState("");
+            const [isProcessing, setIsProcessing] = useState(false);
+            const [headerInfo, setHeaderInfo] = useState({
+                groupName: "",
+                date: "",
+                nation: "",
+                number: ""
+            });
 
-      function parse(v){ return Number(String(v).replace(/[^0-9.-]/g,''))||0; }
-      function formatCurrency(v){
-          const n = parse(v);
-          if(String(v).trim() === '') return '';
-          return n.toLocaleString('ko-KR');
-      }
+            // 드래그 앤 드롭 Refs
+            const dragItem = useRef();
+            const dragOverItem = useRef();
 
-      document.addEventListener('input', e => {
-        const t = e.target;
-        if(t.classList.contains('c-krw') || t.classList.contains('c-qty')) {
-            const tr = t.closest('tr');
-            if(tr) {
-                const krwEl = tr.querySelector('.c-krw');
-                const qtyEl = tr.querySelector('.c-qty');
-                const totEl = tr.querySelector('.c-tot');
-                if(krwEl && qtyEl && totEl) {
-                    totEl.value = formatCurrency(parse(krwEl.value) * parse(qtyEl.value));
+            const dragStart = (e, position) => { dragItem.current = position; e.target.closest('tr')?.classList.add('dragging'); };
+            const dragEnter = (e, position) => { dragOverItem.current = position; };
+            const drop = (e) => {
+                const tr = e.target.closest('tr');
+                if (tr) tr.classList.remove('dragging');
+                if (dragItem.current === null || dragOverItem.current === null) return;
+
+                const copyListItems = [...travelers];
+                const dragItemContent = copyListItems[dragItem.current];
+                copyListItems.splice(dragItem.current, 1);
+                copyListItems.splice(dragOverItem.current, 0, dragItemContent);
+                
+                dragItem.current = null;
+                dragOverItem.current = null;
+                setTravelers(copyListItems);
+            };
+            const dragEnd = (e) => { e.target.closest('tr')?.classList.remove('dragging'); };
+
+            const getExpiryStatus = (dateStr) => {
+                if (!dateStr) return { color: "text-slate-400", warning: false };
+                const match = dateStr.match(/(\d{4})[-./년]?\s*(\d{1,2})[-./월]?\s*(\d{1,2})/);
+                if (!match) return { color: "text-slate-600", warning: false };
+                const expDate = new Date(match[1], match[2] - 1, match[3]);
+                const today = new Date();
+                const sixMonthsLater = new Date();
+                sixMonthsLater.setMonth(today.getMonth() + 6);
+                if (expDate < today) return { color: "text-red-600 font-bold bg-red-50", warning: true, msg: "만료됨" };
+                if (expDate < sixMonthsLater) return { color: "text-orange-500 font-bold", warning: true, msg: "6개월 미만" };
+                return { color: "text-slate-700", warning: false };
+            };
+
+            // 다중 파일 업로드 처리 (Multiple)
+            const handlePassportUpload = async (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) return;
+                
+                setIsProcessing(true);
+                setImportText(`총 ${files.length}개의 파일을 안전하게 순차 분석하고 있습니다. 잠시만 기다려주세요...`);
+
+                let combinedText = "";
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    try {
+                        if (file.type === 'application/pdf') {
+                            const arrayBuffer = await file.arrayBuffer();
+                            const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                                const page = await pdf.getPage(pageNum);
+                                const textContent = await page.getTextContent();
+                                textContent.items.forEach(item => combinedText += item.str + ' ');
+                            }
+                            combinedText += '\n';
+                        } else if (file.type.startsWith('image/')) {
+                            const worker = await Tesseract.createWorker('kor+eng');
+                            const ret = await worker.recognize(file);
+                            combinedText += ret.data.text + '\n';
+                            await worker.terminate();
+                        }
+                    } catch (error) {
+                        console.error("파일 처리 중 오류:", file.name, error);
+                    }
                 }
-            }
-            recalcAll();
-        }
-      });
 
-      document.addEventListener('change', e => {
-         const t = e.target;
-         if(t.classList.contains('c-fgn')) {
-             const tr = t.closest('tr');
-             if(tr) {
-                 const fgnVal = parse(t.value);
-                 const krwEl = tr.querySelector('.c-krw');
-                 const qtyEl = tr.querySelector('.c-qty');
-                 const totEl = tr.querySelector('.c-tot');
-                 if(krwEl) {
-                     krwEl.value = formatCurrency(Math.round(fgnVal * EX_RATE));
-                     if(qtyEl && totEl) totEl.value = formatCurrency(parse(krwEl.value) * parse(qtyEl.value));
-                 }
-             }
-             recalcAll();
-             t.value = formatCurrency(t.value);
-         } else if(t.classList.contains('c-krw') || t.classList.contains('c-qty')) {
-             if(t.value) t.value = formatCurrency(t.value);
-         }
-      });
+                setImportText(combinedText);
+                alert(`✅ 총 ${files.length}개 파일의 분석이 완료되었습니다.\n우측 텍스트를 확인하고 [하단 명단 표에 반영하기]를 눌러주세요.`);
+                setIsProcessing(false);
+                e.target.value = '';
+            };
 
-      function recalcAll() {
-        if(document.getElementById('main-table')) {
-            let flightSum = 0, localSum = 0, domSum = 0;
-            document.querySelectorAll('input.c-tot[data-group="flight"]').forEach(el => flightSum += parse(el.value));
-            document.querySelectorAll('input.c-tot[data-group="local"]').forEach(el => localSum += parse(el.value));
-            document.querySelectorAll('input.c-tot[data-group="domestic"]').forEach(el => domSum += parse(el.value));
+            const handlePassportImport = () => {
+                if (!importText.trim()) return;
+                const lines = importText.split('\n').filter(l => l.trim().length > 0);
+                let newEntries = [];
 
-            const subF = document.getElementById('sub-flight'); if(subF) subF.textContent = '₩' + formatCurrency(flightSum);
-            const subL = document.getElementById('sub-local'); if(subL) subL.textContent = '₩' + formatCurrency(localSum);
-            const subD = document.getElementById('sub-domestic'); if(subD) subD.textContent = '₩' + formatCurrency(domSum);
-            const grand1 = document.getElementById('grand-1'); if(grand1) grand1.textContent = '₩' + formatCurrency(flightSum + localSum + domSum);
-            const grand2 = document.getElementById('grand-2'); if(grand2) grand2.textContent = '₩' + formatCurrency(localSum + domSum);
-        } else if(document.getElementById('simple-table')) {
-            let subTotal = 0;
-            document.querySelectorAll('input.c-tot[data-group="simple"]').forEach(el => subTotal += parse(el.value));
-            const stSub = document.getElementById('st-sub'); if(stSub) stSub.textContent = formatCurrency(subTotal);
+                lines.forEach((line, idx) => {
+                    const cols = line.split(/[\t,]+| {2,}/).map(c => c.trim()).filter(c => c.length > 0);
+                    if (cols.length < 2) return; 
+                    if (cols[0].includes('성명') || cols[0].includes('NAME') || cols[0].includes('NO')) return;
 
-            const vatEl = document.getElementById('st-vat');
-            let vatVal = vatEl ? parse(vatEl.tagName==='INPUT'? vatEl.value : vatEl.textContent) : 0;
-            if(VAT_TYPE === 'auto' && vatEl) {
-                vatVal = Math.floor(subTotal * 0.1);
-                if(vatEl.tagName === 'INPUT') vatEl.value = formatCurrency(vatVal);
-                else vatEl.textContent = formatCurrency(vatVal);
-            }
+                    let offset = (!isNaN(parseInt(cols[0])) && cols[0].length < 4) ? 1 : 0;
+                    if (!cols[offset]) return;
 
-            const extraEl = document.getElementById('st-extra');
-            let extraVal = extraEl ? parse(extraEl.tagName==='INPUT'? extraEl.value : extraEl.textContent) : 0;
-            if(EXTRA_TYPE === 'auto_50' && extraEl) {
-                extraVal = Math.floor(vatVal * 0.5);
-                if(extraEl.tagName === 'INPUT') extraEl.value = formatCurrency(extraVal);
-                else extraEl.textContent = formatCurrency(extraVal);
-            }
+                    let passportNo = cols[offset+4] || "";
+                    let pMatch = line.match(/[A-Z]\d{8}/i);
+                    if(pMatch && !passportNo.match(/[A-Z]\d{8}/i)) passportNo = pMatch[0]; 
 
-            const stGrand = document.getElementById('st-grand');
-            if(stGrand) stGrand.textContent = formatCurrency(subTotal + vatVal + extraVal);
-        }
-      }
-    `;
-    
-    const fullHtml = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>스마트 산출내역서 - 맞춤 편집용</title><style>${styles}</style></head><body><div class="top-bar no-print"><div style="flex:1"><p style="font-size:16px;font-weight:800;margin-bottom:0">💡 스마트 산출내역서 (맞춤 편집용)</p>${topBarSubText ? `<p style="font-size:13px;color:#94a3b8;margin-top:6px;font-weight:600;">${topBarSubText}</p>` : ''}</div><button class="btn-print" onclick="window.print()">🖨️ PDF 저장</button></div>${sheetHtml}<script>${scriptLogic}<\/script></body></html>`;
-    const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const fileName = isSimple ? `투어메이커_${$('#inp-sim-toName').value || '고객'}_맞춤견적서.html` : `투어메이커_${$('#inp-clientName').value || '고객'}_${$('#inp-docTitle').value || '산출내역'}.html`;
-    a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  }
+                    let genderStr = cols[offset+3] || "";
+                    let gender = 'M';
+                    if (genderStr.toUpperCase().includes('F') || genderStr.includes('여')) gender = 'F';
 
-  function bindEvents() {
-    document.addEventListener('input', e => {
-      if (e.target.classList.contains('amount')) e.target.value = formatCurrencyValue(e.target.value);
-      if (e.target.id === 'preset-search') return;
-      calculateAndRender(); scheduleValidation();
-    });
-    document.addEventListener('click', e => {
-      if (e.target.matches('.js-delete-row')) { e.target.closest('.slot-card')?.remove(); calculateAndRender(); scheduleValidation(); }
-      if (e.target.matches('#warning-list li')) scrollToRow(e.target.dataset.row);
-    });
-    $('#btn-add-flight').addEventListener('click', () => addRow('flight'));
-    $('#btn-add-local').addEventListener('click', () => addRow('local'));
-    $('#btn-add-domestic').addEventListener('click', () => addRow('domestic'));
-    $('#btn-add-simple').addEventListener('click', () => addRow('simple'));
-    $('#btn-clear-form').addEventListener('click', clearForm);
-    $('#btn-save-preset').addEventListener('click', savePreset);
-    $('#btn-load-preset').addEventListener('click', loadPreset);
-    $('#btn-delete-preset').addEventListener('click', deletePreset);
-    $('#btn-export').addEventListener('click', exportData);
-    $('#btn-import').addEventListener('click', () => $('#import-file').click());
-    $('#import-file').addEventListener('change', importData);
-    $('#preset-search').addEventListener('input', e => updatePresetDropdown(e.target.value));
-    $('#inp-currency').addEventListener('change', toggleDocMode);
-    $('#inp-sim-vat').addEventListener('change', () => { toggleVatManual(); calculateAndRender(); scheduleValidation(); });
-    $('#inp-sim-extraFee').addEventListener('change', () => { calculateAndRender(); scheduleValidation(); });
-    $('#btn-print-pdf').addEventListener('click', printPDF);
-    $('#btn-export-html').addEventListener('click', downloadInteractiveHTML);
-    $('#tabInput').addEventListener('click', () => switchTab('input'));
-    $('#tabPreview').addEventListener('click', () => switchTab('preview'));
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    setTodayDates(); buildInitialInputs(); bindEvents(); updatePresetDropdown(); toggleDocMode(); calculateAndRender(); scheduleValidation();
-  });
-})();
-</script>
+                    newEntries.push({
+                        id: Date.now() + Math.random(),
+                        nameKor: cols[offset] || "",
+                        nameEng: cols[offset+1] || "",
+                        birth: cols[offset+2] || "",
+                        gender: gender,
+                        passportNo: passportNo.toUpperCase(),
+                        expiry: cols[offset+5] || "",
+                        nation: cols[offset+6] || "KOR",
+                        remark: cols[offset+7] || ""
+                    });
+                });
+
+                setTravelers([...travelers, ...newEntries]);
+                setImportText("");
+            };
+
+            const addEmptyTraveler = () => setTravelers([...travelers, { id: Date.now() + Math.random(), nameKor: "", nameEng: "", birth: "", gender: "M", passportNo: "", expiry: "", nation: "KOR", remark: "" }]);
+            const removeTraveler = (id) => setTravelers(travelers.filter(t => t.id !== id));
+            const updateField = (id, field, val) => setTravelers(travelers.map(t => t.id === id ? {...t, [field]: val} : t));
+
+            // ==========================================
+            // [TAB 2] 방 배정 (루밍리스트 - 외부 담당자 취합용)
+            // ==========================================
+            const [isInternationalRooming, setIsInternationalRooming] = useState(true);
+            const [showGuideRooming, setShowGuideRooming] = useState(true);
+            const [activeSubTabRooming, setActiveSubTabRooming] = useState('pdf');
+            const [roomingHeaderInfo, setRoomingHeaderInfo] = useState({ groupName: "", date: "", location: "" });
+            const [rooms, setRooms] = useState([
+                { id: 1, type: 'TWIN', roomNo: '', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] },
+                { id: 2, type: 'TWIN', roomNo: '', guests: [{name:"", engName:"", gender:"여", remark:""}, {name:"", engName:"", gender:"여", remark:""}] }
+            ]);
+            const [importTextRooming, setImportTextRooming] = useState("");
+
+            const roomStats = useMemo(() => {
+                let total = 0, male = 0, female = 0;
+                let roomCounts = { SINGLE: 0, TWIN: 0, TRIPLE: 0, QUAD: 0 };
+                rooms.forEach(r => {
+                    if (r.guests.some(g => g.name.trim() !== "")) roomCounts[r.type]++;
+                    r.guests.forEach(g => {
+                        if (g.name.trim() !== "") {
+                            total++;
+                            if (g.gender === '남') male++;
+                            if (g.gender === '여') female++;
+                        }
+                    });
+                });
+                return { total, male, female, roomCounts };
+            }, [rooms]);
+
+            const handleRoomingSmartImport = () => {
+                if (!importTextRooming.trim()) return;
+                const lines = importTextRooming.split('\n').filter(l => l.trim().length > 0);
+                const newRooms = lines.map((line, idx) => {
+                    const rawNames = line.split(/[,/]+|(?<=[가-힣a-zA-Z])\s+(?=[가-힣a-zA-Z])/).filter(n => n.trim().length >= 1);
+                    const guests = rawNames.map(raw => {
+                        const hasFemale = raw.includes('(여)') || raw.includes('여');
+                        const name = raw.replace(/\(여\)/, '').replace(/\(남\)/, '').replace(/여$/, '').replace(/남$/, '').trim();
+                        return { name: name, engName: isInternationalRooming ? koreanToEnglish(name) : "", gender: hasFemale ? "여" : "남", remark: "" };
+                    });
+                    let type = 'TWIN';
+                    if (guests.length === 1) type = 'SINGLE';
+                    else if (guests.length === 3) type = 'TRIPLE';
+                    else if (guests.length >= 4) type = 'QUAD';
+                    return { id: idx + 1, roomNo: "", type, guests };
+                });
+                setRooms(newRooms);
+                setImportTextRooming("");
+                setShowGuideRooming(false);
+            };
+
+            const updateRoom = (rIdx, field, value) => { const newRooms = [...rooms]; newRooms[rIdx][field] = value; setRooms(newRooms); };
+            const updateGuest = (rIdx, gIdx, field, value) => {
+                const newRooms = [...rooms];
+                newRooms[rIdx].guests[gIdx][field] = value;
+                if (field === 'name' && isInternationalRooming) newRooms[rIdx].guests[gIdx].engName = koreanToEnglish(value);
+                setRooms(newRooms);
+            };
+            const changeRoomType = (rIdx, type) => {
+                const newRooms = [...rooms];
+                newRooms[rIdx].type = type;
+                const capacity = type === 'SINGLE' ? 1 : (type === 'TWIN' ? 2 : (type === 'TRIPLE' ? 3 : 4));
+                let currentGuests = [...newRooms[rIdx].guests];
+                if (currentGuests.length < capacity) {
+                    while(currentGuests.length < capacity) currentGuests.push({ name: "", engName: "", gender: "남", remark: "" });
+                } else {
+                    currentGuests = currentGuests.slice(0, capacity);
+                }
+                newRooms[rIdx].guests = currentGuests;
+                setRooms(newRooms);
+            };
+            const removeRoom = (rIdx) => setRooms(rooms.filter((_, i) => i !== rIdx));
+            const addRoom = () => setRooms([...rooms, { id: rooms.length + 1, roomNo: '', type: 'TWIN', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] }]);
+
+            const handleRoomingFileUpload = async (e) => {
+                const file = e.target.files[0];
+                if (!file || file.type !== 'application/pdf') return;
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    let fullText = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        textContent.items.forEach(item => fullText += item.str + ' ');
+                    }
+                    const words = fullText.split(/[\s,\t\n]+/);
+                    let extractedNames = [];
+                    const stopWords = ['성명','이름','투어메이커','비고','여권','NAME','NO','DATE','GROUP','만료일'];
+                    words.forEach(w => {
+                        let clean = w.replace(/\([여남]\)/g, '').replace(/[0-9a-zA-Z\.\-\:\/\=\*\+\[\]\{\}\_\(\)]/g, '').replace(/\s/g, ''); 
+                        if (clean.length >= 2 && clean.length <= 4 && /^[가-힣]+$/.test(clean)) {
+                            if (!stopWords.some(stop => clean.includes(stop))) extractedNames.push(clean);
+                        }
+                    });
+                    if (extractedNames.length > 0) {
+                        let newRooms = [];
+                        for(let i=0; i<extractedNames.length; i+=2) {
+                            let guests = [{ name: extractedNames[i], engName: koreanToEnglish(extractedNames[i]), gender: "남", remark: "" }];
+                            if(extractedNames[i+1]) guests.push({ name: extractedNames[i+1], engName: koreanToEnglish(extractedNames[i+1]), gender: "남", remark: "" });
+                            newRooms.push({ id: newRooms.length+1, type: guests.length===1 ? 'SINGLE' : 'TWIN', roomNo: '', guests });
+                        }
+                        setRooms(newRooms);
+                        setShowGuideRooming(false);
+                        alert("✅ 업로드하신 PDF에서 방 배정 인원을 성공적으로 자동 추출했습니다.");
+                    } else {
+                        alert("⚠️ 명단을 찾을 수 없습니다.");
+                    }
+                } catch (err) { alert("⚠️ 파일을 읽는 중 오류가 발생했습니다."); }
+                e.target.value = ''; 
+            };
+
+            const ROOMS_PER_PAGE = 22;
+            const roomPages = [];
+            const totalRoomPages = Math.max(1, Math.ceil(rooms.length / ROOMS_PER_PAGE));
+            for (let i = 0; i < totalRoomPages; i++) roomPages.push(rooms.slice(i * ROOMS_PER_PAGE, (i + 1) * ROOMS_PER_PAGE));
+
+            // ==========================================
+            // 전체 렌더링
+            // ==========================================
+            return (
+                <div className="min-h-screen flex flex-col">
+                    {/* 상단 탭 컨트롤러 */}
+                    <div className="no-print bg-slate-900 border-b shadow-md sticky top-0 z-50">
+                        <div className="max-w-[1200px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center h-auto md:h-14 py-2 md:py-0 gap-3">
+                            <div className="flex items-center gap-3">
+                                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" className="h-6 filter brightness-0 invert" alt="Logo" />
+                                <div className="h-4 w-[1px] bg-slate-600"></div>
+                                <h1 className="font-bold text-white tracking-wide text-sm hidden sm:block">투어메이커 통합 관리 센터</h1>
+                            </div>
+                            
+                            <div className="flex h-full gap-2">
+                                <button onClick={() => setActiveMainTab('traveler')} className={`px-4 py-2 md:py-0 h-full flex items-center font-bold text-sm border-b-4 transition-all rounded-t-md ${activeMainTab === 'traveler' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
+                                    <i className="fas fa-passport mr-2"></i> 1. 여권 명단 정리
+                                </button>
+                                <button onClick={() => setActiveMainTab('rooming')} className={`px-4 py-2 md:py-0 h-full flex items-center font-bold text-sm border-b-4 transition-all rounded-t-md ${activeMainTab === 'rooming' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
+                                    <i className="fas fa-bed mr-2"></i> 2. 방 배정 (루밍)
+                                </button>
+                            </div>
+
+                            <div className="flex gap-2">
+                                <button onClick={() => window.print()} className="bg-blue-600 text-white px-4 py-1.5 rounded font-bold text-sm hover:bg-blue-500 transition shadow flex items-center gap-2">
+                                    <i className="fas fa-print"></i> 현재 화면 출력
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <main className="flex-grow p-4 md:p-8">
+                        {/* ========================================================================= */}
+                        {/* TAB 1: 여권 명단 정리 */}
+                        {/* ========================================================================= */}
+                        <div className={activeMainTab === 'traveler' ? 'block' : 'hidden'}>
+                            <div className="no-print max-w-[1200px] mx-auto mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                {/* 기능 안내 및 업로드 영역 */}
+                                <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                                    <h2 className="text-sm font-black text-slate-800 tracking-widest mb-3 flex items-center gap-2">
+                                        <i className="fas fa-lock text-blue-600"></i> 외부 보안 업로드 시스템
+                                    </h2>
+                                    <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                                        담당자님, 이곳은 안전하게 보호되는 <b>투어메이커 전용 명단 수집 페이지</b>입니다.<br/>
+                                        보유하신 여러 장의 여권 사본(사진)이나 명단 PDF를 <b>한꺼번에 드래그</b>하여 업로드해 주세요. 시스템이 차례대로 내용을 인식합니다. (개인정보는 서버에 일절 저장되지 않습니다.)
+                                    </p>
+                                    
+                                    <div className="mt-auto">
+                                        {/* multiple 속성 추가로 다중 파일 업로드 지원 */}
+                                        <input type="file" id="passport-upload" accept=".pdf, image/*" multiple className="hidden" onChange={handlePassportUpload} />
+                                        <label htmlFor="passport-upload" className="w-full bg-slate-100 hover:bg-slate-200 border-2 border-dashed border-slate-300 text-slate-700 font-bold py-4 rounded-lg flex flex-col items-center justify-center cursor-pointer transition shadow-sm gap-2">
+                                            {isProcessing ? (
+                                                <><i className="fas fa-spinner fa-spin text-xl text-blue-500"></i><span className="text-sm">보안 분석 중...</span></>
+                                            ) : (
+                                                <><i className="fas fa-images text-2xl text-blue-500"></i><span className="text-sm">여권 사진 / PDF 일괄 첨부하기</span></>
+                                            )}
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* 추출된 텍스트 확인 영역 */}
+                                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                    <h2 className="text-sm font-black text-slate-800 tracking-widest mb-3 flex items-center justify-between">
+                                        <span><i className="fas fa-file-lines text-blue-600 mr-2"></i>추출된 데이터 확인 및 수정</span>
+                                    </h2>
+                                    <textarea 
+                                        className="w-full h-28 p-3 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition font-mono"
+                                        placeholder="파일을 업로드하면 추출된 데이터가 이곳에 표시됩니다. 내용이 맞는지 확인 후 아래 [표에 반영하기]를 눌러주세요."
+                                        value={importText}
+                                        onChange={(e) => setImportText(e.target.value)}
+                                    ></textarea>
+                                    <div className="flex gap-2 mt-3">
+                                        <button onClick={() => setTravelers([])} className="bg-white border border-slate-200 text-slate-500 px-4 py-2.5 rounded-lg text-sm hover:bg-slate-50 font-bold transition">
+                                            명단 초기화
+                                        </button>
+                                        <button onClick={handlePassportImport} className="flex-1 bg-slate-800 text-white font-bold py-2.5 rounded-lg hover:bg-black transition flex justify-center items-center gap-2 shadow-sm">
+                                            <i className="fas fa-arrow-down"></i> 하단 명단 표에 반영하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 다중 페이지 인쇄를 완벽하게 지원하는 Table 구조 */}
+                            <div className="print-container print-traveler-list bg-white max-w-[210mm] mx-auto shadow-xl p-4 md:p-[15mm] min-h-[297mm] flex flex-col border border-slate-200">
+                                <div className="no-print mb-2 flex justify-between items-end">
+                                    <p className="text-xs text-blue-600 font-bold"><i className="fas fa-hand-pointer"></i> 표 좌측의 ≡ 아이콘을 위아래로 드래그하여 순서를 변경할 수 있습니다.</p>
+                                    <span className="text-xs font-bold text-slate-500">총 인원: {travelers.length}명</span>
+                                </div>
+
+                                <table className="w-full text-xs border-collapse border border-slate-800">
+                                    <thead className="print:table-header-group">
+                                        {/* 헤더 인포메이션 (모든 인쇄 페이지 상단에 반복 출력됨) */}
+                                        <tr>
+                                            <th colSpan="11" className="no-border-top bg-white p-0 pt-2 pb-6 text-left">
+                                                <div className="flex justify-between items-start border-b-2 border-slate-900 pb-4">
+                                                    <div className="space-y-4 flex-1">
+                                                        <h2 className="text-3xl font-black tracking-tighter text-slate-900 border-b-4 border-slate-900 pb-2 inline-block">OVERSEAS TRAVELERS LIST</h2>
+                                                        <div className="grid grid-cols-1 gap-1 text-sm font-bold text-slate-700">
+                                                            <HeaderField label="GROUP NAME" value={headerInfo.groupName} onChange={(v) => setHeaderInfo({...headerInfo, groupName: v})} />
+                                                            <HeaderField label="DATE" value={headerInfo.date} onChange={(v) => setHeaderInfo({...headerInfo, date: v})} />
+                                                            <HeaderField label="NATION/LOCAL" value={headerInfo.nation} onChange={(v) => setHeaderInfo({...headerInfo, nation: v})} />
+                                                            <HeaderField label="NUMBER" value={headerInfo.number} onChange={(v) => setHeaderInfo({...headerInfo, number: v})} />
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right flex flex-col items-end">
+                                                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" className="h-10 mb-2" alt="Tourmaker Logo" />
+                                                        <div className="text-[10px] text-red-500 font-bold italic">여권 만료일 출발일 기준 최소 6개월 이상 필수</div>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                        {/* 테이블 컬럼명 */}
+                                        <tr className="bg-slate-100 border-b-2 border-slate-800 text-slate-900">
+                                            <th className="no-print p-2 w-8">순서</th>
+                                            <th className="p-2 border border-slate-300 w-10 text-center">NO</th>
+                                            <th className="p-2 border border-slate-300 text-left">성명</th>
+                                            <th className="p-2 border border-slate-300 text-left">NAME</th>
+                                            <th className="p-2 border border-slate-300 text-left">생년월일</th>
+                                            <th className="p-2 border border-slate-300 w-12 text-center">성별</th>
+                                            <th className="p-2 border border-slate-300 text-left">여권번호</th>
+                                            <th className="p-2 border border-slate-300 text-left">여권만료일</th>
+                                            <th className="p-2 border border-slate-300 text-center">국적</th>
+                                            <th className="p-2 border border-slate-300 text-left">비고</th>
+                                            <th className="p-2 no-print w-10 border border-slate-300 text-center">삭제</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody className="print:table-row-group">
+                                        {travelers.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="11" className="p-12 text-center text-slate-400 italic border border-slate-300">상단 업로드 또는 '명단 수동 추가' 버튼을 눌러 인원을 구성해주세요.</td>
+                                            </tr>
+                                        ) : travelers.map((t, idx) => {
+                                            const status = getExpiryStatus(t.expiry);
+                                            return (
+                                                <tr 
+                                                    key={t.id} 
+                                                    className="border-b border-slate-300 hover:bg-blue-50 transition group bg-white"
+                                                    draggable
+                                                    onDragStart={(e) => dragStart(e, idx)}
+                                                    onDragEnter={(e) => dragEnter(e, idx)}
+                                                    onDragEnd={dragEnd}
+                                                    onDrop={drop}
+                                                    onDragOver={(e) => e.preventDefault()}
+                                                >
+                                                    <td className="no-print p-2 text-center text-slate-300 hover:text-blue-500 drag-handle border border-slate-300" title="드래그하여 순서 변경">
+                                                        <i className="fas fa-bars"></i>
+                                                    </td>
+                                                    <td className="p-2 text-center border border-slate-300 text-slate-500 font-bold">{idx + 1}</td>
+                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.nameKor} onChange={(v) => updateField(t.id, 'nameKor', v)} bold /></td>
+                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.nameEng} onChange={(v) => updateField(t.id, 'nameEng', v.toUpperCase())} uppercase /></td>
+                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.birth} onChange={(v) => updateField(t.id, 'birth', v)} placeholder="YYYY-MM-DD" /></td>
+                                                    <td className="p-2 border border-slate-300 text-center">
+                                                        <select className="bg-transparent border-none outline-none cursor-pointer text-slate-700 font-bold" value={t.gender} onChange={(e) => updateField(t.id, 'gender', e.target.value)}>
+                                                            <option value="M">M</option><option value="F">F</option>
+                                                        </select>
+                                                    </td>
+                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.passportNo} onChange={(v) => updateField(t.id, 'passportNo', v.toUpperCase())} uppercase /></td>
+                                                    <td className={`p-2 border border-slate-300 ${status.color}`}>
+                                                        <div className="flex items-center justify-between">
+                                                            <EditableCell val={t.expiry} onChange={(v) => updateField(t.id, 'expiry', v)} placeholder="YYYY-MM-DD" />
+                                                            {status.warning && <i className="fas fa-exclamation-triangle text-orange-400 no-print ml-1" title={status.msg}></i>}
+                                                        </div>
+                                                    </td>
+                                                    <td className="p-2 border border-slate-300 text-center"><EditableCell val={t.nation} onChange={(v) => updateField(t.id, 'nation', v)} center /></td>
+                                                    <td className="p-2 border border-slate-300"><EditableCell val={t.remark} onChange={(v) => updateField(t.id, 'remark', v)} /></td>
+                                                    <td className="p-2 no-print text-center border border-slate-300">
+                                                        <button onClick={() => removeTraveler(t.id)} className="text-slate-300 hover:text-red-500 transition px-2"><i className="fas fa-trash-alt"></i></button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </tbody>
+
+                                    {/* 푸터 영역 (모든 인쇄 페이지 하단에 반복 출력됨) */}
+                                    <tfoot className="print:table-footer-group">
+                                        <tr>
+                                            <td colSpan="11" className="no-border-top bg-white p-0 pt-6">
+                                                <div className="border-t border-slate-200 pt-4">
+                                                    <div className="flex justify-between items-end mb-4">
+                                                        <div className="text-[10px] text-slate-400">제출일: {new Date().toLocaleDateString()}</div>
+                                                        <div className="text-right">
+                                                            <div className="text-xs font-bold text-slate-800">TOURMAKER Smart System</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="bg-[#f8f9fa] py-4 px-6 rounded-lg text-center">
+                                                        <p className="text-[11px] text-[#6c757d] leading-relaxed m-0">
+                                                            [System Powered by <a href="https://tourmaker.kr" target="_blank" rel="noreferrer" className="font-bold underline text-[#6c757d]">TOURMAKER</a>] 본 여행자 명단 시스템은 투어메이커의 기획과 트래블 테크 기술 제휴로 제작되었습니다.<br/>모든 개인정보는 브라우저 내에서만 안전하게 처리되며 외부 서버에 저장되지 않습니다.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                
+                                <div className="no-print mt-6 flex justify-center">
+                                    <button onClick={addEmptyTraveler} className="border-2 border-dashed border-blue-300 text-blue-600 font-bold text-sm px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-blue-50 transition shadow-sm">
+                                        <i className="fas fa-user-plus"></i> 이름 미정 명단 1줄 수동 추가
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ========================================================================= */}
+                        {/* TAB 2: 방 배정 (루밍리스트) */}
+                        {/* ========================================================================= */}
+                        <div className={activeMainTab === 'rooming' ? 'block' : 'hidden'}>
+                            <div className="max-w-[1100px] mx-auto p-4 md:p-6 print-rooming-list">
+                                
+                                {/* 가이드 및 컨트롤 영역 */}
+                                <div className="no-print mb-6">
+                                    <div className="flex bg-white p-1 rounded-lg border border-slate-200 shadow-sm inline-flex mb-4">
+                                        <button onClick={() => setIsInternationalRooming(false)} className={`px-4 py-1.5 rounded text-sm font-bold transition ${!isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>국내행사 (한글만)</button>
+                                        <button onClick={() => setIsInternationalRooming(true)} className={`px-4 py-1.5 rounded text-sm font-bold transition ${isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>해외행사 (영문포함)</button>
+                                    </div>
+
+                                    {showGuideRooming && (
+                                        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                                            <div className="flex border-b border-slate-200">
+                                                <button onClick={() => setActiveSubTabRooming('pdf')} className={`flex-1 py-3 text-sm font-bold flex justify-center items-center gap-2 transition ${activeSubTabRooming === 'pdf' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'bg-white text-slate-500 hover:bg-slate-50'}`}>
+                                                    <i className="fas fa-file-pdf"></i> 작성된 명단(PDF) 업로드
+                                                </button>
+                                                <button onClick={() => setActiveSubTabRooming('text')} className={`flex-1 py-3 text-sm font-bold flex justify-center items-center gap-2 transition ${activeSubTabRooming === 'text' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'bg-white text-slate-500 hover:bg-slate-50'}`}>
+                                                    <i className="fas fa-keyboard"></i> 텍스트로 명단 붙여넣기
+                                                </button>
+                                            </div>
+
+                                            <div className="p-5">
+                                                {activeSubTabRooming === 'pdf' ? (
+                                                    <div className="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
+                                                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3"><i className="fas fa-file-import text-blue-500 text-xl"></i></div>
+                                                        <h4 className="font-bold text-slate-800 mb-2 text-sm">담당자님이 작성해두신 PDF 파일을 올려주세요</h4>
+                                                        <p className="text-xs text-slate-500 mb-5 max-w-md">기존에 임의로 작성해두신 방배정표 파일(PDF)이 있다면 올려주세요. 시스템이 표 구조를 무시하고 사람 이름만 쏙쏙 골라 투어메이커 공식 양식으로 자동 변환해 드립니다.</p>
+                                                        <input type="file" id="rooming-upload" accept=".pdf" className="hidden" onChange={handleRoomingFileUpload}/>
+                                                        <label htmlFor="rooming-upload" className="cursor-pointer bg-blue-600 text-white px-6 py-2.5 rounded font-bold text-sm hover:bg-blue-700 transition shadow-sm">PC에서 PDF 찾아보기</label>
+                                                    </div>
+                                                ) : (
+                                                    <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                                                        <div className="md:col-span-2">
+                                                            <h4 className="font-bold mb-2 text-slate-800 text-sm flex items-center gap-2"><i className="fas fa-circle-info text-blue-500"></i> 메모장 쓰듯 편하게 적어주세요.</h4>
+                                                            <ul className="space-y-1.5 text-xs text-slate-600">
+                                                                <li>1. <b>한 줄에 한 방</b> 인원을 나열해주세요.</li>
+                                                                <li>2. 성별 구분 없이 이름만 편하게 나열하셔도 됩니다.</li>
+                                                                <li>3. 배정 후 버튼을 클릭해 성별을 바로 바꿀 수 있습니다.</li>
+                                                            </ul>
+                                                        </div>
+                                                        <div className="md:col-span-3 flex flex-col">
+                                                            <textarea className="w-full flex-grow p-3 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 outline-none" placeholder="참가자1 참가자2&#10;참가자3 참가자4&#10;인솔자" value={importTextRooming} onChange={(e) => setImportTextRooming(e.target.value)}></textarea>
+                                                            <button onClick={handleRoomingSmartImport} className="w-full mt-2 py-2 bg-slate-800 text-white text-sm font-bold rounded-lg hover:bg-black transition shadow-sm">방 배정 자동 생성</button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* 프린트되는 루밍 페이지 레이아웃 (페이지별 자동 분할 기능 유지) */}
+                                <div className="space-y-6 print:space-y-0">
+                                    {roomPages.map((pageRooms, pageIndex) => {
+                                        const leftTableRooms = pageRooms.slice(0, Math.ceil(pageRooms.length / 2));
+                                        const rightTableRooms = pageRooms.slice(Math.ceil(pageRooms.length / 2));
+                                        const pageStartIndex = pageIndex * ROOMS_PER_PAGE;
+
+                                        return (
+                                            <div key={pageIndex} className="print-page bg-white shadow-lg p-5 md:p-8 border-t-[6px] border-slate-800 print:shadow-none print:p-0 print:border-none print:m-0 relative flex flex-col justify-between" style={{ minHeight: '277mm' }}>
+                                                <div className="flex-1 flex flex-col">
+                                                    {/* Header */}
+                                                    <div className="flex flex-col md:flex-row print:flex-row justify-between items-end border-b-2 border-slate-800 pb-2 mb-3 gap-4">
+                                                        <div className="space-y-1.5 flex-1 min-w-0 w-full mt-1">
+                                                            <HeaderField label="GROUP" val={roomingHeaderInfo.groupName} onChange={(v) => setRoomingHeaderInfo({...roomingHeaderInfo, groupName: v})} isMain={true} />
+                                                            <HeaderField label="DATE" val={roomingHeaderInfo.date} onChange={(v) => setRoomingHeaderInfo({...roomingHeaderInfo, date: v})} />
+                                                            <HeaderField label="LOCATION" val={roomingHeaderInfo.location} onChange={(v) => setRoomingHeaderInfo({...roomingHeaderInfo, location: v})} />
+                                                            
+                                                            <div className="flex items-center group w-full">
+                                                                <span className="w-20 md:w-24 text-[9px] font-black text-slate-500 tracking-widest uppercase flex-shrink-0">TOTAL PAX</span>
+                                                                <div className="text-xs font-bold text-slate-800 flex-1 flex items-center gap-3">
+                                                                    <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">총 인원: <span className="text-blue-600">{roomStats.total}</span>명</span>
+                                                                    <span className="text-[10px] text-slate-500">( 남 {roomStats.male}명 / 여 {roomStats.female}명 )</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right flex-shrink-0 flex flex-col items-end print:text-right">
+                                                            <h2 className="text-2xl md:text-3xl font-black italic tracking-tighter text-slate-800 leading-none">ROOMING LIST</h2>
+                                                            {totalRoomPages > 1 && <span className="text-[10px] font-bold text-slate-400 mt-1">Page {pageIndex + 1} / {totalRoomPages}</span>}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex justify-between items-center mb-3">
+                                                        {isInternationalRooming ? <p className="text-[11px] font-bold text-blue-800 no-print"><i className="fas fa-info-circle"></i> 영문 스펠링은 반드시 재확인 바랍니다.</p> : <div></div>}
+                                                        <div className="flex gap-2 text-[10px] font-bold text-slate-600 no-print">
+                                                            {roomStats.roomCounts.SINGLE > 0 && <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-100">SGL: {roomStats.roomCounts.SINGLE}</span>}
+                                                            {roomStats.roomCounts.TWIN > 0 && <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-100">TWN: {roomStats.roomCounts.TWIN}</span>}
+                                                            {roomStats.roomCounts.TRIPLE > 0 && <span className="bg-amber-50 text-amber-700 px-2 py-1 rounded border border-amber-100">TRP: {roomStats.roomCounts.TRIPLE}</span>}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-x-8 gap-y-4">
+                                                        <RoomTable rooms={leftTableRooms} startIndex={pageStartIndex} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} isInternational={isInternationalRooming} />
+                                                        <RoomTable rooms={rightTableRooms} startIndex={pageStartIndex + leftTableRooms.length} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} isInternational={isInternationalRooming} />
+                                                    </div>
+                                                </div>
+
+                                                <TourmakerFooterRooming />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="mt-8 no-print flex justify-center">
+                                    <button onClick={addRoom} className="bg-white border-2 border-dashed border-blue-300 text-blue-600 px-10 py-4 rounded-xl font-bold text-sm hover:bg-blue-50 hover:border-blue-500 transition-all shadow-sm">
+                                        <i className="fas fa-bed text-xl mr-2"></i> 이름 미정 빈 객실 추가하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </main>
+                </div>
+            );
+        };
+
+        // --- 재사용 컴포넌트 ---
+        const HeaderField = ({ label, value, onChange, isMain = false }) => (
+            <div className="flex items-center gap-2 w-full">
+                <span className={`w-20 md:w-24 text-[9px] font-black text-slate-500 tracking-widest uppercase flex-shrink-0 ${isMain ? 'text-[11px]' : ''}`}>{label}</span>
+                <input 
+                    type="text" 
+                    className={`flex-1 border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none px-2 transition-all text-slate-800 ${isMain ? 'font-black text-lg md:text-xl py-0.5' : 'font-bold text-xs py-1'}`}
+                    value={value} 
+                    onChange={(e) => onChange(e.target.value)} 
+                />
+            </div>
+        );
+
+        const EditableCell = ({ val, onChange, bold, uppercase, placeholder, center }) => (
+            <input 
+                type="text"
+                className={`w-full bg-transparent outline-none border-b border-transparent focus:border-blue-400 transition-colors ${bold ? 'font-black text-slate-900' : ''} ${uppercase ? 'uppercase' : ''} ${center ? 'text-center' : ''}`}
+                value={val}
+                placeholder={placeholder}
+                onChange={(e) => onChange(e.target.value)}
+            />
+        );
+
+        const RoomTable = ({ rooms, startIndex, updateRoom, updateGuest, changeRoomType, removeRoom, isInternational }) => (
+            <div className="border-t-[2px] border-slate-800 room-table-container">
+                <div className="grid grid-cols-[40px_1fr_100px] bg-slate-100 border-b border-slate-300 text-[9px] font-black py-1.5 px-1 text-center uppercase tracking-widest text-slate-600">
+                    <div>No</div><div>Guest Info</div><div>Room No</div>
+                </div>
+                {rooms.map((room, rIdx) => {
+                    const actualIdx = startIndex + rIdx;
+                    return (
+                        <div key={actualIdx} className="room-row grid grid-cols-[40px_1fr_100px] border-b border-slate-200 group relative min-h-[72px]">
+                            <div className="flex flex-col items-center justify-center bg-slate-50 border-r border-slate-100 py-1">
+                                <span className="text-[11px] font-black text-slate-800">{actualIdx + 1}</span>
+                                <select className="no-print mt-0.5 text-[8px] font-bold text-slate-400 bg-transparent outline-none cursor-pointer" value={room.type} onChange={(e) => changeRoomType(actualIdx, e.target.value)}>
+                                    <option value="SINGLE">SGL</option><option value="TWIN">TWN</option><option value="TRIPLE">TRP</option><option value="QUAD">QUAD</option>
+                                </select>
+                            </div>
+                            
+                            <div className="flex flex-col py-0.5 bg-white">
+                                {room.guests.map((g, gIdx) => (
+                                    <div key={gIdx} className={`flex flex-col px-2 py-1 ${gIdx > 0 ? 'border-t border-slate-100' : ''}`}>
+                                        <div className="flex items-center gap-2 mb-0.5 w-full">
+                                            <input className="w-20 md:w-24 font-bold text-xs outline-none bg-transparent focus:text-blue-600" value={g.name} placeholder="이름 입력" onChange={(e) => updateGuest(actualIdx, gIdx, 'name', e.target.value)} />
+                                            <button onClick={() => updateGuest(actualIdx, gIdx, 'gender', g.gender === '남' ? '여' : '남')} className={`flex-shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded cursor-pointer ${g.gender === '여' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
+                                                {g.gender}
+                                            </button>
+                                            <input className="flex-1 min-w-0 text-[10px] text-slate-500 outline-none bg-transparent" placeholder="비고란" value={g.remark} onChange={(e) => updateGuest(actualIdx, gIdx, 'remark', e.target.value)} />
+                                        </div>
+                                        {isInternational && (
+                                            <input className="text-[10px] font-medium tracking-wide text-slate-400 outline-none uppercase bg-transparent" placeholder="ENGLISH NAME" value={g.engName} onChange={(e) => updateGuest(actualIdx, gIdx, 'engName', e.target.value)} />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <div className="border-l border-slate-100 flex items-center justify-center p-1 bg-white">
+                                <input className="w-full text-center text-[11px] font-bold text-slate-600 bg-transparent outline-none" placeholder="추후 배정" value={room.roomNo} onChange={(e) => updateRoom(actualIdx, 'roomNo', e.target.value)} />
+                            </div>
+                            
+                            <button onClick={() => removeRoom(actualIdx)} className="no-print absolute -left-6 top-1/2 -translate-y-1/2 p-1 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 z-10"><i className="fas fa-trash-alt text-[10px]"></i></button>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+
+        const TourmakerFooterRooming = () => (
+            <div className="mt-12 pt-6 border-t border-slate-100">
+                <div className="flex justify-between items-end mb-4">
+                    <div className="text-[10px] text-slate-400">제출일: {new Date().toLocaleDateString()}</div>
+                    <div className="text-right">
+                        <div className="text-xs font-bold text-slate-800">TOURMAKER Smart System</div>
+                    </div>
+                </div>
+                <div className="bg-[#f8f9fa] py-4 px-6 rounded-lg text-center">
+                    <p className="text-[11px] text-[#6c757d] leading-relaxed m-0">
+                        [System Powered by <a href="https://tourmaker.kr" target="_blank" rel="noreferrer" className="font-bold underline text-[#6c757d]">TOURMAKER</a>] 본 시스템은 투어메이커의 기획과 트래블 테크 기술 제휴로 제작되었습니다.<br/>모든 개인정보는 브라우저 내에서만 안전하게 처리되며 외부 서버에 저장되지 않습니다.
+                    </p>
+                </div>
+            </div>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
