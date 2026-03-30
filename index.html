@@ -13,18 +13,12 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- React & ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    
-    <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <!-- PDF.js & Tesseract.js for File Parsing (OCR) -->
@@ -44,295 +38,477 @@
     <style>
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
         
-        /* 인쇄 최적화 (다중 페이지 완벽 대응) */
+        /* 인쇄 최적화 (다중 페이지 완벽 대응 및 A4 강제) */
         @media print {
             .no-print { display: none !important; }
             body { background-color: white !important; padding: 0 !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             
-            /* 명단 인쇄용 (답답한 박스 제거, 가로선 위주의 넓고 시원한 디자인) */
             .print-traveler-list {
-                width: 100% !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important;
+                width: 100% !important; max-width: none !important; box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important;
                 @page { size: A4 portrait; margin: 15mm; }
             }
-            .print-traveler-list .table-wrapper { overflow: visible !important; }
-            .print-traveler-list table { border-collapse: collapse !important; width: 100% !important; page-break-inside: auto; }
+            .print-traveler-list .table-wrapper { overflow: visible !important; width: 100% !important; }
+            .print-traveler-list table { border-collapse: collapse !important; width: 100% !important; page-break-inside: auto; min-width: 0 !important; }
             .print-traveler-list thead { display: table-header-group; }
             .print-traveler-list tfoot { display: table-footer-group; }
             .print-traveler-list tr { page-break-inside: avoid; page-break-after: auto; }
             .print-traveler-list th, .print-traveler-list td { 
-                border: none !important; /* 세로선 완벽 제거 */
-                border-bottom: 1px solid #e2e8f0 !important; /* 부드러운 가로선만 유지 */
-                padding: 12px 4px !important; /* A4 용지 꽉 차게 위아래 여백 확대 */
-                font-size: 10pt !important; 
+                border: none !important; border-bottom: 1px solid #e2e8f0 !important; padding: 10px 2px !important; font-size: 9pt !important; 
             }
-            .print-traveler-list th { 
-                border-top: 2px solid #1e293b !important; /* 헤더 상단 굵은 선 */
-                border-bottom: 2px solid #1e293b !important; /* 헤더 하단 굵은 선 */
-                background-color: transparent !important; 
-                color: #1e293b !important;
-            }
+            .print-traveler-list th { border-top: 2px solid #1e293b !important; border-bottom: 2px solid #1e293b !important; color: #1e293b !important; }
             .print-traveler-list th.no-border-top, .print-traveler-list td.no-border-top { border: none !important; padding: 0 !important; }
             
-            /* 루밍리스트 인쇄용 */
-            .print-rooming-list {
-                box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important;
-                @page { size: A4 portrait; margin: 8mm; }
-            }
-            .print-page { page-break-after: always; break-inside: avoid !important; display: flex !important; flex-direction: column !important; }
+            .print-rooming-list { box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important; @page { size: A4 portrait; margin: 8mm; } }
+            .print-page { page-break-after: always; break-inside: avoid !important; display: flex !important; flex-direction: column !important; min-height: 277mm !important; }
             .print-page:last-child { page-break-after: auto; }
             .room-table-container, .room-row { break-inside: avoid; }
-            
-            input, select { border: none !important; background: transparent !important; appearance: none; -moz-appearance: none; -webkit-appearance: none; }
+            input, select, textarea { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; }
         }
 
-        /* 드래그 앤 드롭 시각적 효과 */
-        .dragging { opacity: 0.5; background-color: #f1f5f9; }
+        .dragging { opacity: 0.55; background-color: #f1f5f9; }
         .drag-handle { cursor: grab; }
         .drag-handle:active { cursor: grabbing; }
 
-        /* 편집 가능한 셀의 호버/포커스 효과 강조 */
-        .editable-cell-input { transition: all 0.2s; width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+        .editable-cell-input { transition: all 0.15s ease; width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
         .editable-cell-input:hover { background-color: #f1f5f9; cursor: text; border-radius: 4px; padding-left: 4px; padding-right: 4px; overflow: visible; }
         .editable-cell-input:focus { background-color: #e0f2fe; border-bottom: 2px solid #3b82f6; outline: none; padding-left: 4px; overflow: visible; }
 
-        /* 파일 드롭존 시각적 효과 */
-        .dropzone-active { background-color: #eff6ff !important; border-color: #3b82f6 !important; transform: scale(1.02); }
-
-        /* 테이블 가로 스크롤을 위한 래퍼 속성 */
+        .dropzone-active { background-color: #eff6ff !important; border-color: #3b82f6 !important; transform: scale(1.01); }
         .table-wrapper { overflow-x: auto; width: 100%; padding-bottom: 15px; }
 
-        /* 투어메이커 메인 로고 변수화 */
-        :root {
-            --tm-logo-url: url('https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8');
-        }
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar { height: 8px; width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body>
-
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef, useMemo } = React;
+        const { useEffect, useMemo, useRef, useState } = React;
 
         const TM_LOGO = "https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8";
 
-        // --- 공통 헬퍼 함수 (영문 변환기) ---
-        const getRomanization = (char) => {
-            const CHO = ["G","KK","N","D","TT","R","M","B","PP","S","SS","","J","JJ","CH","K","T","P","H"];
-            const JUNG = ["A","AE","YA","YAE","EO","E","YEO","YE","O","WA","WAE","OE","YO","U","WO","WE","WI","YU","EU","UI","I"];
-            const JONG = ["","K","K","K","N","N","N","T","L","L","M","P","L","L","P","L","M","P","P","T","T","NG","T","T","K","T","P","T"];
-            const code = char.charCodeAt(0) - 0xAC00;
-            if (code < 0 || code > 11171) return char; 
+        // UI 렌더링 강제 업데이트 유틸 (화면 멈춤 방지)
+        const delay = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
+        const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
+        // --- 로마자 변환 및 파싱 유틸 ---
+        const CHO = ["G","KK","N","D","TT","R","M","B","PP","S","SS","","J","JJ","CH","K","T","P","H"];
+        const JUNG = ["A","AE","YA","YAE","EO","E","YEO","YE","O","WA","WAE","OE","YO","U","WO","WE","WI","YU","EU","UI","I"];
+        const JONG = ["","K","K","K","N","N","N","T","L","L","M","P","L","L","P","L","M","P","P","T","T","NG","T","T","K","T","P","T"];
+        const FAMILY_NAME_MAP = { "김":"KIM", "이":"LEE", "박":"PARK", "최":"CHOI", "정":"JUNG", "강":"KANG", "조":"CHO", "윤":"YOON", "장":"JANG", "임":"LIM", "홍":"HONG", "송":"SONG", "오":"OH", "서":"SEO", "신":"SHIN", "권":"KWON", "황":"HWANG", "안":"AHN", "유":"YOO", "전":"JEON", "배":"BAE", "고":"KO", "문":"MOON", "양":"YANG", "손":"SON", "백":"BAEK", "허":"HEO", "남":"NAM", "심":"SHIM", "노":"NOH", "하":"HA", "곽":"KWAK", "성":"SUNG", "차":"CHA", "주":"JOO", "우":"WOO", "구":"KOO", "나":"NA", "민":"MIN", "엄":"EOM", "채":"CHAE", "원":"WON", "방":"BANG", "공":"KONG" };
+
+        function getRomanization(char) {
+            const code = char.charCodeAt(0) - 0xac00;
+            if (code < 0 || code > 11171) return char;
             return CHO[Math.floor(code / 588)] + JUNG[Math.floor((code % 588) / 28)] + JONG[code % 28];
         }
 
-        const koreanToEnglish = (name) => {
+        function koreanToEnglish(name) {
             if (!name) return "";
-            const fNames = {"김":"KIM", "이":"LEE", "박":"PARK", "최":"CHOI", "정":"JUNG", "강":"KANG", "조":"CHO", "윤":"YOON", "장":"JANG", "임":"LIM", "홍":"HONG", "송":"SONG", "오":"OH", "서":"SEO", "신":"SHIN", "권":"KWON", "황":"HWANG", "안":"AHN", "유":"YOO", "전":"JEON", "배":"BAE", "고":"KO", "문":"MOON", "양":"YANG", "손":"SON", "백":"BAEK", "허":"HEO", "남":"NAM", "심":"SHIM", "노":"NOH", "하":"HA", "곽":"KWAK", "성":"SUNG", "차":"CHA", "주":"JOO", "우":"WOO", "구":"KOO", "나":"NA", "민":"MIN", "엄":"EOM", "채":"CHAE", "원":"WON", "방":"BANG", "공":"KONG"};
-            const char1 = name.charAt(0);
-            const engFamily = fNames[char1] || getRomanization(char1);
-            let engGiven = "";
-            for(let i = 1; i < name.length; i++) engGiven += getRomanization(name.charAt(i));
-            return `${engFamily} ${engGiven}`.trim(); 
-        };
+            const trimmed = name.trim();
+            if (!trimmed) return "";
+            const family = trimmed.charAt(0);
+            const engFamily = FAMILY_NAME_MAP[family] || getRomanization(family);
+            let given = "";
+            for (let i = 1; i < trimmed.length; i += 1) given += getRomanization(trimmed.charAt(i));
+            return `${engFamily} ${given}`.trim();
+        }
 
-        // UI 렌더링 강제 업데이트를 위한 유틸리티 함수 (화면 멈춤 방지 시간 확대)
-        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        function normalizeOCRText(text) {
+            return (text || "").replace(/[|]/g, "I").replace(/[“”‘’`´]/g, "").replace(/\r/g, "\n").replace(/[^A-Za-z0-9<\n ]/g, " ").toUpperCase();
+        }
+
+        function normalizeMRZLine(line) {
+            return (line || "").toUpperCase().replace(/\s+/g, "").replace(/«/g, "<").replace(/[«‹⟨〈]/g, "<").replace(/K0R/g, "KOR")
+                .replace(/O(?=\d{5,})/g, "0").replace(/(?<=\d)O/g, "0").replace(/O(?=\d)/g, "0").replace(/(?<=\d)I/g, "1").replace(/(?<=\d)L/g, "1").replace(/[^A-Z0-9<]/g, "");
+        }
+
+        function formatMrzName(namePart) {
+            return (namePart || "").replace(/<+/g, " ").trim().replace(/\s+/g, " ");
+        }
+
+        function yyMMddToFullDate(value, mode = "birth") {
+            if (!/^\d{6}$/.test(value || "")) return "";
+            const yy = Number(value.slice(0, 2));
+            const mm = value.slice(2, 4);
+            const dd = value.slice(4, 6);
+            let year;
+            if (mode === "expiry") { year = 2000 + yy; } 
+            else {
+                const currentYY = Number(new Date().getFullYear().toString().slice(-2));
+                year = yy <= currentYY ? 2000 + yy : 1900 + yy;
+            }
+            return `${year}-${mm}-${dd}`;
+        }
+
+        function parseMRZPair(line1, line2) {
+            const l1 = normalizeMRZLine(line1).padEnd(44, "<").slice(0, 44);
+            const l2 = normalizeMRZLine(line2).padEnd(44, "<").slice(0, 44);
+            if (!l1.startsWith("P<")) return null;
+            if (l2.length < 30) return null;
+
+            const issuingState = l1.slice(2, 5).replace(/</g, "") || "KOR";
+            const namesChunk = l1.slice(5);
+            const nameParts = namesChunk.split("<<");
+            const surname = formatMrzName(nameParts[0] || "");
+            const given = formatMrzName(nameParts.slice(1).join(" "));
+            const nameEng = [surname, given].filter(Boolean).join(" ").trim();
+
+            const passportNo = l2.slice(0, 9).replace(/</g, "");
+            const nationality = l2.slice(10, 13).replace(/</g, "") || issuingState || "KOR";
+            const birth = yyMMddToFullDate(l2.slice(13, 19), "birth");
+            const genderRaw = l2.slice(20, 21);
+            const gender = genderRaw === "F" ? "F" : "M";
+            const expiry = yyMMddToFullDate(l2.slice(21, 27), "expiry");
+
+            if (!passportNo || !birth || !expiry || !nameEng) return null;
+
+            return {
+                id: `${passportNo}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                nameKor: "", nameEng, birth, gender, passportNo, expiry, nation: nationality || "KOR", remark: ""
+            };
+        }
+
+        function extractMRZRecordsFromText(rawText) {
+            const text = normalizeOCRText(rawText);
+            const lines = text.split(/\n+/).map((line) => normalizeMRZLine(line)).filter((line) => line.length >= 25);
+            const pairs = [];
+            for (let i = 0; i < lines.length - 1; i += 1) {
+                const current = lines[i]; const next = lines[i + 1];
+                if (current.startsWith("P<") && next.length >= 30) pairs.push([current, next]);
+            }
+            if (pairs.length === 0) {
+                const flattened = normalizeMRZLine(text.replace(/\n/g, "<"));
+                const regex = /P<[A-Z<]{3}[A-Z<]{20,39}<[A-Z0-9<]{30,44}/g;
+                const matches = flattened.match(regex) || [];
+                matches.forEach((chunk) => {
+                    const line1 = chunk.slice(0, 44); const line2 = chunk.slice(44, 88);
+                    if (line1 && line2) pairs.push([line1, line2]);
+                });
+            }
+            const records = []; const seen = new Set();
+            for (const [line1, line2] of pairs) {
+                const parsed = parseMRZPair(line1, line2);
+                if (!parsed) continue;
+                if (seen.has(parsed.passportNo)) continue;
+                seen.add(parsed.passportNo);
+                records.push(parsed);
+            }
+            return records;
+        }
+
+        // 실시간으로 기존 명단에 새 명단을 중복 없이 결합하는 함수
+        function mergeTravelers(prev, incoming) {
+            if (!Array.isArray(incoming) || incoming.length === 0) return prev;
+            const map = new Map(prev.map((item) => [String(item.passportNo || "").toUpperCase(), item]));
+            const noPassportList = prev.filter((item) => !item.passportNo);
+            const result = [];
+
+            prev.forEach((item) => {
+                if (!item.passportNo) { result.push(item); return; }
+                const key = String(item.passportNo).toUpperCase();
+                map.set(key, item);
+                result.push(item);
+            });
+
+            incoming.forEach((item) => {
+                const key = String(item.passportNo || "").toUpperCase();
+                if (!key) { noPassportList.push(item); result.push(item); return; }
+                const index = result.findIndex((row) => String(row.passportNo || "").toUpperCase() === key);
+                if (index === -1) {
+                    result.push(item);
+                } else {
+                    const old = result[index];
+                    result[index] = { ...old, ...item, nameKor: old.nameKor || item.nameKor || "", remark: old.remark || item.remark || "" };
+                }
+            });
+            return result;
+        }
+
+        function getExpiryStatus(dateStr) {
+            if (!dateStr) return { color: "text-slate-400", warning: false };
+            const match = String(dateStr).match(/(\d{4})[-./년]?\s*(\d{1,2})[-./월]?\s*(\d{1,2})/);
+            if (!match) return { color: "text-slate-600", warning: false };
+            const expDate = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+            if (Number.isNaN(expDate.getTime())) return { color: "text-slate-600", warning: false };
+            const today = new Date();
+            const sixMonthsLater = new Date(today);
+            sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+            if (expDate < today) return { color: "text-red-600 font-bold bg-red-50", warning: true, msg: "만료됨" };
+            if (expDate < sixMonthsLater) return { color: "text-orange-500 font-bold", warning: true, msg: "6개월 미만" };
+            return { color: "text-slate-700", warning: false };
+        }
+
+        // 이미지 전처리 (캔버스로 대비/밝기 조정하여 OCR 인식률 극대화)
+        async function canvasToBlob(canvas) { return new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 1)); }
+        function preprocessCanvas(sourceCanvas, mode = 'mrz') {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            const sx = 0; const sy = mode === 'mrz' ? Math.floor(sourceCanvas.height * 0.62) : 0;
+            const sw = sourceCanvas.width; const sh = mode === 'mrz' ? Math.floor(sourceCanvas.height * 0.38) : sourceCanvas.height;
+            canvas.width = sw; canvas.height = sh;
+            ctx.drawImage(sourceCanvas, sx, sy, sw, sh, 0, 0, sw, sh);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                const val = gray > 160 ? 255 : 0;
+                data[i] = val; data[i + 1] = val; data[i + 2] = val;
+            }
+            ctx.putImageData(imgData, 0, 0);
+            return canvas;
+        }
+
+        async function renderPdfPageToCanvas(page, scale = 2.5) {
+            const viewport = page.getViewport({ scale });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = viewport.width; canvas.height = viewport.height;
+            await page.render({ canvasContext: context, viewport }).promise;
+            return canvas;
+        }
 
         const App = () => {
             const [activeMainTab, setActiveMainTab] = useState('traveler');
+            const [isNavMenuOpen, setIsNavMenuOpen] = useState(true); // 입력창 열기/닫기 상태
 
-            // ==========================================
-            // [TAB 1] 여행자 명단 (투어메이커 내부관리용)
-            // ==========================================
+            // ── TAB 1: 여행자 명단 상태 ──
             const [travelers, setTravelers] = useState([]);
-            const [importText, setImportText] = useState("");
+            const [importText, setImportText] = useState('');
             const [isProcessing, setIsProcessing] = useState(false);
             const [isFileDragActive, setIsFileDragActive] = useState(false);
-            const [headerInfo, setHeaderInfo] = useState({ groupName: "", date: "", nation: "", number: "" });
+            const [headerInfo, setHeaderInfo] = useState({ groupName: '', date: '', nation: '', number: '' });
 
-            // 행 순서 드래그 앤 드롭 Refs
-            const dragItem = useRef();
-            const dragOverItem = useRef();
+            const dragItem = useRef(null);
+            const dragOverItem = useRef(null);
+            const ocrWorkerRef = useRef(null);
 
-            const dragStart = (e, position) => { dragItem.current = position; e.target.closest('tr')?.classList.add('dragging'); };
-            const dragEnter = (e, position) => { dragOverItem.current = position; };
-            const drop = (e) => {
-                const tr = e.target.closest('tr');
-                if (tr) tr.classList.remove('dragging');
-                if (dragItem.current === null || dragOverItem.current === null) return;
+            // ── TAB 2: 방 배정 (루밍리스트) 상태 ──
+            const [isInternationalRooming, setIsInternationalRooming] = useState(true);
+            const [activeSubTabRooming, setActiveSubTabRooming] = useState('pdf');
+            const [roomingHeaderInfo, setRoomingHeaderInfo] = useState({ groupName: '', date: '', location: '' });
+            const [rooms, setRooms] = useState([
+                { id: 1, type: 'TWIN', roomNo: '', guests: [{ name: '', engName: '', gender: '남', remark: '' }, { name: '', engName: '', gender: '남', remark: '' }] },
+                { id: 2, type: 'TWIN', roomNo: '', guests: [{ name: '', engName: '', gender: '여', remark: '' }, { name: '', engName: '', gender: '여', remark: '' }] }
+            ]);
+            const [importTextRooming, setImportTextRooming] = useState('');
 
-                const copyListItems = [...travelers];
-                const dragItemContent = copyListItems[dragItem.current];
-                copyListItems.splice(dragItem.current, 1);
-                copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-                
-                dragItem.current = null;
-                dragOverItem.current = null;
-                setTravelers(copyListItems);
-            };
-            const dragEnd = (e) => { e.target.closest('tr')?.classList.remove('dragging'); };
+            // Tesseract Worker 재사용 세팅
+            useEffect(() => {
+                return () => {
+                    if (ocrWorkerRef.current) { ocrWorkerRef.current.terminate(); ocrWorkerRef.current = null; }
+                };
+            }, []);
 
-            const getExpiryStatus = (dateStr) => {
-                if (!dateStr) return { color: "text-slate-400", warning: false };
-                const match = dateStr.match(/(\d{4})[-./년]?\s*(\d{1,2})[-./월]?\s*(\d{1,2})/);
-                if (!match) return { color: "text-slate-600", warning: false };
-                const expDate = new Date(match[1], match[2] - 1, match[3]);
-                const today = new Date();
-                const sixMonthsLater = new Date();
-                sixMonthsLater.setMonth(today.getMonth() + 6);
-                if (expDate < today) return { color: "text-red-600 font-bold bg-red-50", warning: true, msg: "만료됨" };
-                if (expDate < sixMonthsLater) return { color: "text-orange-500 font-bold", warning: true, msg: "6개월 미만" };
-                return { color: "text-slate-700", warning: false };
+            const getOcrWorker = async () => {
+                if (ocrWorkerRef.current) return ocrWorkerRef.current;
+                const worker = await Tesseract.createWorker('eng');
+                ocrWorkerRef.current = worker;
+                return worker;
             };
 
-            // 파일 드래그 앤 드롭 이벤트 핸들러
-            const onFileDragOver = (e) => { e.preventDefault(); setIsFileDragActive(true); };
-            const onFileDragLeave = (e) => { e.preventDefault(); setIsFileDragActive(false); };
-            const onFileDrop = (e) => {
-                e.preventDefault();
-                setIsFileDragActive(false);
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    processFiles(Array.from(e.dataTransfer.files));
-                }
+            const appendLog = async (message) => {
+                setImportText((prev) => `${prev}${message}`);
+                await nextFrame(); // 화면 멈춤 방지
             };
 
-            const handleFileInputChange = (e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                    processFiles(Array.from(e.target.files));
-                }
-            };
+            // PDF에서 여권 데이터 추출 (텍스트 기반 우선, 실패시 캔버스+OCR)
+            const extractPassportDataFromPdf = async (file) => {
+                const results = []; const rawChunks = [];
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-            // 핵심 로직: 파일 다중 분석 및 즉시 표 반영 (실시간 렌더링 포함)
-            const processFiles = async (files) => {
-                if (files.length === 0) return;
-                
-                setIsProcessing(true);
-                let currentProgressText = `[시스템 안내] 총 ${files.length}개의 여권 사본 분석을 시작합니다...\n\n`;
-                setImportText(currentProgressText);
-                await delay(150); // 브라우저가 화면을 그릴 수 있는 넉넉한 시간 부여
-
-                let updatedTravelers = [...travelers];
-
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    currentProgressText += `▶ [${i + 1}/${files.length}] "${file.name}" 분석 중... (잠시 대기)\n`;
-                    setImportText(currentProgressText);
-                    await delay(150); // 진행상황 즉시 렌더링을 위한 딜레이
-
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
+                    const page = await pdf.getPage(pageNum);
+                    let textContentString = '';
                     try {
-                        let extractedText = "";
+                        const textContent = await page.getTextContent();
+                        textContentString = textContent.items.map((item) => item.str).join(' ');
+                    } catch (err) { textContentString = ''; }
 
-                        if (file.type === 'application/pdf') {
-                            const arrayBuffer = await file.arrayBuffer();
-                            const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                                const page = await pdf.getPage(pageNum);
-                                const textContent = await page.getTextContent();
-                                textContent.items.forEach(item => extractedText += item.str + ' ');
-                            }
-                        } else if (file.type.startsWith('image/')) {
-                            const worker = await Tesseract.createWorker('eng+kor');
-                            const ret = await worker.recognize(file);
-                            extractedText = ret.data.text;
-                            await worker.terminate();
-                        } else {
-                            currentProgressText += `(지원하지 않는 파일 형식 스킵)\n\n`;
-                            setImportText(currentProgressText);
-                            await delay(100);
-                            continue;
+                    rawChunks.push(textContentString);
+                    const directRecords = extractMRZRecordsFromText(textContentString);
+                    directRecords.forEach((r) => results.push(r));
+
+                    // PDF에 텍스트 레이어가 없는 스캔본일 경우 이미지화 하여 OCR 분석
+                    if (directRecords.length === 0) {
+                        const canvas = await renderPdfPageToCanvas(page, 2.5);
+                        const mrzCanvas = preprocessCanvas(canvas, 'mrz');
+                        const fullCanvas = preprocessCanvas(canvas, 'full');
+                        const worker = await getOcrWorker();
+
+                        const mrzBlob = await canvasToBlob(mrzCanvas);
+                        const mrzRet = await worker.recognize(mrzBlob);
+                        rawChunks.push(mrzRet.data.text || '');
+                        const mrzRecords = extractMRZRecordsFromText(mrzRet.data.text || '');
+                        mrzRecords.forEach((r) => results.push(r));
+
+                        if (mrzRecords.length === 0) {
+                            const fullBlob = await canvasToBlob(fullCanvas);
+                            const fullRet = await worker.recognize(fullBlob);
+                            rawChunks.push(fullRet.data.text || '');
+                            const fullRecords = extractMRZRecordsFromText(fullRet.data.text || '');
+                            fullRecords.forEach((r) => results.push(r));
                         }
-
-                        currentProgressText += extractedText + '\n\n';
-                        setImportText(currentProgressText);
-                        await delay(100);
-
-                        // 텍스트 추출 직후, 여권 데이터(MRZ) 즉시 파싱하여 표에 자동 삽입
-                        const mrzRegex = /([A-Z0-9<]{8,9})[\d<O]?([A-Z0-9<]{3})(\d{6})[\d<O]?([MF<])(\d{6})/gi;
-                        const mrzMatches = [...extractedText.matchAll(mrzRegex)];
-
-                        if (mrzMatches.length > 0) {
-                            mrzMatches.forEach(match => {
-                                let pNo = match[1].replace(/</g, '').toUpperCase();
-                                let nation = match[2].replace(/</g, 'KOR').replace(/0/g, 'O').toUpperCase(); // K0R 오타 보정
-                                let dobRaw = match[3];
-                                let gender = match[4].toUpperCase() === 'F' ? 'F' : 'M';
-                                let expRaw = match[5];
-
-                                let dobYear = parseInt(dobRaw.substring(0,2));
-                                dobYear += (dobYear > 30) ? 1900 : 2000; 
-                                let birth = `${dobYear}-${dobRaw.substring(2,4)}-${dobRaw.substring(4,6)}`;
-                                
-                                let expYear = parseInt(expRaw.substring(0,2)) + 2000;
-                                let expiry = `${expYear}-${expRaw.substring(2,4)}-${expRaw.substring(4,6)}`;
-
-                                let nameEng = "";
-                                const nameRegex = /P[A-Z<]{1,2}K[O0]R([A-Z<]+)/i;
-                                const nameMatch = extractedText.match(nameRegex);
-                                if (nameMatch) {
-                                    nameEng = nameMatch[1].replace(/</g, ' ').trim();
-                                }
-
-                                if (!updatedTravelers.some(t => t.passportNo === pNo)) {
-                                    updatedTravelers.push({
-                                        id: Date.now() + Math.random(),
-                                        nameKor: "", 
-                                        nameEng: nameEng,
-                                        birth: birth,
-                                        gender: gender,
-                                        passportNo: pNo,
-                                        expiry: expiry,
-                                        nation: nation === 'KOR' ? 'KOR' : nation,
-                                        remark: ""
-                                    });
-                                }
-                            });
-                        }
-                        
-                        // 명단 State 실시간 업데이트
-                        setTravelers([...updatedTravelers]);
-                        await delay(100); 
-
-                    } catch (error) {
-                        currentProgressText += `(파일 분석 오류 발생: 텍스트 추출 실패)\n\n`;
-                        setImportText(currentProgressText);
-                        await delay(100);
                     }
                 }
-
-                currentProgressText += `✅ 총 ${files.length}개 파일 분석 완료! 하단 명단 표에 자동으로 기입되었습니다.`;
-                setImportText(currentProgressText);
-                setIsProcessing(false);
+                const deduped = []; const seen = new Set();
+                results.forEach((row) => {
+                    const key = String(row.passportNo || '').toUpperCase();
+                    if (!key || seen.has(key)) return;
+                    seen.add(key); deduped.push(row);
+                });
+                return { records: deduped, rawText: rawChunks.filter(Boolean).join('\n\n') };
             };
 
-            const addEmptyTraveler = () => setTravelers([...travelers, { id: Date.now() + Math.random(), nameKor: "", nameEng: "", birth: "", gender: "M", passportNo: "", expiry: "", nation: "KOR", remark: "" }]);
-            const removeTraveler = (id) => setTravelers(travelers.filter(t => t.id !== id));
-            const updateField = (id, field, val) => setTravelers(travelers.map(t => t.id === id ? {...t, [field]: val} : t));
+            // 이미지 파일(JPG, PNG)에서 여권 데이터 추출
+            const extractPassportDataFromImage = async (file) => {
+                const worker = await getOcrWorker();
+                const bitmap = await createImageBitmap(file);
+                const baseCanvas = document.createElement('canvas');
+                const ctx = baseCanvas.getContext('2d');
+                baseCanvas.width = bitmap.width; baseCanvas.height = bitmap.height;
+                ctx.drawImage(bitmap, 0, 0);
 
-            // ==========================================
-            // [TAB 2] 방 배정 (루밍리스트 - 외부 담당자 취합용)
-            // ==========================================
-            const [isInternationalRooming, setIsInternationalRooming] = useState(true);
-            const [showGuideRooming, setShowGuideRooming] = useState(true);
-            const [activeSubTabRooming, setActiveSubTabRooming] = useState('pdf');
-            const [roomingHeaderInfo, setRoomingHeaderInfo] = useState({ groupName: "", date: "", location: "" });
-            const [rooms, setRooms] = useState([
-                { id: 1, type: 'TWIN', roomNo: '', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] },
-                { id: 2, type: 'TWIN', roomNo: '', guests: [{name:"", engName:"", gender:"여", remark:""}, {name:"", engName:"", gender:"여", remark:""}] }
-            ]);
-            const [importTextRooming, setImportTextRooming] = useState("");
+                const mrzCanvas = preprocessCanvas(baseCanvas, 'mrz');
+                const fullCanvas = preprocessCanvas(baseCanvas, 'full');
+                const rawChunks = []; const results = [];
 
+                const mrzBlob = await canvasToBlob(mrzCanvas);
+                const mrzRet = await worker.recognize(mrzBlob);
+                rawChunks.push(mrzRet.data.text || '');
+                const mrzRecords = extractMRZRecordsFromText(mrzRet.data.text || '');
+                mrzRecords.forEach((r) => results.push(r));
+
+                if (mrzRecords.length === 0) {
+                    const fullBlob = await canvasToBlob(fullCanvas);
+                    const fullRet = await worker.recognize(fullBlob);
+                    rawChunks.push(fullRet.data.text || '');
+                    const fullRecords = extractMRZRecordsFromText(fullRet.data.text || '');
+                    fullRecords.forEach((r) => results.push(r));
+                }
+
+                const deduped = []; const seen = new Set();
+                results.forEach((row) => {
+                    const key = String(row.passportNo || '').toUpperCase();
+                    if (!key || seen.has(key)) return;
+                    seen.add(key); deduped.push(row);
+                });
+                return { records: deduped, rawText: rawChunks.filter(Boolean).join('\n\n') };
+            };
+
+            // 다중 파일 메인 처리 프로세스 (실시간 업데이트 적용)
+            const processFiles = async (files) => {
+                if (!files || files.length === 0 || isProcessing) return;
+
+                setIsProcessing(true);
+                setImportText('');
+                await appendLog(`[시스템 안내] 총 ${files.length}개의 파일 분석을 시작합니다.\n\n`);
+
+                try {
+                    for (let i = 0; i < files.length; i += 1) {
+                        const file = files[i];
+                        await appendLog(`▶ [${i + 1}/${files.length}] ${file.name} 분석 시작\n`);
+
+                        try {
+                            let parsed = { records: [], rawText: '' };
+
+                            if (file.type === 'application/pdf') {
+                                parsed = await extractPassportDataFromPdf(file);
+                            } else if (file.type.startsWith('image/')) {
+                                parsed = await extractPassportDataFromImage(file);
+                            } else {
+                                await appendLog(`  - 지원하지 않는 형식이라 건너뜀\n\n`);
+                                continue;
+                            }
+
+                            // 분석된 결과를 State에 즉각 반영하여 화면에 렌더링
+                            if (parsed.records.length > 0) {
+                                setTravelers((prev) => mergeTravelers(prev, parsed.records));
+                                const summary = parsed.records.map((row) => `${row.nameEng} / ${row.passportNo}`).join(', ');
+                                await appendLog(`  - 인식 성공: ${parsed.records.length}명\n`);
+                                await appendLog(`  - ${summary}\n\n`);
+                            } else {
+                                await appendLog(`  - 여권 정보(MRZ) 인식 실패: 스캔 품질 또는 기울기 확인 필요\n\n`);
+                            }
+                        } catch (fileErr) {
+                            console.error(fileErr);
+                            await appendLog(`  - 오류 발생: ${fileErr.message || '파일 분석 실패'}\n\n`);
+                        }
+                        await delay(50); // 부드러운 UI 갱신을 위한 휴식 시간
+                    }
+                    await appendLog('✅ 분석 완료. 표 하단 명단에 즉시 반영되었습니다.\n');
+                } finally {
+                    setIsProcessing(false);
+                }
+            };
+
+            const handleFileInputChange = async (e) => {
+                const list = Array.from(e.target.files || []);
+                await processFiles(list);
+                e.target.value = '';
+            };
+
+            const onFileDragOver = (e) => { e.preventDefault(); setIsFileDragActive(true); };
+            const onFileDragLeave = (e) => { e.preventDefault(); setIsFileDragActive(false); };
+            const onFileDrop = async (e) => {
+                e.preventDefault();
+                setIsFileDragActive(false);
+                const files = Array.from(e.dataTransfer.files || []);
+                await processFiles(files);
+            };
+
+            // 명단 드래그 앤 드롭
+            const dragStart = (e, position) => { dragItem.current = position; e.currentTarget.classList.add('dragging'); };
+            const dragEnter = (_, position) => { dragOverItem.current = position; };
+            const dragEnd = (e) => { e.currentTarget.classList.remove('dragging'); };
+            const drop = (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('dragging');
+                if (dragItem.current === null || dragOverItem.current === null) return;
+                if (dragItem.current === dragOverItem.current) { dragItem.current = null; dragOverItem.current = null; return; }
+                setTravelers((prev) => {
+                    const next = [...prev];
+                    const item = next[dragItem.current];
+                    next.splice(dragItem.current, 1);
+                    next.splice(dragOverItem.current, 0, item);
+                    return next;
+                });
+                dragItem.current = null; dragOverItem.current = null;
+            };
+
+            const addEmptyTraveler = () => {
+                setTravelers((prev) => [...prev, { id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, nameKor: '', nameEng: '', birth: '', gender: 'M', passportNo: '', expiry: '', nation: 'KOR', remark: '' }]);
+            };
+            const removeTraveler = (id) => { setTravelers((prev) => prev.filter((t) => t.id !== id)); };
+            const updateField = (id, field, value) => {
+                setTravelers((prev) => prev.map((t) => {
+                    if (t.id !== id) return t;
+                    const updated = { ...t, [field]: value };
+                    if (field === 'nameKor' && !t.nameEng?.trim()) updated.nameEng = koreanToEnglish(value);
+                    if (field === 'nameEng') updated.nameEng = String(value || '').toUpperCase();
+                    if (field === 'passportNo') updated.passportNo = String(value || '').toUpperCase();
+                    if (field === 'nation') updated.nation = String(value || '').toUpperCase();
+                    return updated;
+                }));
+            };
+
+            // 루밍리스트 요약 통계
             const roomStats = useMemo(() => {
-                let total = 0, male = 0, female = 0;
-                let roomCounts = { SINGLE: 0, TWIN: 0, TRIPLE: 0, QUAD: 0 };
-                rooms.forEach(r => {
-                    if (r.guests.some(g => g.name.trim() !== "")) roomCounts[r.type]++;
-                    r.guests.forEach(g => {
-                        if (g.name.trim() !== "") {
-                            total++;
-                            if (g.gender === '남') male++;
-                            if (g.gender === '여') female++;
+                let total = 0; let male = 0; let female = 0;
+                const roomCounts = { SINGLE: 0, TWIN: 0, TRIPLE: 0, QUAD: 0 };
+                rooms.forEach((r) => {
+                    if (r.guests.some((g) => g.name.trim() !== '')) roomCounts[r.type] += 1;
+                    r.guests.forEach((g) => {
+                        if (g.name.trim() !== '') {
+                            total += 1;
+                            if (g.gender === '남') male += 1;
+                            if (g.gender === '여') female += 1;
                         }
                     });
                 });
@@ -341,105 +517,107 @@
 
             const handleRoomingSmartImport = () => {
                 if (!importTextRooming.trim()) return;
-                const lines = importTextRooming.split('\n').filter(l => l.trim().length > 0);
+                const lines = importTextRooming.split('\n').filter((line) => line.trim().length > 0);
                 const newRooms = lines.map((line, idx) => {
-                    const rawNames = line.split(/[,/]+|(?<=[가-힣a-zA-Z])\s+(?=[가-힣a-zA-Z])/).filter(n => n.trim().length >= 1);
-                    const guests = rawNames.map(raw => {
-                        const hasFemale = raw.includes('(여)') || raw.includes('여');
-                        const name = raw.replace(/\(여\)/, '').replace(/\(남\)/, '').replace(/여$/, '').replace(/남$/, '').trim();
-                        return { name: name, engName: isInternationalRooming ? koreanToEnglish(name) : "", gender: hasFemale ? "여" : "남", remark: "" };
+                    const rawNames = line.split(/[,/]+|(?<=[가-힣a-zA-Z])\s+(?=[가-힣a-zA-Z])/).map((name) => name.trim()).filter(Boolean);
+                    const guests = rawNames.map((raw) => {
+                        const hasFemale = raw.includes('(여)') || /여$/.test(raw);
+                        const cleanName = raw.replace(/\(여\)|\(남\)|여$|남$/g, '').trim();
+                        return { name: cleanName, engName: isInternationalRooming ? koreanToEnglish(cleanName) : '', gender: hasFemale ? '여' : '남', remark: '' };
                     });
                     let type = 'TWIN';
-                    if (guests.length === 1) type = 'SINGLE';
+                    if (guests.length <= 1) type = 'SINGLE';
+                    else if (guests.length === 2) type = 'TWIN';
                     else if (guests.length === 3) type = 'TRIPLE';
-                    else if (guests.length >= 4) type = 'QUAD';
-                    return { id: idx + 1, roomNo: "", type, guests };
+                    else type = 'QUAD';
+                    return { id: idx + 1, roomNo: '', type, guests: guests.slice(0, type === 'SINGLE' ? 1 : type === 'TWIN' ? 2 : type === 'TRIPLE' ? 3 : 4) };
                 });
-                setRooms(newRooms);
-                setImportTextRooming("");
-                setShowGuideRooming(false);
+                setRooms(newRooms.length > 0 ? newRooms : rooms);
+                setImportTextRooming('');
             };
 
-            const updateRoom = (rIdx, field, value) => { const newRooms = [...rooms]; newRooms[rIdx][field] = value; setRooms(newRooms); };
+            const updateRoom = (rIdx, field, value) => { setRooms((prev) => prev.map((room, idx) => (idx === rIdx ? { ...room, [field]: value } : room))); };
             const updateGuest = (rIdx, gIdx, field, value) => {
-                const newRooms = [...rooms];
-                newRooms[rIdx].guests[gIdx][field] = value;
-                if (field === 'name' && isInternationalRooming) newRooms[rIdx].guests[gIdx].engName = koreanToEnglish(value);
-                setRooms(newRooms);
+                setRooms((prev) => prev.map((room, idx) => {
+                    if (idx !== rIdx) return room;
+                    const guests = room.guests.map((guest, guestIdx) => {
+                        if (guestIdx !== gIdx) return guest;
+                        const updated = { ...guest, [field]: value };
+                        if (field === 'name' && isInternationalRooming) updated.engName = koreanToEnglish(value);
+                        return updated;
+                    });
+                    return { ...room, guests };
+                }));
             };
+
             const changeRoomType = (rIdx, type) => {
-                const newRooms = [...rooms];
-                newRooms[rIdx].type = type;
-                const capacity = type === 'SINGLE' ? 1 : (type === 'TWIN' ? 2 : (type === 'TRIPLE' ? 3 : 4));
-                let currentGuests = [...newRooms[rIdx].guests];
-                if (currentGuests.length < capacity) {
-                    while(currentGuests.length < capacity) currentGuests.push({ name: "", engName: "", gender: "남", remark: "" });
-                } else {
-                    currentGuests = currentGuests.slice(0, capacity);
-                }
-                newRooms[rIdx].guests = currentGuests;
-                setRooms(newRooms);
+                setRooms((prev) => prev.map((room, idx) => {
+                    if (idx !== rIdx) return room;
+                    const capacity = type === 'SINGLE' ? 1 : type === 'TWIN' ? 2 : type === 'TRIPLE' ? 3 : 4;
+                    let guests = [...room.guests];
+                    if (guests.length < capacity) {
+                        while (guests.length < capacity) guests.push({ name: '', engName: '', gender: '남', remark: '' });
+                    } else { guests = guests.slice(0, capacity); }
+                    return { ...room, type, guests };
+                }));
             };
-            const removeRoom = (rIdx) => setRooms(rooms.filter((_, i) => i !== rIdx));
-            const addRoom = () => setRooms([...rooms, { id: rooms.length + 1, roomNo: '', type: 'TWIN', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] }]);
+
+            const removeRoom = (rIdx) => setRooms((prev) => prev.filter((_, idx) => idx !== rIdx));
+            const addRoom = () => setRooms((prev) => ([ ...prev, { id: prev.length + 1, roomNo: '', type: 'TWIN', guests: [ { name: '', engName: '', gender: '남', remark: '' }, { name: '', engName: '', gender: '남', remark: '' } ] } ]));
 
             const handleRoomingFileUpload = async (e) => {
-                const file = e.target.files[0];
+                const file = e.target.files?.[0];
                 if (!file || file.type !== 'application/pdf') return;
                 try {
                     const arrayBuffer = await file.arrayBuffer();
                     const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                     let fullText = '';
-                    for (let i = 1; i <= pdf.numPages; i++) {
+                    for (let i = 1; i <= pdf.numPages; i += 1) {
                         const page = await pdf.getPage(i);
                         const textContent = await page.getTextContent();
-                        textContent.items.forEach(item => fullText += item.str + ' ');
+                        fullText += textContent.items.map((item) => item.str).join(' ') + ' ';
                     }
                     const words = fullText.split(/[\s,\t\n]+/);
-                    let extractedNames = [];
-                    const stopWords = ['성명','이름','투어메이커','비고','여권','NAME','NO','DATE','GROUP','만료일'];
-                    words.forEach(w => {
-                        let clean = w.replace(/\([여남]\)/g, '').replace(/[0-9a-zA-Z\.\-\:\/\=\*\+\[\]\{\}\_\(\)]/g, '').replace(/\s/g, ''); 
+                    const extractedNames = [];
+                    const stopWords = ['성명','이름','투어메이커','비고','여권','NAME','NO','DATE','GROUP','만료일','담당','인솔'];
+                    words.forEach((word) => {
+                        const clean = word.replace(/\([여남]\)/g, '').replace(/[0-9a-zA-Z\.\-\:\/=\*\+\[\]\{\}_\(\)]/g, '').replace(/\s/g, '');
                         if (clean.length >= 2 && clean.length <= 4 && /^[가-힣]+$/.test(clean)) {
-                            if (!stopWords.some(stop => clean.includes(stop))) extractedNames.push(clean);
+                            if (!stopWords.some((stop) => clean.includes(stop))) extractedNames.push(clean);
                         }
                     });
                     if (extractedNames.length > 0) {
-                        let newRooms = [];
-                        for(let i=0; i<extractedNames.length; i+=2) {
-                            let guests = [{ name: extractedNames[i], engName: koreanToEnglish(extractedNames[i]), gender: "남", remark: "" }];
-                            if(extractedNames[i+1]) guests.push({ name: extractedNames[i+1], engName: koreanToEnglish(extractedNames[i+1]), gender: "남", remark: "" });
-                            newRooms.push({ id: newRooms.length+1, type: guests.length===1 ? 'SINGLE' : 'TWIN', roomNo: '', guests });
+                        const newRooms = [];
+                        for (let i = 0; i < extractedNames.length; i += 2) {
+                            const guestA = extractedNames[i];
+                            const guestB = extractedNames[i + 1];
+                            const guests = [{ name: guestA, engName: koreanToEnglish(guestA), gender: '남', remark: '' }];
+                            if (guestB) guests.push({ name: guestB, engName: koreanToEnglish(guestB), gender: '남', remark: '' });
+                            newRooms.push({ id: newRooms.length + 1, type: guests.length === 1 ? 'SINGLE' : 'TWIN', roomNo: '', guests });
                         }
                         setRooms(newRooms);
-                        setShowGuideRooming(false);
-                        alert("✅ 업로드하신 PDF에서 방 배정 인원을 성공적으로 자동 추출했습니다.");
-                    } else {
-                        alert("⚠️ 명단을 찾을 수 없습니다.");
-                    }
-                } catch (err) { alert("⚠️ 파일을 읽는 중 오류가 발생했습니다."); }
-                e.target.value = ''; 
+                        alert('✅ 업로드한 PDF에서 인원을 자동 추출했습니다.');
+                    } else { alert('⚠️ 명단을 찾지 못했습니다.'); }
+                } catch (err) { alert('⚠️ 파일을 읽는 중 오류가 발생했습니다.'); }
+                e.target.value = '';
             };
 
             const ROOMS_PER_PAGE = 22;
             const roomPages = [];
             const totalRoomPages = Math.max(1, Math.ceil(rooms.length / ROOMS_PER_PAGE));
-            for (let i = 0; i < totalRoomPages; i++) roomPages.push(rooms.slice(i * ROOMS_PER_PAGE, (i + 1) * ROOMS_PER_PAGE));
+            for (let i = 0; i < totalRoomPages; i += 1) roomPages.push(rooms.slice(i * ROOMS_PER_PAGE, (i + 1) * ROOMS_PER_PAGE));
 
-            // ==========================================
-            // 전체 렌더링
-            // ==========================================
             return (
                 <div className="min-h-screen flex flex-col">
-                    {/* 상단 탭 컨트롤러 */}
-                    <div className="no-print bg-[#1e293b] border-b shadow-md sticky top-0 z-50">
+                    {/* 상단 네비게이션 */}
+                    <div className="no-print bg-[#1e293b] sticky top-0 z-50 shadow-md">
                         <div className="max-w-[1200px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center h-auto md:h-14 py-2 md:py-0 gap-3">
                             <div className="flex items-center gap-3">
                                 <img src={TM_LOGO} className="h-6 filter brightness-0 invert" alt="Tourmaker Logo" />
-                                <div className="h-4 w-[1px] bg-slate-600"></div>
-                                <h1 className="font-bold text-white tracking-wide text-sm hidden sm:block">통합 관리 센터</h1>
+                                <div className="h-4 w-px bg-slate-600"></div>
+                                <h1 className="font-bold text-white text-sm hidden sm:block tracking-wide">통합 관리 센터</h1>
                             </div>
-                            
+
                             <div className="flex h-full gap-2">
                                 <button onClick={() => setActiveMainTab('traveler')} className={`px-4 py-2 md:py-0 h-full flex items-center font-bold text-sm border-b-4 transition-all rounded-t-md ${activeMainTab === 'traveler' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
                                     <i className="fas fa-passport mr-2"></i> 1. 여권 명단 정리
@@ -450,79 +628,67 @@
                             </div>
 
                             <div className="flex gap-2">
+                                <button onClick={() => setIsNavMenuOpen(!isNavMenuOpen)} className="text-slate-300 hover:text-white px-3 py-1.5 text-sm font-bold transition flex items-center gap-1">
+                                    <i className="fas fa-bars"></i> 입력창 {isNavMenuOpen ? '닫기' : '열기'}
+                                </button>
                                 <button onClick={() => window.print()} className="bg-blue-600 text-white px-4 py-1.5 rounded font-bold text-sm hover:bg-blue-500 transition shadow flex items-center gap-2">
-                                    <i className="fas fa-print"></i> 현재 화면 출력
+                                    <i className="fas fa-print"></i> PDF 저장 및 인쇄
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <main className="flex-grow p-4 md:p-8">
-                        {/* ========================================================================= */}
+                        {/* ========================================== */}
                         {/* TAB 1: 여권 명단 정리 */}
-                        {/* ========================================================================= */}
+                        {/* ========================================== */}
                         <div className={activeMainTab === 'traveler' ? 'block' : 'hidden'}>
-                            <div className="no-print max-w-[1200px] mx-auto mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* 기능 안내 및 파일 드래그앤드롭 업로드 영역 */}
-                                <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                                    <h2 className="text-sm font-black text-slate-800 tracking-widest mb-3 flex items-center gap-2">
-                                        <i className="fas fa-id-card text-blue-600"></i> 여권 사본 업로드 시스템
-                                    </h2>
-                                    <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                                        담당자님, 이곳은 투어메이커 전용 여권 수집 페이지입니다.<br/>
-                                        보유하신 여러 장의 개별 여권 사본(사진/PDF)이나 전체 명단 파일을 <b>마우스로 잡아 이곳에 끌어다 놓으세요(Drag & Drop)</b>. 인식 후 하단 표에 즉시 자동 반영됩니다.
-                                    </p>
-                                    
-                                    <div className="mt-auto h-32 relative">
-                                        <input type="file" id="passport-upload" accept=".pdf, image/*" multiple className="hidden" onChange={handleFileInputChange} disabled={isProcessing} />
-                                        <label 
-                                            htmlFor="passport-upload" 
-                                            className={`absolute inset-0 w-full h-full border-2 border-dashed font-bold rounded-xl flex flex-col items-center justify-center transition-all shadow-sm gap-3 z-10 ${isProcessing ? 'bg-slate-50 border-slate-200 cursor-not-allowed' : (isFileDragActive ? 'dropzone-active bg-blue-50 border-blue-500 text-blue-600' : 'bg-slate-100 hover:bg-blue-50 border-slate-300 cursor-pointer text-slate-600')}`}
-                                            onDragOver={onFileDragOver}
-                                            onDragLeave={onFileDragLeave}
-                                            onDrop={onFileDrop}
-                                        >
-                                            {isProcessing ? (
-                                                <><i className="fas fa-spinner fa-spin text-2xl text-blue-500"></i><span className="text-sm text-slate-500">여권 분석 및 표 반영 중...</span></>
-                                            ) : (
-                                                <>
-                                                    <i className={`fas fa-file-import text-3xl ${isFileDragActive ? 'text-blue-500' : 'text-slate-400'}`}></i>
-                                                    <span className="text-sm text-center">여권 사본/PDF 드래그 앤 드롭<br/>또는 클릭하여 첨부하기</span>
-                                                </>
-                                            )}
-                                        </label>
+                            {/* 업로드 & 로그 패널 (토글 기능 적용) */}
+                            {isNavMenuOpen && (
+                                <div className="no-print max-w-[1200px] mx-auto mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                                        <h2 className="text-sm font-black text-slate-800 tracking-widest mb-3 flex items-center gap-2">
+                                            <i className="fas fa-id-card text-blue-600"></i> 여권 사본 업로드 시스템
+                                        </h2>
+                                        <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                                            스캔 PDF와 여권 이미지 파일을 여러 개 한 번에 올릴 수 있습니다.<br />
+                                            업로드 즉시 여권 정보(MRZ)를 분석하고, 분석된 순서대로 <b>아래 명단 표에 실시간으로 자동 기입</b>됩니다.
+                                        </p>
+                                        <div className="mt-auto h-32 relative">
+                                            <input type="file" id="passport-upload" accept=".pdf,image/*" multiple className="hidden" onChange={handleFileInputChange} disabled={isProcessing} />
+                                            <label htmlFor="passport-upload" className={`absolute inset-0 w-full h-full border-2 border-dashed font-bold rounded-xl flex flex-col items-center justify-center transition-all shadow-sm gap-3 cursor-pointer z-10 ${isProcessing ? 'bg-slate-50 border-slate-200 cursor-not-allowed' : (isFileDragActive ? 'dropzone-active' : 'bg-slate-100 hover:bg-blue-50 border-slate-300 text-slate-600')}`} onDragOver={onFileDragOver} onDragLeave={onFileDragLeave} onDrop={onFileDrop}>
+                                                {isProcessing ? (
+                                                    <><i className="fas fa-spinner fa-spin text-2xl text-blue-500"></i><span className="text-sm text-slate-500">여권 분석 및 표 반영 중...</span></>
+                                                ) : (
+                                                    <><i className={`fas fa-file-import text-3xl ${isFileDragActive ? 'text-blue-500' : 'text-slate-400'}`}></i><span className="text-sm text-center">여권 사본/PDF 드래그 앤 드롭<br />또는 클릭하여 첨부</span></>
+                                                )}
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                                        <h2 className="text-sm font-black text-slate-800 tracking-widest mb-3 flex items-center justify-between">
+                                            <span><i className="fas fa-microchip text-blue-600 mr-2"></i>실시간 분석 로그 <span className="text-xs font-normal text-slate-400 ml-2">(인식 즉시 하단 표에 반영됨)</span></span>
+                                        </h2>
+                                        <textarea className="w-full flex-grow min-h-[160px] p-4 text-sm bg-slate-800 text-green-400 border border-slate-200 rounded-lg outline-none font-mono leading-relaxed resize-none" placeholder="파일을 업로드하면 이곳에 파일별 인식 결과가 실시간 중계됩니다." value={importText} readOnly></textarea>
+                                        <div className="flex gap-3 mt-4 justify-end">
+                                            <button onClick={() => { setTravelers([]); setImportText(''); }} className="bg-white border border-slate-300 text-slate-600 px-5 py-2.5 rounded-lg text-sm hover:bg-red-50 hover:text-red-500 hover:border-red-300 font-bold transition shadow-sm">
+                                                <i className="fas fa-trash-alt mr-1"></i> 명단 표 및 로그 전체 초기화
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+                            )}
 
-                                {/* 추출된 텍스트 확인 영역 */}
-                                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-                                    <h2 className="text-sm font-black text-slate-800 tracking-widest mb-3 flex items-center justify-between">
-                                        <span><i className="fas fa-microchip text-blue-600 mr-2"></i>인공지능 실시간 분석 상황 (하단 표에 자동 반영됩니다)</span>
-                                    </h2>
-                                    <textarea 
-                                        className="w-full flex-grow p-4 text-sm bg-slate-800 text-green-400 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition font-mono leading-relaxed"
-                                        placeholder="여권 이미지나 PDF를 드래그하여 올리시면 시스템이 읽어낸 정보가 이곳에 실시간으로 표시됩니다. 데이터는 분석되는 즉시 아래 표에 자동으로 들어갑니다."
-                                        value={importText}
-                                        readOnly
-                                    ></textarea>
-                                    <div className="flex gap-3 mt-4 justify-end">
-                                        <button onClick={() => {setTravelers([]); setImportText("");}} className="bg-white border border-slate-300 text-slate-600 px-5 py-2.5 rounded-lg text-sm hover:bg-red-50 hover:text-red-500 hover:border-red-300 font-bold transition shadow-sm">
-                                            <i className="fas fa-trash-alt mr-1"></i> 명단 및 기록 전체 초기화
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 보고서형 Table 구조 - 가로 100% 꽉 차게, 화면 밖으로 넘치지 않게 w-full과 max-w 제한 해제 */}
-                            <div className="print-container print-traveler-list bg-white w-full max-w-[1200px] mx-auto shadow-xl p-4 md:p-8 flex flex-col border border-slate-200 print:max-w-[210mm] print:p-[15mm] print:min-h-[297mm]">
-                                <div className="no-print mb-3 flex justify-between items-end px-2 bg-blue-50 p-3 rounded border border-blue-100">
-                                    <p className="text-sm text-blue-800 font-bold"><i className="fas fa-lightbulb text-amber-500 mr-2"></i>표 안의 텍스트(이름, 번호 등)를 마우스로 클릭하시면 엑셀처럼 언제든 직접 글씨를 지우고 수정(타이핑)할 수 있습니다!</p>
-                                    <span className="text-xs font-bold text-slate-600">총 인원: {travelers.length}명</span>
+                            {/* 넓고 시원한 데이터 테이블 (Overflow 해결) */}
+                            <div className="print-container print-traveler-list bg-white w-full max-w-full xl:max-w-[1400px] mx-auto shadow-xl p-4 md:p-8 flex flex-col border border-slate-200">
+                                <div className="no-print mb-3 flex justify-between items-center px-2 bg-blue-50 p-3 rounded border border-blue-100">
+                                    <p className="text-sm text-blue-800 font-bold"><i className="fas fa-lightbulb text-amber-500 mr-2"></i>셀을 마우스로 클릭하면 즉시 글씨 수정(타이핑)이 가능합니다. (좌측 ≡ 아이콘 드래그로 행 순서 변경)</p>
+                                    <span className="text-sm font-black text-slate-700 whitespace-nowrap">총 <span className="text-blue-600 text-lg">{travelers.length}</span> 명</span>
                                 </div>
 
-                                {/* 모니터가 작을 경우 표 안에서만 가로 스크롤이 생기도록 처리 */}
                                 <div className="table-wrapper">
-                                    <table className="w-full text-sm border-collapse min-w-[800px]">
+                                    <table className="w-full text-sm border-collapse min-w-[900px]">
                                         <thead className="print:table-header-group">
                                             <tr>
                                                 <th colSpan="11" className="no-border-top bg-white p-0 pt-2 pb-6 text-left">
@@ -530,14 +696,14 @@
                                                         <div className="space-y-4 flex-1">
                                                             <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 mt-2">OVERSEAS TRAVELERS LIST</h2>
                                                             <div className="grid grid-cols-1 gap-1.5 text-sm font-bold text-slate-700">
-                                                                <HeaderField label="GROUP NAME" value={headerInfo.groupName} onChange={(v) => setHeaderInfo({...headerInfo, groupName: v})} />
-                                                                <HeaderField label="DATE" value={headerInfo.date} onChange={(v) => setHeaderInfo({...headerInfo, date: v})} />
-                                                                <HeaderField label="NATION/LOCAL" value={headerInfo.nation} onChange={(v) => setHeaderInfo({...headerInfo, nation: v})} />
-                                                                <HeaderField label="NUMBER" value={headerInfo.number} onChange={(v) => setHeaderInfo({...headerInfo, number: v})} />
+                                                                <HeaderField label="GROUP NAME" value={headerInfo.groupName} onChange={(v) => setHeaderInfo({ ...headerInfo, groupName: v })} />
+                                                                <HeaderField label="DATE" value={headerInfo.date} onChange={(v) => setHeaderInfo({ ...headerInfo, date: v })} />
+                                                                <HeaderField label="NATION/LOCAL" value={headerInfo.nation} onChange={(v) => setHeaderInfo({ ...headerInfo, nation: v })} />
+                                                                <HeaderField label="NUMBER" value={headerInfo.number} onChange={(v) => setHeaderInfo({ ...headerInfo, number: v })} />
                                                             </div>
                                                         </div>
                                                         <div className="text-right flex flex-col items-end justify-end">
-                                                            <div className="text-[11px] text-red-500 font-bold italic">여권 만료일 출발일 기준 최소 6개월 이상 필수</div>
+                                                            <div className="text-[11px] text-red-500 font-bold italic">여권 만료일은 출발일 기준 최소 6개월 이상 권장</div>
                                                         </div>
                                                     </div>
                                                 </th>
@@ -546,61 +712,53 @@
                                                 <th className="no-print p-2 w-8 text-center"><i className="fas fa-sort text-slate-300"></i></th>
                                                 <th className="p-2 w-10 text-center font-bold">NO</th>
                                                 <th className="p-2 text-left font-bold min-w-[80px]">성명</th>
-                                                <th className="p-2 text-left font-bold min-w-[180px]">NAME (영문명)</th>
+                                                <th className="p-2 text-left font-bold min-w-[200px]">NAME (영문명)</th>
                                                 <th className="p-2 text-left font-bold min-w-[100px]">생년월일</th>
                                                 <th className="p-2 w-12 text-center font-bold">성별</th>
                                                 <th className="p-2 text-left font-bold min-w-[110px]">여권번호</th>
                                                 <th className="p-2 text-left font-bold min-w-[100px]">여권만료일</th>
                                                 <th className="p-2 text-center font-bold w-16">국적</th>
-                                                <th className="p-2 text-left font-bold min-w-[100px]">비고</th>
+                                                <th className="p-2 text-left font-bold min-w-[120px]">비고</th>
                                                 <th className="p-2 no-print w-10 text-center font-bold">삭제</th>
                                             </tr>
                                         </thead>
-                                        
+
                                         <tbody className="print:table-row-group text-slate-800">
                                             {travelers.length === 0 ? (
                                                 <tr>
-                                                    <td colSpan="11" className="p-16 text-center text-slate-400 italic border-b border-slate-200">데이터를 업로드 하거나 '명단 수동 추가' 버튼을 눌러주세요.</td>
+                                                    <td colSpan="11" className="p-16 text-center text-slate-400 italic border-b border-slate-200">여권 파일을 업로드하거나 '빈칸 추가' 버튼을 눌러 인원을 추가해 주세요.</td>
                                                 </tr>
                                             ) : travelers.map((t, idx) => {
                                                 const status = getExpiryStatus(t.expiry);
                                                 return (
-                                                    <tr 
-                                                        key={t.id} 
-                                                        className="border-b border-slate-200 hover:bg-slate-50 transition group bg-white"
-                                                        draggable
-                                                        onDragStart={(e) => dragStart(e, idx)}
-                                                        onDragEnter={(e) => dragEnter(e, idx)}
-                                                        onDragEnd={dragEnd}
-                                                        onDrop={drop}
-                                                        onDragOver={(e) => e.preventDefault()}
-                                                    >
+                                                    <tr key={t.id} className="border-b border-slate-200 hover:bg-slate-50 transition group bg-white" draggable onDragStart={(e) => dragStart(e, idx)} onDragEnter={(e) => dragEnter(e, idx)} onDragEnd={dragEnd} onDrop={drop} onDragOver={(e) => e.preventDefault()}>
                                                         <td className="no-print p-2 text-center text-slate-300 hover:text-blue-500 drag-handle" title="드래그하여 순서 변경">
                                                             <i className="fas fa-bars"></i>
                                                         </td>
                                                         <td className="p-2 text-center text-slate-500 font-bold">{idx + 1}</td>
                                                         <td className="p-2"><EditableCell val={t.nameKor} onChange={(v) => updateField(t.id, 'nameKor', v)} bold /></td>
-                                                        <td className="p-2"><EditableCell val={t.nameEng} onChange={(v) => updateField(t.id, 'nameEng', v.toUpperCase())} uppercase /></td>
+                                                        <td className="p-2"><EditableCell val={t.nameEng} onChange={(v) => updateField(t.id, 'nameEng', v)} uppercase /></td>
                                                         <td className="p-2"><EditableCell val={t.birth} onChange={(v) => updateField(t.id, 'birth', v)} placeholder="YYYY-MM-DD" /></td>
                                                         <td className="p-2 text-center">
                                                             <select className="bg-transparent border-none outline-none cursor-pointer text-slate-700 font-bold editable-cell-input" value={t.gender} onChange={(e) => updateField(t.id, 'gender', e.target.value)}>
-                                                                <option value="M">M</option><option value="F">F</option>
+                                                                <option value="M">M</option>
+                                                                <option value="F">F</option>
                                                             </select>
                                                         </td>
-                                                        <td className="p-2"><EditableCell val={t.passportNo} onChange={(v) => updateField(t.id, 'passportNo', v.toUpperCase())} uppercase /></td>
+                                                        <td className="p-2"><EditableCell val={t.passportNo} onChange={(v) => updateField(t.id, 'passportNo', v)} uppercase /></td>
                                                         <td className={`p-2 ${status.color}`}>
-                                                            <div className="flex items-center justify-between">
+                                                            <div className="flex items-center justify-between gap-2">
                                                                 <EditableCell val={t.expiry} onChange={(v) => updateField(t.id, 'expiry', v)} placeholder="YYYY-MM-DD" />
                                                                 {status.warning && <i className="fas fa-exclamation-triangle text-orange-400 no-print ml-1" title={status.msg}></i>}
                                                             </div>
                                                         </td>
-                                                        <td className="p-2 text-center"><EditableCell val={t.nation} onChange={(v) => updateField(t.id, 'nation', v)} center /></td>
+                                                        <td className="p-2 text-center"><EditableCell val={t.nation} onChange={(v) => updateField(t.id, 'nation', v)} center uppercase /></td>
                                                         <td className="p-2"><EditableCell val={t.remark} onChange={(v) => updateField(t.id, 'remark', v)} /></td>
                                                         <td className="p-2 no-print text-center">
                                                             <button onClick={() => removeTraveler(t.id)} className="text-slate-300 hover:text-red-500 transition px-2"><i className="fas fa-trash-alt"></i></button>
                                                         </td>
                                                     </tr>
-                                                )
+                                                );
                                             })}
                                         </tbody>
 
@@ -611,7 +769,6 @@
                                                         <div className="flex justify-between items-end mb-4">
                                                             <div className="text-[11px] font-bold text-slate-500">제출일: {new Date().toLocaleDateString()}</div>
                                                             <div className="text-right">
-                                                                {/* 우측 하단 푸터: 공식 로고만 깔끔하게 적용 */}
                                                                 <img src={TM_LOGO} className="h-6 opacity-80" alt="Tourmaker Logo" />
                                                             </div>
                                                         </div>
@@ -626,7 +783,7 @@
                                         </tfoot>
                                     </table>
                                 </div>
-                                
+
                                 <div className="no-print mt-6 flex justify-center">
                                     <button onClick={addEmptyTraveler} className="border border-slate-300 text-slate-600 font-bold text-sm px-6 py-2.5 rounded-lg flex items-center gap-2 hover:bg-slate-100 transition shadow-sm">
                                         <i className="fas fa-plus"></i> 이름 미정 빈칸 1줄 추가
@@ -640,14 +797,13 @@
                         {/* ========================================================================= */}
                         <div className={activeMainTab === 'rooming' ? 'block' : 'hidden'}>
                             <div className="max-w-[1100px] mx-auto p-4 md:p-6 print-rooming-list">
-                                
-                                <div className="no-print mb-6">
-                                    <div className="flex bg-white p-1 rounded-lg border border-slate-200 shadow-sm inline-flex mb-4">
-                                        <button onClick={() => setIsInternationalRooming(false)} className={`px-4 py-1.5 rounded text-sm font-bold transition ${!isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>국내행사 (한글만)</button>
-                                        <button onClick={() => setIsInternationalRooming(true)} className={`px-4 py-1.5 rounded text-sm font-bold transition ${isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>해외행사 (영문포함)</button>
-                                    </div>
+                                {isNavMenuOpen && (
+                                    <div className="no-print mb-6">
+                                        <div className="flex bg-white p-1 rounded-lg border border-slate-200 shadow-sm inline-flex mb-4">
+                                            <button onClick={() => setIsInternationalRooming(false)} className={`px-4 py-1.5 rounded text-sm font-bold transition ${!isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>국내행사 (한글만)</button>
+                                            <button onClick={() => setIsInternationalRooming(true)} className={`px-4 py-1.5 rounded text-sm font-bold transition ${isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>해외행사 (영문포함)</button>
+                                        </div>
 
-                                    {showGuideRooming && (
                                         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                                             <div className="flex border-b border-slate-200">
                                                 <button onClick={() => setActiveSubTabRooming('pdf')} className={`flex-1 py-3 text-sm font-bold flex justify-center items-center gap-2 transition ${activeSubTabRooming === 'pdf' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'bg-white text-slate-500 hover:bg-slate-50'}`}>
@@ -662,31 +818,31 @@
                                                 {activeSubTabRooming === 'pdf' ? (
                                                     <div className="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-slate-200 rounded-lg bg-slate-50">
                                                         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3"><i className="fas fa-file-import text-blue-500 text-xl"></i></div>
-                                                        <h4 className="font-bold text-slate-800 mb-2 text-sm">담당자님이 작성해두신 PDF 파일을 올려주세요</h4>
-                                                        <p className="text-xs text-slate-500 mb-5 max-w-md">기존에 임의로 작성해두신 방배정표 파일(PDF)이 있다면 올려주세요. 시스템이 표 구조를 무시하고 사람 이름만 쏙쏙 골라 투어메이커 공식 양식으로 자동 변환해 드립니다.</p>
-                                                        <input type="file" id="rooming-upload" accept=".pdf" className="hidden" onChange={handleRoomingFileUpload}/>
+                                                        <h4 className="font-bold text-slate-800 mb-2 text-sm">작성된 명단 PDF가 있다면 올려주세요</h4>
+                                                        <p className="text-xs text-slate-500 mb-5 max-w-md">기존 명단 PDF에서 사람 이름만 추출해 투어메이커 양식으로 다시 정리합니다.</p>
+                                                        <input type="file" id="rooming-upload" accept=".pdf" className="hidden" onChange={handleRoomingFileUpload} />
                                                         <label htmlFor="rooming-upload" className="cursor-pointer bg-blue-600 text-white px-6 py-2.5 rounded font-bold text-sm hover:bg-blue-700 transition shadow-sm">PC에서 PDF 찾아보기</label>
                                                     </div>
                                                 ) : (
                                                     <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                                                         <div className="md:col-span-2">
-                                                            <h4 className="font-bold mb-2 text-slate-800 text-sm flex items-center gap-2"><i className="fas fa-circle-info text-blue-500"></i> 메모장 쓰듯 편하게 적어주세요.</h4>
+                                                            <h4 className="font-bold mb-2 text-slate-800 text-sm flex items-center gap-2"><i className="fas fa-circle-info text-blue-500"></i> 한 줄에 한 객실씩 입력</h4>
                                                             <ul className="space-y-1.5 text-xs text-slate-600">
-                                                                <li>1. <b>한 줄에 한 방</b> 인원을 나열해주세요.</li>
-                                                                <li>2. 성별 구분 없이 이름만 편하게 나열하셔도 됩니다.</li>
-                                                                <li>3. 배정 후 버튼을 클릭해 성별을 바로 바꿀 수 있습니다.</li>
+                                                                <li>1. <b>한 줄에 한 방</b> 인원을 적어주세요.</li>
+                                                                <li>2. 이름 사이에 띄어쓰기, 쉼표를 사용해도 됩니다.</li>
+                                                                <li>3. 성별 구분 없이 이름만 편하게 나열하셔도 됩니다.</li>
                                                             </ul>
                                                         </div>
                                                         <div className="md:col-span-3 flex flex-col">
-                                                            <textarea className="w-full flex-grow p-3 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 outline-none" placeholder="참가자1 참가자2&#10;참가자3 참가자4&#10;인솔자" value={importTextRooming} onChange={(e) => setImportTextRooming(e.target.value)}></textarea>
+                                                            <textarea className="w-full flex-grow p-3 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 outline-none" placeholder="홍길동 이순신&#10;유관순(여) 신사임당(여)&#10;인솔자" value={importTextRooming} onChange={(e) => setImportTextRooming(e.target.value)}></textarea>
                                                             <button onClick={handleRoomingSmartImport} className="w-full mt-2 py-2 bg-slate-800 text-white text-sm font-bold rounded-lg hover:bg-black transition shadow-sm">방 배정 자동 생성</button>
                                                         </div>
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
 
                                 <div className="space-y-6 print:space-y-0">
                                     {roomPages.map((pageRooms, pageIndex) => {
@@ -699,9 +855,9 @@
                                                 <div className="flex-1 flex flex-col">
                                                     <div className="flex flex-col md:flex-row print:flex-row justify-between items-end border-b-2 border-slate-800 pb-2 mb-3 gap-4">
                                                         <div className="space-y-1.5 flex-1 min-w-0 w-full mt-1">
-                                                            <HeaderField label="GROUP" val={roomingHeaderInfo.groupName} onChange={(v) => setRoomingHeaderInfo({...roomingHeaderInfo, groupName: v})} isMain={true} />
-                                                            <HeaderField label="DATE" val={roomingHeaderInfo.date} onChange={(v) => setRoomingHeaderInfo({...roomingHeaderInfo, date: v})} />
-                                                            <HeaderField label="LOCATION" val={roomingHeaderInfo.location} onChange={(v) => setRoomingHeaderInfo({...roomingHeaderInfo, location: v})} />
+                                                            <HeaderField label="GROUP" value={roomingHeaderInfo.groupName} onChange={(v) => setRoomingHeaderInfo({ ...roomingHeaderInfo, groupName: v })} isMain={true} />
+                                                            <HeaderField label="DATE" value={roomingHeaderInfo.date} onChange={(v) => setRoomingHeaderInfo({ ...roomingHeaderInfo, date: v })} />
+                                                            <HeaderField label="LOCATION" value={roomingHeaderInfo.location} onChange={(v) => setRoomingHeaderInfo({ ...roomingHeaderInfo, location: v })} />
                                                             
                                                             <div className="flex items-center group w-full">
                                                                 <span className="w-20 md:w-24 text-[9px] font-black text-slate-500 tracking-widest uppercase flex-shrink-0">TOTAL PAX</span>
@@ -723,12 +879,13 @@
                                                             {roomStats.roomCounts.SINGLE > 0 && <span className="bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-100">SGL: {roomStats.roomCounts.SINGLE}</span>}
                                                             {roomStats.roomCounts.TWIN > 0 && <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-100">TWN: {roomStats.roomCounts.TWIN}</span>}
                                                             {roomStats.roomCounts.TRIPLE > 0 && <span className="bg-amber-50 text-amber-700 px-2 py-1 rounded border border-amber-100">TRP: {roomStats.roomCounts.TRIPLE}</span>}
+                                                            {roomStats.roomCounts.QUAD > 0 && <span className="bg-violet-50 text-violet-700 px-2 py-1 rounded border border-violet-100">QAD: {roomStats.roomCounts.QUAD}</span>}
                                                         </div>
                                                     </div>
 
                                                     <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-x-8 gap-y-4">
-                                                        <RoomTable rooms={leftTableRooms} startIndex={pageStartIndex} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} isInternational={isInternationalRooming} />
-                                                        <RoomTable rooms={rightTableRooms} startIndex={pageStartIndex + leftTableRooms.length} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} isInternational={isInternationalRooming} />
+                                                        <RoomTable rooms={leftTableRooms} startIndex={pageStartIndex} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} isInternational={isInternationalRooming} globalRooms={rooms} />
+                                                        <RoomTable rooms={rightTableRooms} startIndex={pageStartIndex + leftTableRooms.length} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} isInternational={isInternationalRooming} globalRooms={rooms} />
                                                     </div>
                                                 </div>
 
@@ -763,7 +920,7 @@
             );
         };
 
-        const HeaderField = ({ label, value, onChange, isMain = false }) => (
+        const HeaderField = ({ label, value = "", onChange, isMain = false }) => (
             <div className="flex items-center gap-2 w-full">
                 <span className={`w-20 md:w-24 text-[10px] font-black text-slate-500 tracking-widest uppercase flex-shrink-0 ${isMain ? 'text-[11px]' : ''}`}>{label}</span>
                 <input 
@@ -775,7 +932,7 @@
             </div>
         );
 
-        const EditableCell = ({ val, onChange, bold, uppercase, placeholder, center }) => (
+        const EditableCell = ({ val = "", onChange, bold = false, uppercase = false, placeholder = '', center = false }) => (
             <input 
                 type="text"
                 title="클릭하여 내용을 수정하세요"
@@ -786,18 +943,21 @@
             />
         );
 
-        const RoomTable = ({ rooms, startIndex, updateRoom, updateGuest, changeRoomType, removeRoom, isInternational }) => (
+        const RoomTable = ({ rooms, startIndex, updateRoom, updateGuest, changeRoomType, removeRoom, isInternational, globalRooms }) => (
             <div className="border-t-[2px] border-slate-800 room-table-container">
                 <div className="grid grid-cols-[40px_1fr_100px] bg-slate-100 border-b border-slate-300 text-[9px] font-black py-1.5 px-1 text-center uppercase tracking-widest text-slate-600">
                     <div>No</div><div>Guest Info</div><div>Room No</div>
                 </div>
                 {rooms.map((room, rIdx) => {
                     const actualIdx = startIndex + rIdx;
+                    // 글로벌 인덱스 매핑 보정
+                    const globalIdx = globalRooms ? globalRooms.findIndex(r => r.id === room.id) : actualIdx;
+                    
                     return (
-                        <div key={actualIdx} className="room-row grid grid-cols-[40px_1fr_100px] border-b border-slate-200 group relative min-h-[72px]">
+                        <div key={`${actualIdx}-${room.id}`} className="room-row grid grid-cols-[40px_1fr_100px] border-b border-slate-200 group relative min-h-[72px]">
                             <div className="flex flex-col items-center justify-center bg-slate-50 border-r border-slate-100 py-1">
                                 <span className="text-[11px] font-black text-slate-800">{actualIdx + 1}</span>
-                                <select className="no-print mt-0.5 text-[8px] font-bold text-slate-400 bg-transparent outline-none cursor-pointer" value={room.type} onChange={(e) => changeRoomType(actualIdx, e.target.value)}>
+                                <select className="no-print mt-0.5 text-[8px] font-bold text-slate-400 bg-transparent outline-none cursor-pointer" value={room.type} onChange={(e) => changeRoomType(globalIdx, e.target.value)}>
                                     <option value="SINGLE">SGL</option><option value="TWIN">TWN</option><option value="TRIPLE">TRP</option><option value="QUAD">QUAD</option>
                                 </select>
                             </div>
@@ -806,24 +966,25 @@
                                 {room.guests.map((g, gIdx) => (
                                     <div key={gIdx} className={`flex flex-col px-2 py-1 ${gIdx > 0 ? 'border-t border-slate-100' : ''}`}>
                                         <div className="flex items-center gap-2 mb-0.5 w-full">
-                                            <input className="w-20 md:w-24 font-bold text-xs outline-none bg-transparent focus:text-blue-600" value={g.name} placeholder="이름 입력" onChange={(e) => updateGuest(actualIdx, gIdx, 'name', e.target.value)} />
-                                            <button onClick={() => updateGuest(actualIdx, gIdx, 'gender', g.gender === '남' ? '여' : '남')} className={`flex-shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded cursor-pointer ${g.gender === '여' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
+                                            {/* 이름 입력칸 플렉스(flex-1) 처리로 자동 확장되도록 개선 */}
+                                            <input className="flex-1 min-w-[80px] font-bold text-xs outline-none bg-transparent focus:text-blue-600" value={g.name} placeholder="이름 입력" onChange={(e) => updateGuest(globalIdx, gIdx, 'name', e.target.value)} />
+                                            <button type="button" onClick={() => updateGuest(globalIdx, gIdx, 'gender', g.gender === '남' ? '여' : '남')} className={`flex-shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded cursor-pointer ${g.gender === '여' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
                                                 {g.gender}
                                             </button>
-                                            <input className="flex-1 min-w-0 text-[10px] text-slate-500 outline-none bg-transparent" placeholder="비고란" value={g.remark} onChange={(e) => updateGuest(actualIdx, gIdx, 'remark', e.target.value)} />
+                                            <input className="flex-1 min-w-[50px] text-[10px] text-slate-500 outline-none bg-transparent" placeholder="비고" value={g.remark} onChange={(e) => updateGuest(globalIdx, gIdx, 'remark', e.target.value)} />
                                         </div>
                                         {isInternational && (
-                                            <input className="text-[10px] font-medium tracking-wide text-slate-400 outline-none uppercase bg-transparent" placeholder="ENGLISH NAME" value={g.engName} onChange={(e) => updateGuest(actualIdx, gIdx, 'engName', e.target.value)} />
+                                            <input className="text-[10px] font-medium tracking-wide text-slate-400 outline-none uppercase bg-transparent w-full" placeholder="ENGLISH NAME" value={g.engName} onChange={(e) => updateGuest(globalIdx, gIdx, 'engName', e.target.value.toUpperCase())} />
                                         )}
                                     </div>
                                 ))}
                             </div>
                             
                             <div className="border-l border-slate-100 flex items-center justify-center p-1 bg-white">
-                                <input className="w-full text-center text-[11px] font-bold text-slate-600 bg-transparent outline-none" placeholder="추후 배정" value={room.roomNo} onChange={(e) => updateRoom(actualIdx, 'roomNo', e.target.value)} />
+                                <input className="w-full text-center text-[11px] font-bold text-slate-600 bg-transparent outline-none" placeholder="추후 배정" value={room.roomNo} onChange={(e) => updateRoom(globalIdx, 'roomNo', e.target.value)} />
                             </div>
                             
-                            <button onClick={() => removeRoom(actualIdx)} className="no-print absolute -left-6 top-1/2 -translate-y-1/2 p-1 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 z-10"><i className="fas fa-trash-alt text-[10px]"></i></button>
+                            <button type="button" onClick={() => removeRoom(globalIdx)} className="no-print absolute -left-6 top-1/2 -translate-y-1/2 p-1 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 z-10"><i className="fas fa-trash-alt text-[10px]"></i></button>
                         </div>
                     );
                 })}
