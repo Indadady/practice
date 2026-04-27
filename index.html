@@ -755,14 +755,14 @@
     </div>
   </div>
 
-  <!-- 제출 완료 화면 -->
+  <!-- 제출 완료 및 이미 제출 안내 화면 -->
   <div id="viewComplete" class="view-section">
     <div class="q-block header-block" style="text-align:center; padding:60px 20px; border-top:8px solid var(--teal);">
       <div class="complete-icon" style="font-size:64px; margin-bottom:16px;">🎉</div>
       <h2 id="completeMsgTitle" style="font-size:24px; color:var(--navy); margin-bottom:16px; font-weight:800;">소중한 의견이 잘 전달되었습니다!</h2>
       <div style="background:var(--teal-light); padding:20px; border-radius:var(--radius-sm); margin-bottom:24px; display:inline-block; text-align:left; max-width:420px;">
-        <p style="color:var(--navy); font-size:15px; margin-bottom:8px; font-weight:800;">✅ 접수 완료</p>
-        <p style="color:var(--slate); font-size:14px; line-height:1.7; margin:0;">보내주신 피드백은 성공적으로 수집되었으며, 다음 행사 준비 및 서비스 개선에 귀중한 자료로 활용하겠습니다.</p>
+        <p style="color:var(--navy); font-size:15px; margin-bottom:8px; font-weight:800;">✅ 접수 확인</p>
+        <p id="completeMsgDesc" style="color:var(--slate); font-size:14px; line-height:1.7; margin:0;">보내주신 피드백은 성공적으로 수집되었으며, 다음 행사 준비 및 서비스 개선에 귀중한 자료로 활용하겠습니다.</p>
       </div>
       <p style="color:var(--navy); font-weight:800; font-size:16px;">함께해주셔서 대단히 감사합니다. ✈️</p>
     </div>
@@ -1006,16 +1006,39 @@
     }
   }
 
+  // ★ 이미 완료한 고객인지 확인하고 바로 안내 페이지를 띄우는 함수
+  function showAlreadyCompleted() {
+    const completeTitleEl = document.getElementById('completeMsgTitle');
+    const completeDescEl = document.getElementById('completeMsgDesc');
+    
+    completeTitleEl.innerText = '이미 설문조사를 완료하였습니다.';
+    if(completeDescEl) {
+      completeDescEl.innerText = '소중한 의견을 내주셔서 대단히 감사합니다.\n제출하신 피드백은 서비스 개선을 위해 소중히 활용됩니다.';
+    }
+
+    document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById('viewComplete').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
   async function finishInitialLoad() {
     await loadConfigFromDB();
     uiHeroTitle.innerText = currentConfig.title;
     uiHeroDesc.innerText = currentConfig.desc;
     
-    // 모드에 따라 탭을 렌더링
-    if (isCustomerMode) switchTab('viewForm');
-    else switchTab('viewBuilder');
+    // ★ 모드 및 중복 참여 여부에 따라 화면 렌더링 분기
+    if (isCustomerMode) {
+      const hasCompleted = localStorage.getItem(`tm_survey_completed_${currentEventId}`);
+      if (hasCompleted) {
+        showAlreadyCompleted(); // 중복 참여인 경우 폼 대신 완료 화면으로
+      } else {
+        switchTab('viewForm'); // 처음 참여하는 경우 정상적으로 폼 노출
+      }
+    } else {
+      switchTab('viewBuilder'); // 관리자 모드
+    }
 
-    // ★ 모든 세팅이 완료되면 초기 로딩 화면 끄기
+    // 모든 세팅이 완료되면 초기 로딩 화면 끄기
     setTimeout(() => {
       showLoading(false);
     }, 150);
@@ -1462,8 +1485,16 @@
       localStorage.setItem(`tm_survey_responses_${currentEventId}`, JSON.stringify(localData));
     }
 
+    // ★ 로컬 스토리지에 특정 Event ID의 설문 제출 완료 플래그 저장
+    localStorage.setItem(`tm_survey_completed_${currentEventId}`, 'true');
+
     const completeTitleEl = document.getElementById('completeMsgTitle');
+    const completeDescEl = document.getElementById('completeMsgDesc');
+    
     completeTitleEl.innerText = userName ? `${userName}님, 소중한 의견이 잘 전달되었습니다!` : '소중한 의견이 잘 전달되었습니다!';
+    if(completeDescEl) {
+      completeDescEl.innerText = '보내주신 피드백은 성공적으로 수집되었으며, 다음 행사 준비 및 서비스 개선에 귀중한 자료로 활용하겠습니다.';
+    }
 
     document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById('viewComplete').classList.add('active');
@@ -1708,6 +1739,10 @@
         await Promise.all(deletePromises);
       }
       localStorage.removeItem(`tm_survey_responses_${currentEventId}`);
+      
+      // ★ 관리자가 데이터 초기화 시, 로컬의 중복 참여 방지 플래그도 함께 리셋하여 테스트 편의성 보장
+      localStorage.removeItem(`tm_survey_completed_${currentEventId}`);
+
       showToast(`[${currentEventId}] 응답 데이터가 초기화되었습니다.`);
       await fetchAndRenderDashboard();
     } catch (error) {
