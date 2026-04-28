@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- 카카오톡 공유 썸네일 및 메타 태그 -->
-    <meta property="og:title" content="투어메이커 스마트 명단/루밍 작성 폼">
-    <meta property="og:description" content="담당자님, 여행자 명단 및 방배정(루밍리스트)을 작성 후 PDF 또는 엑셀로 저장해 전달해주세요.">
+    <meta property="og:title" content="투어메이커 스마트 명단/루밍 설문 시스템">
+    <meta property="og:description" content="담당자님, 링크를 통해 여행자 명단 및 방배정(루밍리스트)을 작성 후 제출해주세요.">
     <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEjQVWjqNlaxb98AP-qG4LHAIN9gK9sn4cGowBArA_-DUz0rxQycXrr3vFhvUqMM9Pa5tP2cDBxqBzW_re-HqzVLVAngEO8FAORbaQ36ANr0BULZ_q2PBFdDbEUJhQqr7LCGGuXO1snQ-bYx5SdFP1GZllmKNTxYv66H8E7zYyvQLsq3jour2LNjQ4PyAbo">
     <meta property="og:type" content="website">
     
@@ -22,74 +22,45 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- SheetJS with Styling (xlsx-js-style) -->
+    <!-- SheetJS with Styling -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
-    <!-- Google Analytics (GA4) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-JLH9GD9SVR');
+    <!-- Firebase Modules (Babel의 dynamic import 오류 우회) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        window.FirebaseModules = {
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
+            getFirestore, collection, addDoc, onSnapshot
+        };
     </script>
 
     <style>
         body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
         
-        /* ========================================================
-           인쇄 최적화 (투어메이커 표준양식 완벽 구현 및 선 삐져나옴 방지)
-           ======================================================== */
+        /* 인쇄 최적화 (투어메이커 표준양식) */
         @media print {
             .no-print { display: none !important; }
             body { background-color: white !important; padding: 0 !important; margin: 0 !important; overflow-x: visible !important; }
-            
-            * { 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                box-sizing: border-box !important; /* 박스 사이징 강제 */
-            }
-            
-            @page { size: A4 portrait; margin: 8mm 8mm; } /* 여백을 10mm에서 8mm로 줄여 상하좌우 공간 확장 */
-
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box !important; }
+            @page { size: A4 portrait; margin: 8mm 8mm; }
             .print-page { 
                 box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important; 
                 page-break-after: always; break-inside: avoid !important; 
                 display: flex !important; flex-direction: column !important; justify-content: space-between !important;
-                height: 277mm !important; 
-                width: 100% !important;
-                max-width: 100% !important;
-                overflow: hidden !important; /* 미세한 테두리 오버플로우 절단 */
-                position: relative;
+                height: 277mm !important; width: 100% !important; max-width: 100% !important; overflow: hidden !important; position: relative;
             }
             .print-page:last-child { page-break-after: auto; }
-            
-            table { 
-                border-collapse: collapse !important; 
-                width: 100% !important; 
-                max-width: 100% !important;
-                table-layout: fixed !important; /* 열 너비 고정으로 삐져나옴 방지 */
-            }
+            table { border-collapse: collapse !important; width: 100% !important; max-width: 100% !important; table-layout: fixed !important; }
             thead { display: table-header-group; }
             tr { page-break-inside: avoid; }
-            th, td { 
-                border: none !important; border-bottom: 1px solid #cbd5e1 !important; 
-                padding: 6px 2px !important; 
-                word-wrap: break-word !important; word-break: keep-all !important;
-            }
+            th, td { border: none !important; border-bottom: 1px solid #cbd5e1 !important; padding: 6px 2px !important; word-wrap: break-word !important; word-break: keep-all !important; }
             th { border-top: 2px solid #1e293b !important; border-bottom: 2px solid #1e293b !important; color: #1e293b !important; }
-            
-            .print-footer { 
-                margin-top: auto !important; 
-                page-break-inside: avoid;
-                width: 100%;
-                padding-top: 15px !important;
-                background: white !important;
-            }
-
+            .print-footer { margin-top: auto !important; page-break-inside: avoid; width: 100%; padding-top: 15px !important; background: white !important; }
             .print-rooming-list { box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important; display: flex !important; flex-direction: column !important; }
             .room-row { padding: 0 !important; break-inside: avoid; }
-            
             input, select, textarea { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; }
             input::placeholder, textarea::placeholder { color: transparent !important; }
         }
@@ -98,12 +69,7 @@
         .drag-handle { cursor: grab; }
         .drag-handle:active { cursor: grabbing; }
 
-        .editable-cell-input { 
-            white-space: normal !important; 
-            width: 100% !important; 
-            transition: all 0.15s ease;
-            font-family: inherit;
-        }
+        .editable-cell-input { white-space: normal !important; width: 100% !important; transition: all 0.15s ease; font-family: inherit; }
         .editable-cell-input:hover { background-color: #f1f5f9; cursor: text; border-radius: 4px; overflow: visible; }
         .editable-cell-input:focus { background-color: #e0f2fe; border-bottom: 2px solid #3b82f6; outline: none; overflow: visible; }
 
@@ -117,14 +83,15 @@
         
         .fixed-row-height { height: 36px; } 
 
-        /* 방배정 전용 황금비율 그리드 (PDF 양식 기준) */
         .room-grid { display: grid; grid-template-columns: 35px 8% 12% 1fr 20%; align-items: stretch; }
-        @media print {
-            .room-grid { grid-template-columns: 8% 12% 1fr 20%; }
-        }
+        @media print { .room-grid { grid-template-columns: 8% 12% 1fr 20%; } }
 
         .room-row input::placeholder { color: transparent !important; transition: color 0.2s ease-in-out; }
         .room-row:hover input::placeholder, .room-row input:focus::placeholder { color: #cbd5e1 !important; }
+
+        /* Loader Animation */
+        .spinner { border: 4px solid rgba(255,255,255,0.3); width: 40px; height: 40px; border-radius: 50%; border-left-color: white; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -134,13 +101,11 @@
     <script type="text/babel">
         const { useState, useRef, useMemo, useEffect } = React;
 
-        // 지정된 공식 투어메이커 헤더 로고 URL
         const TM_LOGO = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png";
-        
-        // 요청된 하단 로고(TM_FOOTER_LOGO) 적용
         const TM_FOOTER_LOGO = "https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8";
 
-        // 영문 자동 변환 로직
+        const generateEventCode = () => Math.random().toString(36).substring(2, 8).toUpperCase();
+
         const getRomanization = (char) => {
             const CHO = ["G","KK","N","D","TT","R","M","B","PP","S","SS","","J","JJ","CH","K","T","P","H"];
             const JUNG = ["A","AE","YA","YAE","EO","E","YEO","YE","O","WA","WAE","OE","YO","U","WO","WE","WI","YU","EU","UI","I"];
@@ -160,7 +125,6 @@
             return `${engFamily} ${engGiven}`.trim(); 
         };
 
-        // UI 컴포넌트
         const AutoResizeTextarea = ({ value, onChange, placeholder, minRows = 4 }) => {
             const textareaRef = useRef(null);
             const handleChange = (e) => onChange(e.target.value);
@@ -173,7 +137,7 @@
             return <textarea ref={textareaRef} className="w-full p-3 md:p-4 text-xs md:text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition font-mono leading-relaxed resize-none overflow-hidden" placeholder={placeholder} value={value} onChange={handleChange} rows={minRows} />;
         };
 
-        const HeaderField = ({ label, value = "", onChange, isMain = false, fontSize, placeholder = "" }) => (
+        const HeaderField = ({ label, value = "", onChange, isMain = false, fontSize, placeholder = "", readOnly = false }) => (
             <div className="flex items-center gap-2 print:gap-4 w-full box-border">
                 <span className={`font-black text-slate-500 tracking-widest uppercase flex-shrink-0 whitespace-nowrap`} 
                       style={{ fontSize: `${isMain ? Math.max(9, fontSize - 1) : Math.max(8, fontSize - 1.5)}pt`, width: `${Math.max(140, fontSize * 11)}px` }}>
@@ -181,11 +145,12 @@
                 </span>
                 <input 
                     type="text" 
-                    className={`flex-1 min-w-0 border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none px-2 transition-all text-slate-800 ${isMain ? 'font-black' : 'font-bold'}`}
+                    className={`flex-1 min-w-0 border-b border-transparent ${readOnly ? '' : 'hover:border-slate-300 focus:border-blue-500'} outline-none px-2 transition-all text-slate-800 ${isMain ? 'font-black' : 'font-bold'}`}
                     style={{ fontSize: `${isMain ? fontSize + 4 : fontSize}pt` }}
                     value={value} 
                     placeholder={placeholder}
-                    onChange={(e) => onChange(e.target.value)} 
+                    onChange={(e) => !readOnly && onChange(e.target.value)} 
+                    readOnly={readOnly}
                 />
             </div>
         );
@@ -202,18 +167,18 @@
             />
         );
 
-        const RoomRow = ({ room, actualIdx, globalIdx, updateRoom, updateGuest, changeRoomType, removeRoom, dragRoomStart, dragRoomEnter, dragRoomEnd, dropRoom, fontSize, isInternationalRooming }) => (
+        const RoomRow = ({ room, actualIdx, globalIdx, updateRoom, updateGuest, changeRoomType, removeRoom, dragRoomStart, dragRoomEnter, dragRoomEnd, dropRoom, fontSize, isInternationalRooming, isSharedMode }) => (
             <div
                 className="room-row room-grid group relative bg-white w-full h-full border-b border-slate-300 last:border-b-0 print:border-b box-border"
                 style={{ breakInside: 'avoid' }}
-                draggable
-                onDragStart={(e) => dragRoomStart(e, globalIdx)}
-                onDragEnter={(e) => dragRoomEnter(e, globalIdx)}
-                onDragEnd={dragRoomEnd}
-                onDrop={dropRoom}
-                onDragOver={(e) => e.preventDefault()}
+                draggable={!isSharedMode}
+                onDragStart={!isSharedMode ? (e) => dragRoomStart(e, globalIdx) : undefined}
+                onDragEnter={!isSharedMode ? (e) => dragRoomEnter(e, globalIdx) : undefined}
+                onDragEnd={!isSharedMode ? dragRoomEnd : undefined}
+                onDrop={!isSharedMode ? dropRoom : undefined}
+                onDragOver={!isSharedMode ? (e) => e.preventDefault() : undefined}
             >
-                <div className="no-print flex items-center justify-center border-r border-slate-200 text-slate-300 hover:text-blue-500 drag-handle" title="드래그하여 방 순서 변경">
+                <div className={`no-print flex items-center justify-center border-r border-slate-200 text-slate-300 ${!isSharedMode ? 'hover:text-blue-500 drag-handle' : ''}`} title={!isSharedMode ? "드래그하여 방 순서 변경" : ""}>
                     <i className="fas fa-bars"></i>
                 </div>
 
@@ -235,7 +200,7 @@
                                 <button type="button" onClick={() => updateGuest(globalIdx, gIdx, 'gender', g.gender === '남' ? '여' : '남')} className={`flex-shrink-0 font-bold px-1.5 py-0.5 rounded cursor-pointer ${g.gender === '여' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`} style={{ fontSize: `${Math.max(8, fontSize - 2)}pt`, minWidth: '26px' }}>
                                     {g.gender}
                                 </button>
-                                <input className="flex-1 min-w-[20px] text-slate-500 outline-none bg-transparent" style={{ fontSize: `${Math.max(9, fontSize - 1)}pt` }} placeholder="" value={g.remark} onChange={(e) => updateGuest(globalIdx, gIdx, 'remark', e.target.value)} />
+                                <input className="flex-1 min-w-[20px] text-slate-500 outline-none bg-transparent" style={{ fontSize: `${Math.max(9, fontSize - 1)}pt` }} placeholder={isSharedMode ? "(비고 입력)" : ""} value={g.remark} onChange={(e) => updateGuest(globalIdx, gIdx, 'remark', e.target.value)} />
                             </div>
                             {isInternationalRooming && (
                                 <input className="font-bold tracking-wide text-slate-500 outline-none uppercase bg-transparent w-full mt-0.5" style={{ fontSize: `${Math.max(8, fontSize - 1.5)}pt` }} placeholder="ENGLISH NAME" value={g.engName} onChange={(e) => updateGuest(globalIdx, gIdx, 'engName', e.target.value)} />
@@ -253,24 +218,124 @@
 
         // 메인 컴포넌트
         const App = () => {
-            const isInitialShared = useMemo(() => new URLSearchParams(window.location.search).get('shared') === 'true', []);
+            const searchParams = new URLSearchParams(window.location.search);
+            const isInitialShared = searchParams.get('shared') === 'true';
+            const urlEventCode = searchParams.get('code') || '';
+
             const [isSharedMode, setIsSharedMode] = useState(isInitialShared);
             const [activeMainTab, setActiveMainTab] = useState(isInitialShared ? 'rooming' : 'traveler');
-            const [isNavMenuOpen, setIsNavMenuOpen] = useState(true);
+            const [isNavMenuOpen, setIsNavMenuOpen] = useState(!isInitialShared);
 
             const [docFontSize, setDocFontSize] = useState(10.5); 
-            const [commonHeader, setCommonHeader] = useState({ groupName: "", date: "", location: "", number: "" });
+            const [commonHeader, setCommonHeader] = useState({ 
+                groupName: "", 
+                date: "", 
+                location: "", 
+                number: "", 
+                eventCode: urlEventCode || generateEventCode() 
+            });
 
-            const [modal, setModal] = useState({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null });
+            const [modal, setModal] = useState({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null, onChange: null });
+            const [isLoading, setIsLoading] = useState(true);
+            const [submitSuccess, setSubmitSuccess] = useState(false);
+
+            // Firebase States
+            const [db, setDb] = useState(null);
+            const [user, setUser] = useState(null);
+            const [submissions, setSubmissions] = useState([]);
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'tourmaker-rooming-app';
+
+            // 1. Firebase Initialization & Auth
+            useEffect(() => {
+                const initFirebase = async () => {
+                    try {
+                        while(!window.FirebaseModules) {
+                            await new Promise(r => setTimeout(r, 50));
+                        }
+                        const { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore } = window.FirebaseModules;
+
+                        let firebaseConfig;
+                        if (typeof __firebase_config !== 'undefined') {
+                            firebaseConfig = JSON.parse(__firebase_config);
+                        } else {
+                            // Dummy config for local testing if needed, though system requires valid config
+                            console.warn("Firebase config missing. Submission will not work locally without a backend.");
+                            setIsLoading(false);
+                            return;
+                        }
+
+                        const app = initializeApp(firebaseConfig);
+                        const auth = getAuth(app);
+                        const firestoreDb = getFirestore(app);
+                        setDb(firestoreDb);
+
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+
+                        onAuthStateChanged(auth, (u) => {
+                            setUser(u);
+                            setIsLoading(false);
+                        });
+
+                    } catch (err) {
+                        console.error("Firebase init error:", err);
+                        setIsLoading(false);
+                    }
+                };
+                initFirebase();
+            }, []);
+
+            // 2. Fetch Submissions (Manager View only)
+            useEffect(() => {
+                if (!user || !db || isSharedMode) return;
+
+                let unsubscribe = () => {};
+                const fetchSubs = async () => {
+                    try {
+                        while(!window.FirebaseModules) {
+                            await new Promise(r => setTimeout(r, 50));
+                        }
+                        const { collection, onSnapshot } = window.FirebaseModules;
+                        const subRef = collection(db, 'artifacts', appId, 'public', 'data', 'rooming_submissions');
+                        
+                        unsubscribe = onSnapshot(subRef, (snapshot) => {
+                            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                            // Filter by current event code in memory (Rule 2: No complex queries)
+                            const filtered = data.filter(d => d.eventCode === commonHeader.eventCode)
+                                                 .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+                            setSubmissions(filtered);
+                        }, (error) => {
+                            console.error("Snapshot error:", error);
+                        });
+                    } catch (err) {
+                        console.error("Fetch error:", err);
+                    }
+                };
+                fetchSubs();
+                return () => unsubscribe();
+            }, [user, db, isSharedMode, commonHeader.eventCode]);
+
 
             const showAlert = (message) => {
-                setModal({ isOpen: true, type: 'alert', message, inputValue: '', onConfirm: () => setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }) });
+                setModal({ isOpen: true, type: 'alert', message, inputValue: '', onConfirm: () => setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }), onChange: null });
             };
 
-            const showPrompt = (message, defaultValue, callback) => {
-                setModal({ isOpen: true, type: 'prompt', message, inputValue: defaultValue, 
-                    onConfirm: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); }, 
-                    onCancel: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); } 
+            const showPrompt = (message, defaultValue, onConfirmCallback) => {
+                setModal({ 
+                    isOpen: true, type: 'prompt', message, inputValue: defaultValue, 
+                    onChange: (val) => setModal(prev => ({ ...prev, inputValue: val })),
+                    onConfirm: () => { 
+                        // Prompt 확인 시 콜백 실행 (inputValue 전달)
+                        setModal(prev => {
+                            onConfirmCallback(prev.inputValue);
+                            return { isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null, onChange: null };
+                        });
+                    }, 
+                    onCancel: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null, onChange: null }); } 
                 });
             };
 
@@ -281,10 +346,10 @@
                     message: "🖨️ 인쇄 전 필수 확인사항\n\n1. 용지 크기: A4\n2. 레이아웃: 세로\n3. 옵션: '배경 그래픽 포함' 체크\n\n* 프린터 환경에 따라 표가 잘리거나 양식이 깨질 수 있습니다.\n* 가급적 상단의 [완성본 엑셀 저장] 버튼을 이용해 파일 형태로 담당자에게 전달해 주시면 가장 오류가 적습니다.\n\n그래도 인쇄를 진행하시겠습니까?",
                     inputValue: '',
                     onConfirm: () => { 
-                        setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); 
+                        setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null, onChange: null }); 
                         setTimeout(() => { window.print(); }, 300); 
                     },
-                    onCancel: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); }
+                    onCancel: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null, onChange: null }); }
                 });
             };
 
@@ -318,7 +383,6 @@
 
             const getExpiryStatus = (dateStr) => {
                 if (!dateStr) return { color: "text-slate-400", warning: false };
-                
                 let normalizedStr = dateStr;
                 if (normalizedStr.replace(/\s/g, '').match(/^\d{6}$/)) {
                     let clean = normalizedStr.replace(/\s/g, '');
@@ -326,23 +390,18 @@
                     y += (y > 50 ? 1900 : 2000); 
                     normalizedStr = `${y}-${clean.substring(2, 4)}-${clean.substring(4, 6)}`;
                 }
-
                 const match = normalizedStr.match(/(\d{2,4})[-./년]?\s*(\d{1,2})[-./월]?\s*(\d{1,2})/);
                 if (!match) return { color: "text-slate-600", warning: false };
-                
                 let year = parseInt(match[1], 10);
                 if (year < 100) { year += 2000; }
                 const month = parseInt(match[2], 10);
                 const day = parseInt(match[3], 10);
-
                 const expDate = new Date(year, month - 1, day);
                 const today = new Date();
                 today.setHours(0,0,0,0);
-                
                 const sixMonthsLater = new Date();
                 sixMonthsLater.setMonth(today.getMonth() + 6);
                 sixMonthsLater.setHours(0,0,0,0);
-
                 if (expDate < today) return { color: "text-red-600 font-bold bg-red-50", warning: true, msg: "만료됨" };
                 if (expDate < sixMonthsLater) return { color: "text-orange-500 font-bold", warning: true, msg: "6개월 미만" };
                 return { color: "text-slate-700", warning: false };
@@ -486,12 +545,10 @@
                 });
                 if (ws_data.length === 1) return showAlert("⚠️ 내보낼 데이터가 없습니다.");
 
-                // 로고(워터마크) 추가
                 ws_data.push(['', '', '', '', '', '', '', '', '']); // 간격
                 const emptyRowIdx = currentRowIdx;
                 currentRowIdx++;
 
-                // 우측 하단 열(여권번호~기타) 병합용으로 5번 인덱스에 텍스트 배치
                 ws_data.push(['', '', '', '', '', 'System Powered by TOURMAKER', '', '', '']);
                 const logoRowIdx = currentRowIdx;
                 
@@ -550,7 +607,6 @@
             // [TAB 2] 방 배정 (루밍리스트)
             // ==========================================
             const [isInternationalRooming, setIsInternationalRooming] = useState(true);
-            const [activeSubTabRooming, setActiveSubTabRooming] = useState('text');
             const [rooms, setRooms] = useState([
                 { id: 1, type: 'TWIN', roomNo: '', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] }
             ]);
@@ -592,7 +648,6 @@
                 return { total, male, female, roomCounts };
             }, [rooms]);
 
-            // [루밍 엑셀 처리 로직 - 방번호/실제호실 세로 병합 적용]
             const downloadRoomingExcelTemplate = () => {
                 const ws_data = [
                     ['순서', '성명', '영문명(NAME)', '성별', '객실번호', '기타'],
@@ -606,16 +661,15 @@
                 ];
                 const ws = XLSX.utils.aoa_to_sheet(ws_data);
                 
-                // 엑셀 병합(Merge) 설정 - 1번방(2명), 2번방(3명), 로고
                 ws['!merges'] = [
-                    { s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, // 1번방 방 번호
-                    { s: { r: 1, c: 4 }, e: { r: 2, c: 4 } }, // 1번방 호실
-                    { s: { r: 3, c: 0 }, e: { r: 5, c: 0 } }, // 2번방 방 번호
-                    { s: { r: 3, c: 4 }, e: { r: 5, c: 4 } },  // 2번방 호실
-                    { s: { r: 7, c: 4 }, e: { r: 7, c: 5 } }  // 로고 텍스트 병합
+                    { s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, 
+                    { s: { r: 1, c: 4 }, e: { r: 2, c: 4 } }, 
+                    { s: { r: 3, c: 0 }, e: { r: 5, c: 0 } }, 
+                    { s: { r: 3, c: 4 }, e: { r: 5, c: 4 } },  
+                    { s: { r: 7, c: 4 }, e: { r: 7, c: 5 } }  
                 ];
                 
-                const borders = [2, 5]; // 묶음의 마지막 행
+                const borders = [2, 5]; 
 
                 const headerStyle = { font: { name: '맑은 고딕', sz: 11, bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "047857" } }, alignment: { horizontal: "center", vertical: "center" } };
                 const dataStyle = { font: { name: '맑은 고딕', sz: 10 }, alignment: { horizontal: "center", vertical: "center" } };
@@ -630,7 +684,7 @@
                         let s = R === 0 ? { ...headerStyle } : { ...dataStyle };
                         
                         if (R === 6 || R === 7) {
-                            s.border = {}; // 푸터 영역 테두리 제거
+                            s.border = {}; 
                             if (R === 7 && C === 4) s = { ...logoStyle };
                         } else {
                             s.border = { left: { style: "thin", color: { rgb: "CBD5E1" } }, right: { style: "thin", color: { rgb: "CBD5E1" } } };
@@ -652,99 +706,6 @@
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "방배정_표준양식");
                 XLSX.writeFile(wb, "투어메이커_루밍표준양식.xlsx");
-            };
-
-            const importRoomingExcelData = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const data = new Uint8Array(event.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: true });
-
-                        const roomMap = new Map();
-                        let lastRoomIndex = "";
-                        let lastRoomNo = "";
-
-                        for (let i = 1; i < json.length; i++) {
-                            const row = json[i] || [];
-                            
-                            // 워터마크/로고 행 무시
-                            if (String(row[4] || '').includes('TOURMAKER') || String(row[1] || '').includes('TOURMAKER')) continue;
-
-                            // 병합된 셀 처리 (빈칸이면 직전 방번호 유지)
-                            let roomIndex = row[0]; 
-                            if (roomIndex !== undefined && roomIndex !== null && String(roomIndex).trim() !== '') {
-                                lastRoomIndex = roomIndex;
-                            } else {
-                                roomIndex = lastRoomIndex;
-                            }
-
-                            const guestName = String(row[1] || '').trim();
-                            if (!guestName && !row[4]) continue; 
-
-                            // 병합된 실제 호실 처리
-                            let roomNoVal = row[4];
-                            if (roomNoVal !== undefined && roomNoVal !== null && String(roomNoVal).trim() !== '') {
-                                lastRoomNo = String(roomNoVal).trim();
-                            } else if (guestName) {
-                                roomNoVal = lastRoomNo; 
-                            } else {
-                                roomNoVal = "";
-                            }
-
-                            const rawGender = row[3] ? String(row[3]).trim() : '';
-                            const gender = (rawGender === 'F' || rawGender === '여') ? '여' : '남';
-                            
-                            const guest = {
-                                name: guestName,
-                                engName: row[2] ? String(row[2]).toUpperCase().trim() : (isInternationalRooming ? koreanToEnglish(guestName) : ""),
-                                gender: gender,
-                                remark: row[5] ? String(row[5]).trim() : ""
-                            };
-
-                            if (!roomMap.has(roomIndex)) {
-                                roomMap.set(roomIndex, {
-                                    id: Date.now() + Math.random() + i,
-                                    roomNo: roomNoVal || '',
-                                    guests: []
-                                });
-                            } else {
-                                if(roomNoVal && !roomMap.get(roomIndex).roomNo) {
-                                    roomMap.get(roomIndex).roomNo = roomNoVal;
-                                }
-                            }
-                            if(guestName) {
-                                roomMap.get(roomIndex).guests.push(guest);
-                            }
-                        }
-
-                        const newRooms = Array.from(roomMap.values()).map(r => {
-                            let type = 'TWIN';
-                            let gCount = r.guests.length;
-                            if (gCount <= 1) type = 'SINGLE';
-                            else if (gCount === 2) type = 'TWIN';
-                            else if (gCount === 3) type = 'TRIPLE';
-                            else type = 'QUAD';
-
-                            const capacity = type === 'SINGLE' ? 1 : (type === 'TWIN' ? 2 : (type === 'TRIPLE' ? 3 : 4));
-                            while(r.guests.length < capacity) {
-                                r.guests.push({name:"", engName:"", gender:"남", remark:""});
-                            }
-                            return { ...r, type };
-                        });
-
-                        if (newRooms.length > 0) {
-                            setRooms(newRooms);
-                            showAlert(`✅ 성공적으로 ${newRooms.length}개의 방 배정 데이터를 불러왔습니다.`);
-                        } else showAlert("⚠️ 유효한 데이터가 없습니다. (순서 및 성명 확인)");
-                    } catch (error) { console.error(error); showAlert("⚠️ 엑셀 파싱 오류가 발생했습니다."); }
-                };
-                reader.readAsArrayBuffer(file);
-                e.target.value = '';
             };
 
             const exportRoomingToExcel = () => {
@@ -769,7 +730,6 @@
                     if (addedCount > 0) {
                         borders.push(currentRowIdx - 1); 
                         if (addedCount > 1) {
-                            // 방 번호 & 실제 호실 세로 병합 적용
                             merges.push({ s: { r: startRow, c: 0 }, e: { r: currentRowIdx - 1, c: 0 } });
                             merges.push({ s: { r: startRow, c: 4 }, e: { r: currentRowIdx - 1, c: 4 } });
                         }
@@ -778,14 +738,13 @@
 
                 if (ws_data.length === 1) return showAlert("⚠️ 내보낼 방 배정 데이터가 없습니다.");
 
-                // 로고(워터마크) 추가
-                ws_data.push(['', '', '', '', '', '']); // 간격
+                ws_data.push(['', '', '', '', '', '']); 
                 const emptyRowIdx = currentRowIdx;
                 currentRowIdx++;
 
                 ws_data.push(['', '', '', '', 'System Powered by TOURMAKER', '']);
                 const logoRowIdx = currentRowIdx;
-                merges.push({ s: { r: logoRowIdx, c: 4 }, e: { r: logoRowIdx, c: 5 } }); // 우측 하단 병합
+                merges.push({ s: { r: logoRowIdx, c: 4 }, e: { r: logoRowIdx, c: 5 } }); 
 
                 const ws = XLSX.utils.aoa_to_sheet(ws_data);
                 if (merges.length > 0) ws['!merges'] = merges;
@@ -803,7 +762,7 @@
                         let s = R === 0 ? { ...headerStyle } : { ...dataStyle };
                         
                         if (R === emptyRowIdx || R === logoRowIdx) {
-                            s.border = {}; // 푸터 영역 테두리 제거
+                            s.border = {}; 
                             if (R === logoRowIdx && C === 4) s = { ...logoStyle };
                         } else {
                             s.border = { left: { style: "thin", color: { rgb: "CBD5E1" } }, right: { style: "thin", color: { rgb: "CBD5E1" } } };
@@ -858,10 +817,7 @@
                 setImportTextRooming("");
             };
 
-            const updateRoom = (rIdx, field, value) => { 
-                setRooms(prev => prev.map((room, idx) => idx === rIdx ? { ...room, [field]: value } : room)); 
-            };
-            
+            const updateRoom = (rIdx, field, value) => { setRooms(prev => prev.map((room, idx) => idx === rIdx ? { ...room, [field]: value } : room)); };
             const updateGuest = (globalIdx, gIdx, field, value) => {
                 setRooms(prev => prev.map((room, rIndex) => {
                     if (rIndex === globalIdx) {
@@ -903,39 +859,20 @@
             const removeRoom = (globalIdx) => setRooms(prev => prev.filter((_, idx) => idx !== globalIdx));
             const addRoom = () => setRooms(prev => [...prev, { id: Date.now() + Math.random(), roomNo: '', type: 'TWIN', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] }]);
 
-            // PDF 구조 기반 2단 분리를 위한 로직 (1페이지당 36개 방을 처리하여 18줄 생성)
             const ROOMS_PER_PAGE = 36;
             const roomPages = [];
             const totalRoomPages = Math.max(1, Math.ceil(rooms.length / ROOMS_PER_PAGE));
             for (let i = 0; i < totalRoomPages; i++) roomPages.push(rooms.slice(i * ROOMS_PER_PAGE, (i + 1) * ROOMS_PER_PAGE));
 
-            // 시스템 기능들 (저장/불러오기/프린트 등)
-            const exportData = () => {
-                const dataToSave = { travelers, commonHeader, rooms };
-                const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a'); link.href = url; link.download = `투어메이커_데이터_${new Date().toISOString().slice(0,10)}.json`;
-                document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
-            };
-
-            const importData = (e) => {
-                const file = e.target.files[0]; if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        if (data.travelers) setTravelers(data.travelers);
-                        if (data.commonHeader) setCommonHeader(data.commonHeader);
-                        if (data.rooms) setRooms(data.rooms);
-                        showAlert("✅ 저장된 데이터를 성공적으로 불러왔습니다.");
-                    } catch (error) { showAlert("⚠️ 데이터를 읽는 중 오류가 발생했습니다."); }
-                };
-                reader.readAsText(file); e.target.value = '';
-            };
-
+            // 시스템 기능들 (프린트 및 링크 복사 등)
             const handleCopyLink = () => {
+                // Generate a code if empty
+                if(!commonHeader.eventCode) {
+                    setCommonHeader(prev => ({...prev, eventCode: generateEventCode()}));
+                }
+                const currentCode = commonHeader.eventCode || generateEventCode();
                 const baseUrl = window.location.origin + window.location.pathname;
-                const shareUrl = `${baseUrl}?shared=true`;
+                const shareUrl = `${baseUrl}?shared=true&code=${encodeURIComponent(currentCode)}`;
                 
                 fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(shareUrl)}`)
                     .then(res => res.json())
@@ -949,9 +886,9 @@
                 document.body.appendChild(textArea); textArea.focus(); textArea.select();
                 try {
                     const successful = document.execCommand('copy');
-                    if(successful) showAlert(`✅ 담당자 공유용 단축 링크(${urlToCopy})가 복사되었습니다!`);
-                    else showPrompt("자동 복사에 실패했습니다. 복사해주세요:", urlToCopy);
-                } catch (err) { showPrompt("자동 복사에 실패했습니다. 복사해주세요:", urlToCopy); } 
+                    if(successful) showAlert(`✅ 고객 전용 배정 링크(${urlToCopy})가 복사되었습니다! 담당자에게 전달해주세요.`);
+                    else showPrompt("자동 복사에 실패했습니다. 복사해주세요:", urlToCopy, () => {});
+                } catch (err) { showPrompt("자동 복사에 실패했습니다. 복사해주세요:", urlToCopy, () => {}); } 
                 finally { document.body.removeChild(textArea); }
             };
 
@@ -962,6 +899,77 @@
                     setTimeout(() => { window.print(); }, 100);
                 }
             };
+
+            // ==========================================
+            // [제출 시스템 로직] 
+            // ==========================================
+            const handleSubmitRooming = () => {
+                if(roomStats.total === 0) {
+                    showAlert("⚠️ 방 배정된 인원이 없습니다. 명단을 입력해주세요.");
+                    return;
+                }
+
+                showPrompt("마지막 단계입니다!\n담당자 확인을 위해 '제출자 성함(또는 직책)'을 입력해주세요.\n(예: 1반 담임 김철수)", "", async (submitterName) => {
+                    if(!submitterName || submitterName.trim() === "") {
+                        showAlert("⚠️ 제출자 성함을 입력해야 제출이 가능합니다.");
+                        return;
+                    }
+
+                    try {
+                        const { collection, addDoc } = window.FirebaseModules;
+                        const subRef = collection(db, 'artifacts', appId, 'public', 'data', 'rooming_submissions');
+                        
+                        await addDoc(subRef, {
+                            eventCode: commonHeader.eventCode,
+                            groupName: commonHeader.groupName || '미지정 단체',
+                            submitterName: submitterName,
+                            submittedAt: new Date().toISOString(),
+                            rooms: rooms,
+                            stats: roomStats
+                        });
+                        
+                        setSubmitSuccess(true);
+                    } catch(err) {
+                        console.error(err);
+                        showAlert("⚠️ 서버 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+                    }
+                });
+            };
+
+            const loadSubmission = (submission) => {
+                setModal({
+                    isOpen: true,
+                    type: 'confirm',
+                    message: `해당 배정본(${submission.submitterName} 제출)을 현재 화면에 덮어씌웁니다.\n기존 화면에 작성 중이던 내용은 사라집니다. 계속하시겠습니까?`,
+                    inputValue: '',
+                    onConfirm: () => {
+                        setRooms(submission.rooms);
+                        setActiveMainTab('rooming');
+                        setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null, onChange: null }); 
+                        showAlert("✅ 성공적으로 배정본이 적용되었습니다!");
+                    },
+                    onCancel: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null, onChange: null }); }
+                });
+            };
+
+            if (isLoading) {
+                return <div className="min-h-screen flex items-center justify-center bg-slate-800 flex-col gap-4"><div className="spinner"></div><p className="text-white font-bold">보안 시스템 연결 중...</p></div>;
+            }
+
+            if (submitSuccess) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center bg-slate-50 flex-col px-4 text-center">
+                        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-xl max-w-lg w-full border border-slate-100">
+                            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i className="fas fa-check text-4xl text-emerald-500"></i>
+                            </div>
+                            <h2 className="text-2xl md:text-3xl font-black text-slate-800 mb-2">제출 완료!</h2>
+                            <p className="text-slate-500 font-bold mb-8">작성해주신 객실 배정표가 담당자에게<br/>성공적으로 전달되었습니다.</p>
+                            <p className="text-sm text-slate-400">이 창을 닫으셔도 좋습니다.</p>
+                        </div>
+                    </div>
+                );
+            }
 
             return (
                 <div className="min-h-screen flex flex-col bg-slate-50 relative">
@@ -977,26 +985,36 @@
                             </div>
                             
                             <div className="flex w-full md:w-auto justify-center overflow-x-auto hide-scrollbar">
-                                <button onClick={() => setActiveMainTab('traveler')} className={`whitespace-nowrap px-3 md:px-5 py-2 md:py-4 h-full flex items-center font-bold text-[13px] md:text-sm border-b-[3px] transition-all md:rounded-t-md ${activeMainTab === 'traveler' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
-                                    <i className="fas fa-passport mr-2"></i> 1. 여행자 명단
-                                </button>
+                                {!isSharedMode && (
+                                    <button onClick={() => setActiveMainTab('traveler')} className={`whitespace-nowrap px-3 md:px-5 py-2 md:py-4 h-full flex items-center font-bold text-[13px] md:text-sm border-b-[3px] transition-all md:rounded-t-md ${activeMainTab === 'traveler' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
+                                        <i className="fas fa-passport mr-2"></i> 1. 여행자 명단
+                                    </button>
+                                )}
                                 <button onClick={() => setActiveMainTab('rooming')} className={`whitespace-nowrap px-3 md:px-5 py-2 md:py-4 h-full flex items-center font-bold text-[13px] md:text-sm border-b-[3px] transition-all md:rounded-t-md ${activeMainTab === 'rooming' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
-                                    <i className="fas fa-bed mr-2"></i> 2. 방 배정 (루밍)
+                                    <i className="fas fa-bed mr-2"></i> {isSharedMode ? '방 배정 작성' : '2. 방 배정 (루밍)'}
                                 </button>
+                                {!isSharedMode && (
+                                    <button onClick={() => setActiveMainTab('results')} className={`whitespace-nowrap px-3 md:px-5 py-2 md:py-4 h-full flex items-center font-bold text-[13px] md:text-sm border-b-[3px] transition-all md:rounded-t-md ${activeMainTab === 'results' ? 'border-emerald-400 text-emerald-400 bg-slate-800' : 'border-transparent text-slate-400 hover:text-emerald-200 hover:bg-slate-800'}`}>
+                                        <i className="fas fa-inbox mr-2"></i> 3. 방배정 완료 <span className="ml-2 bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{submissions.length}</span>
+                                    </button>
+                                )}
                             </div>
 
-                            <div className="flex w-full md:w-auto justify-end gap-2 pt-1 md:pt-0 border-t border-slate-700 md:border-none">
+                            <div className="flex w-full md:w-auto justify-end items-center gap-2 pt-1 md:pt-0 border-t border-slate-700 md:border-none">
                                 {!isSharedMode && (
                                     <React.Fragment>
-                                        <button onClick={handleCopyLink} className="text-slate-300 hover:text-white px-2 py-1.5 text-xs font-bold transition flex items-center gap-1" title="링크 복사"><i className="fas fa-link"></i> 링크 복사</button>
-                                        <input type="file" id="json-upload" accept=".json" className="hidden" onChange={importData} />
-                                        <label htmlFor="json-upload" className="cursor-pointer text-slate-300 hover:text-white px-2 py-1.5 text-xs font-bold transition flex items-center gap-1" title="데이터 불러오기"><i className="fas fa-folder-open"></i> 불러오기</label>
-                                        <button onClick={exportData} className="text-slate-300 hover:text-white px-2 py-1.5 text-xs font-bold transition flex items-center gap-1" title="데이터 저장"><i className="fas fa-save"></i> 데이터 저장</button>
+                                        <div className="hidden lg:flex items-center gap-2 mr-2 bg-slate-800 px-2 py-1 rounded text-xs">
+                                            <span className="text-slate-400">공유 코드:</span>
+                                            <input type="text" className="bg-transparent text-emerald-400 font-bold w-16 outline-none text-center" value={commonHeader.eventCode} onChange={e=>setCommonHeader({...commonHeader, eventCode: e.target.value.toUpperCase()})} placeholder="코드" />
+                                        </div>
+                                        <button onClick={handleCopyLink} className="text-emerald-300 hover:text-emerald-100 px-2 py-1.5 text-xs font-bold transition flex items-center gap-1" title="고객 설문 전송용 링크 복사"><i className="fas fa-link"></i> 링크 복사</button>
                                     </React.Fragment>
                                 )}
-                                <button onClick={handlePrint} className="bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded font-bold text-xs md:text-sm hover:bg-blue-500 transition shadow flex items-center gap-2">
-                                    <i className="fas fa-file-pdf"></i> PDF 인쇄
-                                </button>
+                                {!isSharedMode && (
+                                    <button onClick={handlePrint} className="bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded font-bold text-xs md:text-sm hover:bg-blue-500 transition shadow flex items-center gap-2">
+                                        <i className="fas fa-file-pdf"></i> PDF 인쇄
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -1006,16 +1024,6 @@
                         {/* TAB 1: 여행자 명단 */}
                         {/* ========================================================================= */}
                         <div className={activeMainTab === 'traveler' ? 'block' : 'hidden'}>
-                            {isSharedMode && (
-                                <div className="no-print max-w-[1400px] mx-auto px-3 mt-4 mb-1">
-                                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded text-[13px] md:text-sm text-indigo-800 font-bold flex flex-col md:flex-row justify-between items-start md:items-center gap-2 shadow-sm">
-                                        <div>
-                                            <i className="fas fa-info-circle mr-1 text-indigo-600"></i>
-                                            담당자님, 작성을 모두 마치신 후 가급적 우측의 <span className="text-indigo-900 bg-indigo-100 px-1.5 py-0.5 rounded mx-0.5">완성본 엑셀 저장</span> 버튼을 눌러 엑셀 파일로 전달해 주시면 가장 오류가 적습니다.
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
                             <div className="no-print max-w-[1400px] mx-auto mb-3 flex flex-col gap-2 px-3 md:px-4 bg-blue-50 py-3 rounded border border-blue-100 mt-2">
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                                     <p className="text-[11px] md:text-sm text-blue-800 font-bold leading-relaxed">
@@ -1077,7 +1085,6 @@
                                                     <col className="w-[14%] print:w-[15%]" />
                                                     <col className="w-[12%] print:w-[13%]" />
                                                     <col className="w-[7%] print:w-[8%]" />
-                                                    {/* 기타 열 넓이를 3% -> 10%로 대폭 확장하여 줄바꿈 해결 (전체비율 100% 교정) */}
                                                     <col className="w-[11%] print:w-[10%]" />
                                                     <col className="no-print w-[4%]" />
                                                 </colgroup>
@@ -1134,7 +1141,6 @@
                                                 제출일: {new Date().toLocaleDateString()}
                                             </div>
                                             <div className="flex flex-col items-end justify-center gap-1.5 pr-1">
-                                                {/* 로고 추가 및 단체명 변수 연동 */}
                                                 <img src={TM_FOOTER_LOGO} alt="Tourmaker" className="h-6 md:h-8 object-contain" />
                                                 <p className="text-[#6c757d] leading-relaxed m-0 font-bold text-right tracking-tight" style={{ fontSize: `${Math.max(7, docFontSize - 3)}pt` }}>
                                                     본 시스템은 <span className="text-slate-800 font-black">{commonHeader.groupName || '해당 단체'}</span>의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
@@ -1150,53 +1156,50 @@
                         </div>
 
                         {/* ========================================================================= */}
-                        {/* TAB 2: 방 배정 (루밍리스트) */}
+                        {/* TAB 2: 방 배정 (루밍리스트) / 고객 작성 화면 */}
                         {/* ========================================================================= */}
                         <div className={activeMainTab === 'rooming' ? 'block' : 'hidden'}>
                             <div className="w-full max-w-full xl:max-w-[1400px] mx-auto p-0 sm:p-4 md:p-6 print-rooming-list">
                                 <div className="no-print mb-4 md:mb-6">
-                                    {isSharedMode && (
-                                        <div className="mb-4 bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded text-[13px] md:text-sm text-indigo-800 font-bold flex flex-col md:flex-row justify-between items-start md:items-center gap-2 shadow-sm">
-                                            <div>
-                                                <i className="fas fa-info-circle mr-1 text-indigo-600"></i>
-                                                담당자님, 작성을 모두 마치신 후 가급적 우측의 <span className="text-indigo-900 bg-indigo-100 px-1.5 py-0.5 rounded mx-0.5">완성본 엑셀 저장</span> 버튼을 눌러 엑셀 파일로 전달해 주시면 가장 오류가 적습니다.
+                                    {isSharedMode ? (
+                                        <div className="mb-4 bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded text-sm text-indigo-800 font-bold shadow-sm flex items-start gap-3">
+                                            <i className="fas fa-bullhorn text-2xl text-indigo-500 mt-1"></i>
+                                            <div className="flex-1 leading-relaxed">
+                                                <p className="text-base text-indigo-900 mb-1">담당자님, 아래 객실 배정을 완료해 주세요.</p>
+                                                <p className="font-normal opacity-80">인원과 성별을 알맞게 배치하신 후 최하단의 <strong className="text-indigo-600">객실 배정 제출</strong> 버튼을 누르시면 됩니다.</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 bg-blue-50 py-3 px-3 md:px-4 rounded border border-blue-100">
+                                            <div className="flex flex-col sm:flex-row gap-2 md:items-center">
+                                                <div className="flex bg-white p-1 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto">
+                                                    <button onClick={() => setIsInternationalRooming(false)} className={`flex-1 sm:flex-none px-3 py-1.5 rounded text-xs md:text-sm font-bold transition ${!isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>국내행사(한글)</button>
+                                                    <button onClick={() => setIsInternationalRooming(true)} className={`flex-1 sm:flex-none px-3 py-1.5 rounded text-xs md:text-sm font-bold transition ${isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>해외행사(영문)</button>
+                                                </div>
+                                                <p className="text-[11px] md:text-xs text-blue-800 font-bold leading-relaxed ml-1 hidden lg:block">
+                                                    <i className="fas fa-lightbulb text-amber-500 mr-1"></i> 텍스트를 복사해 붙여넣으면 시스템이 알아서 배치합니다.
+                                                </p>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2 flex-wrap justify-end">
+                                                <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-emerald-400">
+                                                    <button onClick={downloadRoomingExcelTemplate} className="text-[11px] md:text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 transition whitespace-nowrap" title="루밍 엑셀 양식 다운로드"><i className="fas fa-download"></i> 양식 다운</button>
+                                                    <div className="w-[1px] h-3 bg-emerald-300"></div>
+                                                    <button onClick={exportRoomingToExcel} className="text-[11px] md:text-xs font-black text-emerald-700 hover:text-emerald-900 flex items-center gap-1 transition whitespace-nowrap" title="방배정 엑셀로 내보내기"><i className="fas fa-file-excel"></i> 완성본 엑셀 저장</button>
+                                                </div>
+                                                
+                                                <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-slate-200">
+                                                    <span className="text-xs font-bold text-slate-500"><i className="fas fa-search-plus"></i> 크기:</span>
+                                                    <button onClick={() => setDocFontSize(Math.max(8, docFontSize - 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">-</button>
+                                                    <span className="text-xs font-bold text-blue-600 w-10 text-center">{docFontSize}pt</span>
+                                                    <button onClick={() => setDocFontSize(Math.min(16, docFontSize + 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">+</button>
+                                                </div>
+                                                <button onClick={() => setIsNavMenuOpen(!isNavMenuOpen)} className="bg-white border border-slate-200 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded text-xs font-bold transition shadow-sm"><i className={`fas fa-chevron-${isNavMenuOpen ? 'up' : 'down'}`}></i> 복붙기능</button>
                                             </div>
                                         </div>
                                     )}
-                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 bg-blue-50 py-3 px-3 md:px-4 rounded border border-blue-100">
-                                        
-                                        <div className="flex flex-col sm:flex-row gap-2 md:items-center">
-                                            <div className="flex bg-white p-1 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto">
-                                                <button onClick={() => setIsInternationalRooming(false)} className={`flex-1 sm:flex-none px-3 py-1.5 rounded text-xs md:text-sm font-bold transition ${!isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>국내행사(한글)</button>
-                                                <button onClick={() => setIsInternationalRooming(true)} className={`flex-1 sm:flex-none px-3 py-1.5 rounded text-xs md:text-sm font-bold transition ${isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>해외행사(영문)</button>
-                                            </div>
-                                            <p className="text-[11px] md:text-xs text-blue-800 font-bold leading-relaxed ml-1 hidden lg:block">
-                                                <i className="fas fa-lightbulb text-amber-500 mr-1"></i> 텍스트를 복사해 붙여넣으면 시스템이 알아서 배치합니다.
-                                            </p>
-                                        </div>
-                                        
-                                        <div className="flex items-center gap-2 flex-wrap justify-end">
-                                            <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-emerald-400">
-                                                {!isSharedMode && (
-                                                    <React.Fragment>
-                                                        <button onClick={downloadRoomingExcelTemplate} className="text-[11px] md:text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 transition whitespace-nowrap" title="루밍 엑셀 양식 다운로드"><i className="fas fa-download"></i> 양식 다운</button>
-                                                        <div className="w-[1px] h-3 bg-emerald-300"></div>
-                                                    </React.Fragment>
-                                                )}
-                                                <button onClick={exportRoomingToExcel} className="text-[11px] md:text-xs font-black text-emerald-700 hover:text-emerald-900 flex items-center gap-1 transition whitespace-nowrap" title="방배정 엑셀로 내보내기"><i className="fas fa-file-excel"></i> 완성본 엑셀 저장</button>
-                                            </div>
-                                            
-                                            <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-slate-200">
-                                                <span className="text-xs font-bold text-slate-500"><i className="fas fa-search-plus"></i> 크기:</span>
-                                                <button onClick={() => setDocFontSize(Math.max(8, docFontSize - 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">-</button>
-                                                <span className="text-xs font-bold text-blue-600 w-10 text-center">{docFontSize}pt</span>
-                                                <button onClick={() => setDocFontSize(Math.min(16, docFontSize + 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">+</button>
-                                            </div>
-                                            <button onClick={() => setIsNavMenuOpen(!isNavMenuOpen)} className="bg-white border border-slate-200 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded text-xs font-bold transition shadow-sm"><i className={`fas fa-chevron-${isNavMenuOpen ? 'up' : 'down'}`}></i> 복붙기능</button>
-                                        </div>
-                                    </div>
 
-                                    {isNavMenuOpen && (
+                                    {!isSharedMode && isNavMenuOpen && (
                                         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
                                             <div className="flex border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-xs md:text-sm font-bold text-blue-700 items-center justify-center md:justify-start">
                                                 <i className="fas fa-bolt text-amber-400 mr-2"></i> 스마트 변환기 (텍스트 복붙으로 명단 자동 완성)
@@ -1234,15 +1237,15 @@
                                                         <div className="space-y-3 flex-1 w-full min-w-0">
                                                             <h2 className="font-black tracking-tighter text-slate-900 mt-2" style={{ fontSize: `${docFontSize * 2.2}pt` }}>ROOMING LIST</h2>
                                                             <div className="flex flex-col gap-1.5 font-bold text-slate-700 w-full print:max-w-none max-w-full sm:max-w-[750px] box-border">
-                                                                <HeaderField label="GROUP" value={commonHeader.groupName} onChange={(v) => setCommonHeader({ ...commonHeader, groupName: v })} isMain={true} fontSize={docFontSize} placeholder="단체명" />
-                                                                <HeaderField label="DATE" value={commonHeader.date} onChange={(v) => setCommonHeader({ ...commonHeader, date: v })} fontSize={docFontSize} placeholder="일정" />
-                                                                <HeaderField label="LOCATION" value={commonHeader.location} onChange={(v) => setCommonHeader({ ...commonHeader, location: v })} fontSize={docFontSize} placeholder="지역" />
+                                                                <HeaderField label="GROUP" value={commonHeader.groupName} onChange={(v) => setCommonHeader({ ...commonHeader, groupName: v })} isMain={true} fontSize={docFontSize} placeholder="단체명" readOnly={isSharedMode} />
+                                                                <HeaderField label="DATE" value={commonHeader.date} onChange={(v) => setCommonHeader({ ...commonHeader, date: v })} fontSize={docFontSize} placeholder="일정" readOnly={isSharedMode} />
+                                                                <HeaderField label="LOCATION" value={commonHeader.location} onChange={(v) => setCommonHeader({ ...commonHeader, location: v })} fontSize={docFontSize} placeholder="지역" readOnly={isSharedMode} />
                                                                 
                                                                 <div className="flex items-center group w-full mt-1 md:mt-0 box-border">
                                                                     <span className="font-black text-slate-500 tracking-widest uppercase flex-shrink-0 whitespace-nowrap" style={{ fontSize: `${Math.max(8, docFontSize - 1.5)}pt`, width: `${Math.max(140, docFontSize * 11)}px` }}>TOTAL PAX</span>
                                                                     <div className="font-bold text-slate-800 flex-1 flex flex-row items-center gap-2 md:gap-3 px-1 md:px-2 whitespace-nowrap overflow-hidden" style={{ fontSize: `${docFontSize}pt` }}>
                                                                         <div className="flex items-center gap-1.5 md:gap-2">
-                                                                            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">총 인원: <span className="text-blue-600">{roomStats.total}</span>명</span>
+                                                                            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">배정 인원: <span className="text-blue-600">{roomStats.total}</span>명</span>
                                                                         </div>
                                                                         <div className="flex items-center gap-1.5 hidden sm:flex">
                                                                             <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200">TWN: {roomStats.roomCounts.TWIN}</span>
@@ -1260,13 +1263,12 @@
                                                     </div>
 
                                                     <div className="flex justify-between items-center mb-2 gap-2">
-                                                        {isInternationalRooming ? <p className="font-bold text-red-600 no-print" style={{ fontSize: `${Math.max(9, docFontSize - 1)}pt` }}><i className="fas fa-exclamation-circle mr-1"></i> 자동 변환된 영문명은 여권과 상이할 수 있습니다. 꼭 재확인 바랍니다.</p> : <div></div>}
+                                                        {isInternationalRooming && !isSharedMode ? <p className="font-bold text-red-600 no-print" style={{ fontSize: `${Math.max(9, docFontSize - 1)}pt` }}><i className="fas fa-exclamation-circle mr-1"></i> 자동 변환된 영문명은 여권과 상이할 수 있습니다. 꼭 재확인 바랍니다.</p> : <div></div>}
                                                     </div>
 
                                                     <div className="table-wrapper flex-1 w-full relative box-border overflow-hidden">
                                                         <div className="w-full border-t-[2px] border-slate-800 border-b-[3px] border-slate-800 print:border-b-2 flex flex-col bg-white box-border">
                                                             
-                                                            {/* 표 헤더 */}
                                                             <div className="flex flex-col md:flex-row print:flex-row items-stretch w-full border-b-[2px] border-slate-800 text-slate-800 font-bold bg-slate-50 box-border" style={{ fontSize: `${Math.max(8, docFontSize - 1)}pt` }}>
                                                                 <div className="room-grid text-center items-stretch w-full md:w-1/2 print:w-1/2 md:border-r-[2px] print:border-r-[2px] border-slate-800 box-border">
                                                                     <div className="no-print flex items-center justify-center py-2 border-r border-slate-200"><i className="fas fa-sort text-slate-300"></i></div>
@@ -1284,7 +1286,6 @@
                                                                 </div>
                                                             </div>
 
-                                                            {/* 표 몸통 (Row 단위) */}
                                                             <div className="flex flex-col w-full box-border">
                                                                 {Array.from({ length: leftTableRooms.length }).map((_, i) => {
                                                                     const leftRoom = leftTableRooms[i];
@@ -1295,11 +1296,11 @@
                                                                     return (
                                                                         <div key={i} className="flex flex-col md:flex-row print:flex-row w-full items-stretch bg-white box-border">
                                                                             <div className="w-full md:w-1/2 print:w-1/2 md:border-r-[2px] print:border-r-[2px] border-slate-800 flex box-border">
-                                                                                <RoomRow room={leftRoom} actualIdx={pageStartIndex + i + 1} globalIdx={leftGlobalIdx} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} dragRoomStart={dragRoomStart} dragRoomEnter={dragRoomEnter} dragRoomEnd={dragRoomEnd} dropRoom={dropRoom} fontSize={docFontSize} isInternationalRooming={isInternationalRooming} />
+                                                                                <RoomRow room={leftRoom} actualIdx={pageStartIndex + i + 1} globalIdx={leftGlobalIdx} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} dragRoomStart={dragRoomStart} dragRoomEnter={dragRoomEnter} dragRoomEnd={dragRoomEnd} dropRoom={dropRoom} fontSize={docFontSize} isInternationalRooming={isInternationalRooming} isSharedMode={isSharedMode} />
                                                                             </div>
                                                                             <div className="w-full md:w-1/2 print:w-1/2 flex border-b md:border-b-0 print:border-b-0 border-slate-300 box-border">
                                                                                 {rightRoom ? (
-                                                                                    <RoomRow room={rightRoom} actualIdx={pageStartIndex + leftTableRooms.length + i + 1} globalIdx={rightGlobalIdx} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} dragRoomStart={dragRoomStart} dragRoomEnter={dragRoomEnter} dragRoomEnd={dragRoomEnd} dropRoom={dropRoom} fontSize={docFontSize} isInternationalRooming={isInternationalRooming} />
+                                                                                    <RoomRow room={rightRoom} actualIdx={pageStartIndex + leftTableRooms.length + i + 1} globalIdx={rightGlobalIdx} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} dragRoomStart={dragRoomStart} dragRoomEnter={dragRoomEnter} dragRoomEnd={dragRoomEnd} dropRoom={dropRoom} fontSize={docFontSize} isInternationalRooming={isInternationalRooming} isSharedMode={isSharedMode}/>
                                                                                 ) : (
                                                                                     <div className="w-full h-full bg-white border-b border-slate-300 last:border-b-0 print:border-b box-border"></div>
                                                                                 )}
@@ -1315,10 +1316,9 @@
                                                 <div className="print-footer w-full mt-auto pt-8">
                                                     <div className="flex justify-between items-end border-t-[2px] border-slate-800 pt-4 pb-2 w-full">
                                                         <div className="font-bold text-slate-500" style={{ fontSize: `${Math.max(8, docFontSize - 2)}pt` }}>
-                                                            제출일: {new Date().toLocaleDateString()}
+                                                            작성일: {new Date().toLocaleDateString()}
                                                         </div>
                                                         <div className="flex flex-col items-end justify-center gap-1.5 pr-1">
-                                                            {/* 방배정 리스트 푸터에도 로고 추가 및 단체명 변수 연동 */}
                                                             <img src={TM_FOOTER_LOGO} alt="Tourmaker" className="h-6 md:h-8 object-contain" />
                                                             <p className="text-[#6c757d] leading-relaxed m-0 font-bold text-right tracking-tight" style={{ fontSize: `${Math.max(7, docFontSize - 3)}pt` }}>
                                                                 본 시스템은 <span className="text-slate-800 font-black">{commonHeader.groupName || '해당 단체'}</span>의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
@@ -1331,21 +1331,70 @@
                                     })}
                                 </div>
 
-                                <div className="no-print mt-6 md:mt-8 flex justify-center">
+                                <div className="no-print mt-6 mb-12 flex flex-col md:flex-row justify-center gap-4 px-4">
                                     <button onClick={addRoom} className="bg-white border-2 border-dashed border-blue-300 text-blue-600 px-6 md:px-10 py-3 md:py-4 rounded-xl font-bold text-xs md:text-sm hover:bg-blue-50 hover:border-blue-500 transition-all shadow-sm"><i className="fas fa-bed text-lg mr-2"></i> 빈 객실 추가하기</button>
+                                    {isSharedMode && (
+                                        <button onClick={handleSubmitRooming} className="bg-emerald-600 text-white px-6 md:px-12 py-3 md:py-4 rounded-xl font-black text-sm md:text-lg hover:bg-emerald-500 transition-all shadow-lg flex items-center justify-center gap-2 transform hover:-translate-y-1"><i className="fas fa-paper-plane"></i> 객실 배정 제출하기</button>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
+                        {/* ========================================================================= */}
+                        {/* TAB 3: 제출 결과 확인 (관리자 뷰 전용) */}
+                        {/* ========================================================================= */}
+                        {!isSharedMode && (
+                            <div className={activeMainTab === 'results' ? 'block' : 'hidden'}>
+                                <div className="max-w-[1000px] mx-auto py-8 px-4">
+                                    <div className="mb-8 border-b-2 border-slate-200 pb-4">
+                                        <h2 className="text-2xl font-black text-slate-800 mb-2 flex items-center gap-2">
+                                            <i className="fas fa-inbox text-emerald-500"></i> 제출된 객실 배정 목록
+                                        </h2>
+                                        <p className="text-slate-500 font-bold">고객이 링크를 통해 제출한 데이터가 실시간으로 이곳에 쌓입니다. 현재 공유 코드: <span className="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{commonHeader.eventCode || '미설정'}</span></p>
+                                    </div>
+
+                                    {submissions.length === 0 ? (
+                                        <div className="bg-white p-12 text-center rounded-xl shadow-sm border border-slate-200">
+                                            <i className="fas fa-box-open text-5xl text-slate-300 mb-4"></i>
+                                            <h3 className="text-lg font-bold text-slate-600">아직 제출된 데이터가 없습니다.</h3>
+                                            <p className="text-slate-400 text-sm mt-2">고객에게 링크를 공유하고 배정 제출을 요청해 보세요.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="grid gap-4">
+                                            {submissions.map((sub, idx) => (
+                                                <div key={sub.id} className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md transition">
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <span className="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">NEW</span>
+                                                            <h3 className="text-lg font-black text-slate-800">{sub.submitterName} 제출본</h3>
+                                                        </div>
+                                                        <p className="text-sm text-slate-500 font-bold"><i className="far fa-clock mr-1"></i> 제출 시간: {new Date(sub.submittedAt).toLocaleString()}</p>
+                                                        <div className="flex gap-3 mt-3">
+                                                            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded font-bold"><i className="fas fa-users mr-1 text-slate-400"></i> 총 {sub.stats?.total || 0}명</span>
+                                                            <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded font-bold"><i className="fas fa-bed mr-1 text-slate-400"></i> 객실 {sub.rooms?.length || 0}개</span>
+                                                        </div>
+                                                    </div>
+                                                    <button onClick={() => loadSubmission(sub)} className="w-full md:w-auto bg-slate-800 hover:bg-black text-white px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+                                                        <i className="fas fa-file-import"></i> 이 배정본 적용하기
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 모달 창 */}
                         {modal.isOpen && (
                             <div className="no-print fixed inset-0 bg-slate-900 bg-opacity-50 flex items-center justify-center z-[99999] px-4 backdrop-blur-sm transition-opacity">
                                 <div className="bg-white rounded-xl shadow-2xl max-w-sm md:max-w-md w-full p-6 text-center transform transition-all scale-100">
                                     <p className="text-slate-800 font-bold mb-6 text-[14px] md:text-[15px] leading-relaxed whitespace-pre-wrap text-left pl-2">{modal.message}</p>
-                                    {modal.type === 'prompt' && <input type="text" className="w-full border-2 border-blue-200 focus:border-blue-500 rounded-lg px-4 py-2.5 mb-6 outline-none text-slate-700 font-bold text-center" value={modal.inputValue} readOnly />}
+                                    {modal.type === 'prompt' && <input type="text" className="w-full border-2 border-blue-200 focus:border-blue-500 rounded-lg px-4 py-2.5 mb-6 outline-none text-slate-700 font-bold text-center" value={modal.inputValue} onChange={(e) => modal.onChange && modal.onChange(e.target.value)} placeholder="직책 및 성함 입력" />}
                                     <div className="flex justify-center gap-3">
                                         {(modal.type === 'prompt' || modal.type === 'confirm') && <button onClick={modal.onCancel} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg font-bold hover:bg-slate-200">취소(닫기)</button>}
                                         <button onClick={modal.onConfirm} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 shadow-sm">
-                                            {modal.type === 'confirm' ? "그래도 인쇄하기" : "확인"}
+                                            {modal.type === 'confirm' ? "확인(적용)" : "확인"}
                                         </button>
                                     </div>
                                 </div>
