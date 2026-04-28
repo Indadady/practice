@@ -915,7 +915,7 @@
                     return;
                 }
 
-                showPrompt("마지막 단계입니다!\n담당자 확인을 위해 '단체명' 또는 '고객명'을 입력해 주세요.\n(예: 고한중학교, 김철수 등)", "", async (submitterName) => {
+                showPrompt("마지막 단계입니다!\n담당자 확인을 위해 '단체명' 또는 '고객명'을 입력해 주세요.\n(예: 소속 기관명 또는 성함)", "", async (submitterName) => {
                     if(!submitterName || submitterName.trim() === "") {
                         showAlert("⚠️ 단체명 또는 고객명을 입력해야 제출이 가능합니다.");
                         return;
