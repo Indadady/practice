@@ -3,1348 +3,1358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOURMAKER 스마트 일정·견적 통합 솔루션</title>
     
-    <!-- 카카오톡 등 공유 썸네일 (og:image) 및 파비콘 추가 -->
-    <meta property="og:title" content="스마트 일정·견적 통합 솔루션 | TOURMAKER">
-    <meta property="og:description" content="클릭하여 상세 일정 및 산출 내역을 확인하세요.">
-    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEhPxG_ONo2BdFAGDNnn-pHIGJTrAq374YbqgwTTlyIZTP22kOWTDD_AyjKDNFPhsHg5t1Iq6zV0dL_NZIj4o97Kd0eWJYCv-NHhtIqme-Mp3htGhAdkqVv5NRU3Jc9TbdbvvVKrPslObA1oNABpgl12QtGwirC2QM5lcPCVoWm8pIbeKuZBbeDHAvpbKEQ">
-    <link rel="icon" href="https://blogger.googleusercontent.com/img/a/AVvXsEhPxG_ONo2BdFAGDNnn-pHIGJTrAq374YbqgwTTlyIZTP22kOWTDD_AyjKDNFPhsHg5t1Iq6zV0dL_NZIj4o97Kd0eWJYCv-NHhtIqme-Mp3htGhAdkqVv5NRU3Jc9TbdbvvVKrPslObA1oNABpgl12QtGwirC2QM5lcPCVoWm8pIbeKuZBbeDHAvpbKEQ">
+    <!-- 카카오톡 공유 썸네일 및 메타 태그 -->
+    <meta property="og:title" content="투어메이커 스마트 명단/루밍 작성 폼">
+    <meta property="og:description" content="담당자님, 여행자 명단 및 방배정(루밍리스트)을 작성 후 PDF 또는 엑셀로 저장해 전달해주세요.">
+    <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEjQVWjqNlaxb98AP-qG4LHAIN9gK9sn4cGowBArA_-DUz0rxQycXrr3vFhvUqMM9Pa5tP2cDBxqBzW_re-HqzVLVAngEO8FAORbaQ36ANr0BULZ_q2PBFdDbEUJhQqr7LCGGuXO1snQ-bYx5SdFP1GZllmKNTxYv66H8E7zYyvQLsq3jour2LNjQ4PyAbo">
+    <meta property="og:type" content="website">
+    
+    <title>투어메이커 스마트 명단/루밍 통합 시스템</title>
 
-    <!-- 구글 애널리틱스 (GA4) -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- SheetJS with Styling (xlsx-js-style) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+
+    <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-JLH9GD9SVR');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JLH9GD9SVR');
     </script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-        * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; }
-        body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: #f1f5f9; color: #0f172a; overflow: hidden; }
-
-        /* 스크롤바 커스텀 */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f8fafc; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* 레이아웃 (좌측 입력, 우측 미리보기) */
-        .app-container { display: flex; height: calc(100vh - 56px); width: 100vw; }
-
-        /* [좌측] 입력 패널 */
-        .input-panel {
-            flex: 4; min-width: 480px; max-width: 550px; background-color: white;
-            border-right: 1px solid #cbd5e1; overflow-y: auto; padding: 24px;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.03); z-index: 10;
-        }
-
-        /* [우측] 미리보기/편집 패널 */
-        .preview-panel {
-            flex: 6; background-color: #e2e8f0; overflow-y: auto; padding: 40px 20px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        /* A4 용지 기본 세팅 */
-        .a4-sheet { 
-            width: 210mm;
-            min-height: 297mm;
-            background: white;
-            padding: 15mm 12mm;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-sizing: border-box;
-        }
-        .a4-sheet:last-child { margin-bottom: 0; }
-
-        /* 웹 편집 모드에서 일정표 하단 잘림 방지 */
-        #page-1 {
-            height: auto;
-            overflow: visible;
-            transition: min-height 0.18s ease, box-shadow 0.18s ease;
-        }
-        #page-1.preview-expanded {
-            box-shadow: 0 14px 32px rgba(15,23,42,0.12);
-        }
-        #page-1::after {
-            content: '';
-            display: block;
-            height: 18mm;
-        }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
         
-        .flex-grow-space {
-            flex-grow: 1;
-        }
-
-        .itinerary-overflow-note {
-            display: none;
-            margin-top: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #92400e;
-            background: #fffbeb;
-            border: 1px solid #fcd34d;
-            border-radius: 8px;
-            padding: 8px 10px;
-            line-height: 1.45;
-        }
-        #page-1.preview-expanded .itinerary-overflow-note {
-            display: block;
-        }
-
-        /* 테이블 기본 */
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        thead { display: table-header-group; }
-        tfoot { display: table-footer-group; }
-        th, td {
-            border: 1px solid #94a3b8;
-            padding: 6px;
-            word-break: break-word;
-            vertical-align: middle;
-        }
-        th {
-            background-color: #f8fafc;
-            font-weight: 700;
-            color: #1e293b;
-            text-align: center;
-        }
-
-        /* 테이블 테두리 디자인 */
-        .itinerary-table { border-top: 3px solid #0f172a; border-bottom: 3px solid #0f172a; margin-top: 10px; }
-        .itinerary-table tbody td { vertical-align: middle !important; }
-
-        .cost-table { border-top: 3px solid #0f172a; border-bottom: 3px solid #0f172a; margin-top: 10px; }
-        .cost-table tbody td { vertical-align: middle; }
-        .subtotal-row td { background-color: #f1f5f9; font-weight: bold; border-bottom: 2px solid #64748b; }
-
-        /* 입력 폼 요소 */
-        .form-section { margin-bottom: 24px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
-        .section-title { font-size: 15px; font-weight: 800; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .section-title::before { content: ''; display: block; width: 4px; height: 16px; border-radius: 2px; background: #2563eb; }
-        .input-label { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 4px; }
-        .input-field { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 10px; font-size: 13px; outline: none; transition: 0.2s; background: white; }
-        .input-field:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
-
-        /* 비용 입력 카드 2줄 레이아웃 */
-        .card-box { background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 10px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: border 0.2s; }
-        .card-box:hover { border-color: #3b82f6; }
-        .btn-remove { position: absolute; top: -8px; right: -8px; color: white; background: #ef4444; border: none; border-radius: 50%; width: 22px; height: 22px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; font-size: 11px; z-index: 5; box-shadow: 0 2px 4px rgba(239,68,68,0.3); }
-        .btn-remove:hover { background: #dc2626; transform: scale(1.1); }
-
-        /* 버튼 */
-        .btn-primary { background: #1e293b; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-primary:hover { background: #0f172a; }
-        .btn-action { background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-
-        /* 인라인 편집기 (div contenteditable) */
-        .edit-input {
-            width: 100%;
-            background: transparent;
-            border: 1px solid transparent;
-            outline: none;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: inherit;
-            color: inherit;
-            line-height: 1.6;
-            transition: border 0.2s, background 0.2s;
-            border-radius: 4px;
-            padding: 4px;
-            white-space: pre-wrap;
-            word-break: keep-all;
-            min-height: 24px;
-        }
-        .edit-input:hover, .edit-input:focus { border: 1px dashed #93c5fd; background: #eff6ff; }
-
-        /* 툴바 및 액션 버튼 */
-        .preset-btn { font-size: 11px; padding: 4px 10px; border-radius: 4px; font-weight: 700; border: 1px solid #cbd5e1; color: #475569; background: white; cursor: pointer; transition: 0.2s; }
-        .preset-btn:hover, .preset-btn.active { background: #1e293b; color: white; border-color: #1e293b; }
-
-        .action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; border-radius: 4px; width: 32px; height: 36px; line-height: 1.1; transition: 0.2s; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .btn-del-row { background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; } .btn-del-row:hover { background: #ef4444; color: white; }
-        .btn-hotel-row { background: #eff6ff; color: #3b82f6; border: 1px solid #93c5fd; } .btn-hotel-row:hover { background: #3b82f6; color: white; }
-        .btn-poi-row { background: #f0fdf4; color: #10b981; border: 1px solid #6ee7b7; } .btn-poi-row:hover { background: #10b981; color: white; }
-
-        /* 템플릿 관리 영역 */
-        .template-manager { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 24px; }
-        .template-btn { padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
-        .btn-tm-save { background: #3b82f6; color: white; } .btn-tm-save:hover { background: #2563eb; }
-        .btn-tm-load { background: #475569; color: white; } .btn-tm-load:hover { background: #334155; }
-        .btn-tm-del { background: white; color: #ef4444; border-color: #fca5a5; } .btn-tm-del:hover { background: #fef2f2; }
-
-        .print-only { display: none; }
-
-        .calc-notice { margin-top: 16px; }
-        .calc-powered { margin-top: 12px; }
-
-        /* === 고품질 인쇄(PDF) 대응 === */
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
-
+        /* ========================================================
+           인쇄 최적화 (투어메이커 표준양식 완벽 구현 및 선 삐져나옴 방지)
+           ======================================================== */
         @media print {
-            html, body {
-                width: auto !important;
-                min-width: 0 !important;
-                height: auto !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                overflow: visible !important;
-            }
-
-            body {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-                font-size: 12px;
-                line-height: 1.45;
-            }
-
-            .top-nav, .input-panel, .no-print, .action-btn-container, .itinerary-overflow-note {
-                display: none !important;
-            }
-
-            .app-container {
-                height: auto !important;
-                display: block !important;
-                width: 100% !important;
-            }
-
-            .preview-panel {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                width: 100% !important;
-                padding: 0 !important;
-                margin: 0 auto !important;
-                background: white !important;
-                overflow: visible !important;
-            }
-
-            .a4-sheet {
-                width: 210mm !important;
-                min-height: 297mm !important;
-                height: auto !important;
-                margin: 0 auto !important;
-                padding: 12mm 12mm 14mm 12mm !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                overflow: visible !important;
-                position: relative !important;
-                left: auto !important;
-                right: auto !important;
-                transform: none !important;
-                transform-origin: top center !important;
-                page-break-after: always !important;
-                break-after: page !important;
-                page-break-inside: auto !important;
-                break-inside: auto !important;
-            }
-            .a4-sheet:last-child {
-                page-break-after: auto !important;
-                break-after: auto !important;
-            }
-
-            #page-1::after {
-                display: none !important;
+            .no-print { display: none !important; }
+            body { background-color: white !important; padding: 0 !important; margin: 0 !important; overflow-x: visible !important; }
+            
+            * { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                box-sizing: border-box !important; /* 박스 사이징 강제 */
             }
             
-            #inc-exc-container {
-                border: 2px solid #0f172a !important;
-                background: #f8fafc !important;
-                margin-top: auto !important; /* 바닥으로 밀어내기 */
-            }
+            @page { size: A4 portrait; margin: 10mm 10mm; }
 
-            table {
+            .print-page { 
+                box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important; 
+                page-break-after: always; break-inside: avoid !important; 
+                display: flex !important; flex-direction: column !important; justify-content: space-between !important;
+                height: 277mm !important; 
                 width: 100% !important;
-                border-collapse: collapse !important;
-                table-layout: fixed !important;
-            }
-
-            thead { display: table-header-group !important; }
-            tfoot { display: table-footer-group !important; }
-
-            /* 행(tr) 내부에서는 글자가 반으로 잘리지 않도록 보호 */
-            table, thead, tbody, tfoot, tr, td, th, p, h1, h2, h3, h4, h5, h6, .subtotal-row {
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-            }
-
-            .itinerary-table, .cost-table {
-                border-top: 2px solid #000 !important;
-                border-bottom: 2px solid #000 !important;
-                margin-top: 8px !important;
-            }
-
-            th, td {
-                border: 1px solid #000 !important;
-                padding: 5px 6px !important;
-                color: #000 !important;
-            }
-
-            th { background-color: #f3f4f6 !important; }
-
-            .subtotal-row td { background-color: #eef2f7 !important; }
-
-            .edit-input {
-                border: none !important;
-                background: transparent !important;
-                padding: 0 !important;
-                min-height: auto !important;
-            }
-
-            img, svg {
                 max-width: 100% !important;
-                image-rendering: -webkit-optimize-contrast;
-                print-color-adjust: exact !important;
+                overflow: hidden !important; /* 미세한 테두리 오버플로우 절단 */
+                position: relative;
+            }
+            .print-page:last-child { page-break-after: auto; }
+            
+            table { 
+                border-collapse: collapse !important; 
+                width: 100% !important; 
+                max-width: 100% !important;
+                table-layout: fixed !important; /* 열 너비 고정으로 삐져나옴 방지 */
+            }
+            thead { display: table-header-group; }
+            tr { page-break-inside: avoid; }
+            th, td { 
+                border: none !important; border-bottom: 1px solid #cbd5e1 !important; 
+                padding: 6px 2px !important; 
+                word-wrap: break-word !important; word-break: keep-all !important;
+            }
+            th { border-top: 2px solid #1e293b !important; border-bottom: 2px solid #1e293b !important; color: #1e293b !important; }
+            
+            .print-footer { 
+                margin-top: auto !important; 
+                page-break-inside: avoid;
+                width: 100%;
+                padding-top: 15px !important;
+                background: white !important;
             }
 
-            a { color: inherit !important; text-decoration: none !important; }
-
-            #page-2 {
-                padding-top: 9mm !important;
-                padding-bottom: 18mm !important;
-            }
-
-            #page-2 .calc-page-title { margin-bottom: 10px !important; }
-            #page-2 .cost-table { margin-top: 6px !important; }
-            #page-2 .cost-table th, #page-2 .cost-table td { padding-top: 4px !important; padding-bottom: 4px !important; }
-            #page-2 .calc-notice { margin-top: 10px !important; padding-top: 0 !important; }
-            #page-2 .calc-notice-title { margin-bottom: 3px !important; font-size: 11px !important; line-height: 1.3 !important; }
-            #page-2 .calc-notice-text { font-size: 10.5px !important; line-height: 1.4 !important; }
-            #page-2 .calc-powered { margin-top: 15px !important; padding-top: 8px !important; padding-bottom: 0 !important; border-top: 1px solid #cbd5e1 !important; }
-
-            .print-only { display: block !important; }
+            .print-rooming-list { box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important; display: flex !important; flex-direction: column !important; }
+            .room-row { padding: 0 !important; break-inside: avoid; }
+            
+            input, select, textarea { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; }
+            input::placeholder, textarea::placeholder { color: transparent !important; }
         }
+
+        .dragging { opacity: 0.55; background-color: #e0f2fe; }
+        .drag-handle { cursor: grab; }
+        .drag-handle:active { cursor: grabbing; }
+
+        .editable-cell-input { 
+            white-space: normal !important; 
+            width: 100% !important; 
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+        .editable-cell-input:hover { background-color: #f1f5f9; cursor: text; border-radius: 4px; overflow: visible; }
+        .editable-cell-input:focus { background-color: #e0f2fe; border-bottom: 2px solid #3b82f6; outline: none; overflow: visible; }
+
+        .table-wrapper { overflow-x: auto; width: 100%; padding-bottom: 15px; -webkit-overflow-scrolling: touch; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar { height: 6px; width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .fixed-row-height { height: 36px; } 
+
+        /* 방배정 전용 황금비율 그리드 (PDF 양식 기준) */
+        .room-grid { display: grid; grid-template-columns: 35px 8% 12% 1fr 20%; align-items: stretch; }
+        @media print {
+            .room-grid { grid-template-columns: 8% 12% 1fr 20%; }
+        }
+
+        .room-row input::placeholder { color: transparent !important; transition: color 0.2s ease-in-out; }
+        .room-row:hover input::placeholder, .room-row input:focus::placeholder { color: #cbd5e1 !important; }
     </style>
 </head>
 <body>
 
-    <!-- 상단 네비게이션 -->
-    <div class="top-nav h-[56px] bg-slate-900 text-white px-4 flex justify-between items-center shadow-md z-20 relative">
-        <div class="flex items-center gap-3">
-            <img src="https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8" alt="Tourmaker" class="h-8 object-contain">
-            <h1 class="text-[15px] font-bold tracking-wide text-emerald-400 border-l border-slate-600 pl-3 flex items-center">
-                스마트 일정·견적 통합 솔루션
-                <span class="text-[10px] font-medium text-slate-300 ml-2 border border-slate-500 px-1.5 py-0.5 rounded opacity-80">B2B / B2C</span>
-            </h1>
-        </div>
-        <div class="flex items-center gap-3">
-            <span class="text-sm font-bold text-slate-300 mr-2">총 견적: <span id="top-total" class="text-amber-400 text-lg font-black tracking-tight">0</span>원</span>
-            <button id="btn-word-download" onclick="exportToWord()" class="btn-action flex items-center gap-1 text-sm hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> 워드 다운로드
-            </button>
-            <button onclick="window.print()" class="btn-primary flex items-center gap-1 text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">🖨️ 인쇄 (PDF)</button>
-        </div>
-    </div>
+    <div id="root"></div>
 
-    <div class="app-container">
+    <script type="text/babel">
+        const { useState, useRef, useMemo, useEffect } = React;
+
+        // 지정된 공식 투어메이커 헤더 로고 URL
+        const TM_LOGO = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png";
         
-        <!-- ================= [좌측] 입력 패널 ================= -->
-        <div class="input-panel no-print">
-            <div class="flex justify-between items-center mb-4 border-b-2 border-slate-900 pb-2">
-                <h2 class="text-lg font-black text-slate-800">📋 데이터 입력 및 관리</h2>
-                <button onclick="clearForm()" class="text-xs text-slate-500 hover:text-red-500 font-bold border border-slate-300 px-2 py-1 rounded transition hover:bg-red-50 hover:border-red-300">초기화 ↺</button>
-            </div>
+        // 하단 로고(TM_FOOTER_LOGO)는 인쇄 표준 원칙에 따라 "로고 이미지 생략, 텍스트만 표시" 규칙 적용으로 제외됨
 
-            <!-- 템플릿 관리 영역 -->
-            <div class="template-manager">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-bold text-[13px] text-slate-800">💾 견적 템플릿 및 백업</span>
-                    <div class="flex gap-2">
-                        <button onclick="document.getElementById('import-file').click()" class="text-[11px] font-bold text-teal-600 hover:text-teal-800 hover:underline">📂 JSON 불러오기</button>
-                        <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
-                        <span class="text-slate-300 text-[10px]">|</span>
-                        <button onclick="exportData()" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline">⬇️ JSON 다운로드</button>
-                    </div>
+        // 영문 자동 변환 로직
+        const getRomanization = (char) => {
+            const CHO = ["G","KK","N","D","TT","R","M","B","PP","S","SS","","J","JJ","CH","K","T","P","H"];
+            const JUNG = ["A","AE","YA","YAE","EO","E","YEO","YE","O","WA","WAE","OE","YO","U","WO","WE","WI","YU","EU","UI","I"];
+            const JONG = ["","K","K","K","N","N","N","T","L","L","M","P","L","L","P","L","M","P","P","T","T","NG","T","T","K","T","P","T"];
+            const code = char.charCodeAt(0) - 0xAC00;
+            if (code < 0 || code > 11171) return char; 
+            return CHO[Math.floor(code / 588)] + JUNG[Math.floor((code % 588) / 28)] + JONG[code % 28];
+        }
+
+        const koreanToEnglish = (name) => {
+            if (!name) return "";
+            const fNames = {"김":"KIM", "이":"LEE", "박":"PARK", "최":"CHOI", "정":"JUNG", "강":"KANG", "조":"CHO", "윤":"YOON", "장":"JANG", "임":"LIM", "홍":"HONG", "송":"SONG", "오":"OH", "서":"SEO", "신":"SHIN", "권":"KWON", "황":"HWANG", "안":"AHN", "유":"YOO", "전":"JEON", "배":"BAE", "고":"KO", "문":"MOON", "양":"YANG", "손":"SON", "백":"BAEK", "허":"HEO", "남":"NAM", "심":"SHIM", "노":"NOH", "하":"HA", "곽":"KWAK", "성":"SUNG", "차":"CHA", "주":"JOO", "우":"WOO", "구":"KOO", "나":"NA", "민":"MIN", "엄":"EOM", "채":"CHAE", "원":"WON", "방":"BANG", "공":"KONG"};
+            const char1 = name.charAt(0);
+            const engFamily = fNames[char1] || getRomanization(char1);
+            let engGiven = "";
+            for(let i = 1; i < name.length; i++) engGiven += getRomanization(name.charAt(i));
+            return `${engFamily} ${engGiven}`.trim(); 
+        };
+
+        // UI 컴포넌트
+        const AutoResizeTextarea = ({ value, onChange, placeholder, minRows = 4 }) => {
+            const textareaRef = useRef(null);
+            const handleChange = (e) => onChange(e.target.value);
+            useEffect(() => {
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = 'auto';
+                    textareaRef.current.style.height = Math.max(textareaRef.current.scrollHeight, minRows * 24 + 32) + 'px';
+                }
+            }, [value, minRows]);
+            return <textarea ref={textareaRef} className="w-full p-3 md:p-4 text-xs md:text-sm bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition font-mono leading-relaxed resize-none overflow-hidden" placeholder={placeholder} value={value} onChange={handleChange} rows={minRows} />;
+        };
+
+        const HeaderField = ({ label, value = "", onChange, isMain = false, fontSize, placeholder = "" }) => (
+            <div className="flex items-center gap-2 print:gap-4 w-full box-border">
+                <span className={`font-black text-slate-500 tracking-widest uppercase flex-shrink-0 whitespace-nowrap`} 
+                      style={{ fontSize: `${isMain ? Math.max(9, fontSize - 1) : Math.max(8, fontSize - 1.5)}pt`, width: `${Math.max(140, fontSize * 11)}px` }}>
+                    {label}
+                </span>
+                <input 
+                    type="text" 
+                    className={`flex-1 min-w-0 border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none px-2 transition-all text-slate-800 ${isMain ? 'font-black' : 'font-bold'}`}
+                    style={{ fontSize: `${isMain ? fontSize + 4 : fontSize}pt` }}
+                    value={value} 
+                    placeholder={placeholder}
+                    onChange={(e) => onChange(e.target.value)} 
+                />
+            </div>
+        );
+
+        const EditableCell = ({ val = "", onChange, bold = false, uppercase = false, placeholder = '', center = false, fontSize }) => (
+            <input 
+                type="text"
+                title="클릭하여 내용을 수정하세요"
+                className={`editable-cell-input bg-transparent outline-none border-b border-transparent focus:border-blue-400 p-0 m-0 ${bold ? 'font-black text-slate-900' : ''} ${uppercase ? 'uppercase' : ''} ${center ? 'text-center' : 'text-left'}`}
+                style={{ fontSize: 'inherit' }}
+                value={val}
+                placeholder={placeholder}
+                onChange={(e) => onChange(e.target.value)}
+            />
+        );
+
+        const RoomRow = ({ room, actualIdx, globalIdx, updateRoom, updateGuest, changeRoomType, removeRoom, dragRoomStart, dragRoomEnter, dragRoomEnd, dropRoom, fontSize, isInternationalRooming }) => (
+            <div
+                className="room-row room-grid group relative bg-white w-full h-full border-b border-slate-300 last:border-b-0 print:border-b box-border"
+                style={{ breakInside: 'avoid' }}
+                draggable
+                onDragStart={(e) => dragRoomStart(e, globalIdx)}
+                onDragEnter={(e) => dragRoomEnter(e, globalIdx)}
+                onDragEnd={dragRoomEnd}
+                onDrop={dropRoom}
+                onDragOver={(e) => e.preventDefault()}
+            >
+                <div className="no-print flex items-center justify-center border-r border-slate-200 text-slate-300 hover:text-blue-500 drag-handle" title="드래그하여 방 순서 변경">
+                    <i className="fas fa-bars"></i>
                 </div>
-                <div class="flex gap-2 mb-2">
-                    <select id="preset-select" class="input-field !py-1.5 !text-[12px] flex-1 font-bold text-slate-700">
-                        <option value="">저장된 템플릿 선택...</option>
+
+                <div className="flex items-center justify-center border-r border-slate-200 py-1 bg-slate-50">
+                    <span className="font-bold text-slate-700 text-center" style={{ fontSize: `${fontSize}pt` }}>{actualIdx}</span>
+                </div>
+
+                <div className="flex items-center justify-center border-r border-slate-200 py-1 px-1">
+                    <select className="font-bold text-slate-600 bg-transparent outline-none cursor-pointer w-full text-center" style={{ fontSize: `${Math.max(8, fontSize - 1)}pt` }} value={room.type} onChange={(e) => changeRoomType(globalIdx, e.target.value)}>
+                        <option value="TWIN">TWN</option><option value="TRIPLE">TRP</option><option value="SINGLE">SGL</option><option value="QUAD">QUAD</option>
                     </select>
                 </div>
-                <div class="flex gap-1.5">
-                    <button onclick="loadPreset()" class="template-btn btn-tm-load flex-1 shadow-sm">내역 불러오기</button>
-                    <button onclick="savePreset()" class="template-btn btn-tm-save flex-1 shadow-sm">현재 상태 저장</button>
-                    <button onclick="deletePreset()" class="template-btn btn-tm-del shadow-sm">삭제</button>
+
+                <div className="flex flex-col py-0.5 bg-white min-w-0 border-r border-slate-200 justify-center">
+                    {room.guests.map((g, gIdx) => (
+                        <div key={gIdx} className={`flex flex-col px-1.5 md:px-2 py-1 ${gIdx > 0 ? 'border-t border-dashed border-slate-200' : ''}`} style={{ padding: `${fontSize/2.5}px 4px` }}>
+                            <div className="flex items-center gap-1 md:gap-2 w-full">
+                                <input className="font-bold outline-none bg-transparent focus:text-blue-600" style={{ fontSize: `${fontSize}pt`, width: `${Math.max(70, fontSize * 6)}px` }} value={g.name} placeholder="이름" onChange={(e) => updateGuest(globalIdx, gIdx, 'name', e.target.value)} />
+                                <button type="button" onClick={() => updateGuest(globalIdx, gIdx, 'gender', g.gender === '남' ? '여' : '남')} className={`flex-shrink-0 font-bold px-1.5 py-0.5 rounded cursor-pointer ${g.gender === '여' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`} style={{ fontSize: `${Math.max(8, fontSize - 2)}pt`, minWidth: '26px' }}>
+                                    {g.gender}
+                                </button>
+                                <input className="flex-1 min-w-[20px] text-slate-500 outline-none bg-transparent" style={{ fontSize: `${Math.max(9, fontSize - 1)}pt` }} placeholder="" value={g.remark} onChange={(e) => updateGuest(globalIdx, gIdx, 'remark', e.target.value)} />
+                            </div>
+                            {isInternationalRooming && (
+                                <input className="font-bold tracking-wide text-slate-500 outline-none uppercase bg-transparent w-full mt-0.5" style={{ fontSize: `${Math.max(8, fontSize - 1.5)}pt` }} placeholder="ENGLISH NAME" value={g.engName} onChange={(e) => updateGuest(globalIdx, gIdx, 'engName', e.target.value)} />
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex items-center justify-center p-1 bg-white min-w-0 relative">
+                    <input className="w-full text-center font-bold text-slate-600 bg-transparent outline-none" style={{ fontSize: `${fontSize}pt` }} placeholder="추후 배정" value={room.roomNo} onChange={(e) => updateRoom(globalIdx, 'roomNo', e.target.value)} />
+                    <button type="button" onClick={() => removeRoom(globalIdx)} className="no-print absolute -right-3 top-1/2 -translate-y-1/2 p-1.5 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 z-10 shadow-sm"><i className="fas fa-trash-alt" style={{ fontSize: `${Math.max(8, fontSize - 2)}pt` }}></i></button>
                 </div>
             </div>
-            
-            <!-- 1. 기본 정보 -->
-            <div class="form-section">
-                <div class="section-title">1. 문서 기본 정보</div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="col-span-2">
-                        <label class="input-label">출력 업체 (로고/서명)</label>
-                        <select id="inp-agency" class="input-field font-bold text-blue-900" onchange="handleAgencyChange()">
-                            <option value="tourmaker" selected>투어메이커 (기본 로고 출력)</option>
-                            <option value="jeju">(주)제주테마투어 (텍스트 출력 / 워드 허용)</option>
-                            <option value="woorideul" class="text-emerald-700">(주)우리들여행 (전용 로고 출력)</option>
-                            <option value="custom" class="text-rose-600">🔒 화이트라벨 직접 입력 (관리자 전용)</option>
-                        </select>
-                    </div>
-                    
-                    <!-- 타 여행사 B2B 직접 입력창 (비밀번호 입력 시 활성화) -->
-                    <div id="custom-agency-fields" class="col-span-2 grid grid-cols-2 gap-2 hidden bg-rose-50 p-3 rounded border border-rose-200 mt-1">
-                        <div class="col-span-2 text-xs font-black text-rose-800 mb-1 flex items-center gap-1">
-                            <span>👑 B2B 화이트라벨 관리자 모드</span>
-                        </div>
-                        <div class="col-span-2">
-                            <input type="text" id="inp-custom-name" class="input-field text-[12px]" placeholder="여행사명 (예: 하나투어 태백점)" oninput="handleAgencyChange()">
-                        </div>
-                        <div class="col-span-2">
-                            <input type="text" id="inp-custom-contact" class="input-field text-[12px]" placeholder="담당자 및 연락처 (예: 담당자 홍길동 010-1234-5678)" oninput="handleAgencyChange()">
-                        </div>
-                        <div class="col-span-2">
-                            <input type="text" id="inp-custom-logo" class="input-field text-[12px]" placeholder="로고 이미지 주소 (선택사항 - 비워두면 텍스트로만 출력)" oninput="handleAgencyChange()">
-                        </div>
-                    </div>
+        );
 
-                    <div class="col-span-2">
-                        <label class="input-label">고객명 / 행사명 (합쳐서 표시됨)</label>
-                        <input type="text" id="inp-title" class="input-field font-bold text-slate-900" oninput="renderHeaderAndCosts()">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="input-label">여행일자 및 기간</label>
-                        <input type="text" id="inp-date" class="input-field" oninput="renderHeaderAndCosts()">
-                    </div>
-                    <div>
-                        <label class="input-label">인원 기재</label>
-                        <input type="text" id="inp-pax" class="input-field" oninput="renderHeaderAndCosts()">
-                    </div>
-                    <!-- 1인 단가 -->
-                    <div>
-                        <label class="input-label">1인 단가 (미입력시 숨김)</label>
-                        <input type="text" id="inp-per-pax-price" class="input-field text-emerald-700 font-bold bg-emerald-50/30" placeholder="숫자만 입력 (예: 650000)" oninput="handlePerPaxPrice(this)">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="input-label">작성 일자 / 비고</label>
-                        <input type="text" id="inp-issue" class="input-field text-blue-700 font-bold" oninput="renderHeaderAndCosts()">
-                    </div>
-                    
-                    <!-- [신규] 포함 / 불포함 사항 -->
-                    <div class="col-span-2 mt-2 pt-2 border-t border-slate-200">
-                        <label class="input-label text-teal-700 mb-1">✅ 포함 사항 (1페이지 하단 출력 / 미입력시 숨김)</label>
-                        <input type="text" id="inp-inc" class="input-field text-[12px]" placeholder="예: 왕복항공권, 전일정 숙박 및 식사, 차량 등" oninput="renderHeaderAndCosts()">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="input-label text-rose-700 mb-1">❌ 불포함 사항 (1페이지 하단 출력 / 미입력시 숨김)</label>
-                        <input type="text" id="inp-exc" class="input-field text-[12px]" placeholder="예: 개인경비, 매너팁, 선택관광 등" oninput="renderHeaderAndCosts()">
-                    </div>
-                </div>
-            </div>
+        // 메인 컴포넌트
+        const App = () => {
+            const isInitialShared = useMemo(() => new URLSearchParams(window.location.search).get('shared') === 'true', []);
+            const [isSharedMode, setIsSharedMode] = useState(isInitialShared);
+            const [activeMainTab, setActiveMainTab] = useState(isInitialShared ? 'rooming' : 'traveler');
+            const [isNavMenuOpen, setIsNavMenuOpen] = useState(true);
 
-            <!-- 2. 산출내역 -->
-            <div class="form-section">
-                <div class="section-title">2. 비용 산출 내역</div>
+            const [docFontSize, setDocFontSize] = useState(10.5); 
+            const [commonHeader, setCommonHeader] = useState({ groupName: "", date: "", location: "", number: "" });
+
+            const [modal, setModal] = useState({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null });
+
+            const showAlert = (message) => {
+                setModal({ isOpen: true, type: 'alert', message, inputValue: '', onConfirm: () => setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }) });
+            };
+
+            const showPrompt = (message, defaultValue, callback) => {
+                setModal({ isOpen: true, type: 'prompt', message, inputValue: defaultValue, 
+                    onConfirm: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); }, 
+                    onCancel: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); } 
+                });
+            };
+
+            const showPrintConfirm = () => {
+                setModal({
+                    isOpen: true,
+                    type: 'confirm',
+                    message: "🖨️ 인쇄 전 필수 확인사항\n\n1. 용지 크기: A4\n2. 레이아웃: 세로\n3. 옵션: '배경 그래픽 포함' 체크\n\n* 프린터 환경에 따라 표가 잘리거나 양식이 깨질 수 있습니다.\n* 가급적 상단의 [완성본 엑셀 저장] 버튼을 이용해 파일 형태로 담당자에게 전달해 주시면 가장 오류가 적습니다.\n\n그래도 인쇄를 진행하시겠습니까?",
+                    inputValue: '',
+                    onConfirm: () => { 
+                        setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); 
+                        setTimeout(() => { window.print(); }, 300); 
+                    },
+                    onCancel: () => { setModal({ isOpen: false, type: 'alert', message: '', inputValue: '', onConfirm: null, onCancel: null }); }
+                });
+            };
+
+            // ==========================================
+            // [TAB 1] 여행자 명단
+            // ==========================================
+            const [travelers, setTravelers] = useState([
+                { id: 1, nameKor: "", nameEng: "", birth: "", gender: "M", passportNo: "", expiry: "", nation: "KOR", remark: "" }
+            ]);
+
+            const dragItem = useRef();
+            const dragOverItem = useRef();
+
+            const dragStart = (e, position) => { dragItem.current = position; e.target.closest('tr')?.classList.add('dragging'); };
+            const dragEnter = (e, position) => { dragOverItem.current = position; };
+            const drop = (e) => {
+                const tr = e.target.closest('tr');
+                if (tr) tr.classList.remove('dragging');
+                if (dragItem.current === undefined || dragItem.current === null || dragOverItem.current === undefined || dragOverItem.current === null) return;
+                setTravelers(prev => {
+                    const copyListItems = [...prev];
+                    const dragItemContent = copyListItems[dragItem.current];
+                    if (!dragItemContent) return prev;
+                    copyListItems.splice(dragItem.current, 1);
+                    copyListItems.splice(dragOverItem.current, 0, dragItemContent);
+                    return copyListItems;
+                });
+                dragItem.current = null; dragOverItem.current = null;
+            };
+            const dragEnd = (e) => { e.target.closest('tr')?.classList.remove('dragging'); dragItem.current = null; dragOverItem.current = null; };
+
+            const getExpiryStatus = (dateStr) => {
+                if (!dateStr) return { color: "text-slate-400", warning: false };
                 
-                <div class="mb-5">
-                    <div class="flex justify-between items-center mb-2 border-b border-indigo-200 pb-1">
-                        <div class="text-[13px] font-bold text-indigo-800">✈️ (1) 교통비 (항공/선박/차량 등)</div>
-                    </div>
-                    <div id="cost-flight-list"></div>
-                    <button onclick="addCost('flight')" class="w-full text-[11px] bg-indigo-50 border border-dashed border-indigo-300 text-indigo-600 py-2 rounded font-bold hover:bg-indigo-100 transition shadow-sm">+ 교통비 항목 추가</button>
-                </div>
-
-                <div class="mb-5">
-                    <div class="flex justify-between items-center mb-2 border-b border-green-200 pb-1">
-                        <div class="text-[13px] font-bold text-green-800">🌴 (2) 현지 발생비용 영역</div>
-                    </div>
-                    <div id="cost-local-list"></div>
-                    <button onclick="addCost('local')" class="w-full text-[11px] bg-green-50 border border-dashed border-green-300 text-green-600 py-2 rounded font-bold hover:bg-green-100 transition shadow-sm">+ 현지 발생 항목 추가</button>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-2 border-b border-orange-200 pb-1">
-                        <div class="text-[13px] font-bold text-orange-800">🏢 (3) 수수료 및 기타비용</div>
-                    </div>
-                    <div id="cost-domestic-list"></div>
-                    <button onclick="addCost('domestic')" class="w-full text-[11px] bg-orange-50 border border-dashed border-orange-300 text-orange-600 py-2 rounded font-bold hover:bg-orange-100 transition shadow-sm">+ 기타 비용 항목 추가</button>
-                </div>
-            </div>
-            
-            <div class="pb-10 text-center">
-                <p class="text-xs text-slate-500 font-medium">👉 상세 일정 편집은 우측 문서 위에서 직접 타이핑하세요.</p>
-            </div>
-        </div>
-
-        <!-- ================= [우측] 미리보기 및 인라인 편집 패널 ================= -->
-        <div class="preview-panel" id="preview-panel">
-            
-            <!-- [1페이지] 일정표 -->
-            <div class="a4-sheet" id="page-1">
-                <!-- 헤더 영역 -->
-                <div class="flex justify-between items-start border-b-[3px] border-slate-900 pb-4 mb-4 shrink-0">
-                    <div>
-                        <h2 class="text-[28px] font-black text-slate-900 tracking-tight leading-none" id="out-title"></h2>
-                        <div class="flex items-center text-[13px] font-bold text-slate-600 mt-3 tracking-wide">
-                            <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 shadow-sm" id="out-date"></span>
-                            <span class="mx-2 text-slate-300">|</span>
-                            <span id="out-pax"></span>
-                            
-                            <!-- 1인 단가 출력부 -->
-                            <span class="mx-2 text-slate-300 sep-per-pax hidden">|</span>
-                            <span id="out-per-pax" class="text-emerald-700 font-extrabold hidden"></span>
-                            
-                            <span class="mx-2 text-slate-300">|</span>
-                            <span id="out-issue" class="text-blue-700"></span>
-                        </div>
-                    </div>
-                    <div class="text-right pt-1" id="out-agency-1"></div>
-                </div>
-
-                <!-- 일정표 툴바 -->
-                <div class="no-print flex justify-between items-center bg-slate-50 border border-slate-200 p-2 rounded-t mb-[-1px] relative z-10 shrink-0">
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[11px] font-bold text-slate-600 mr-1">일정 프리셋:</span>
-                        <button onclick="presetDays(2)" class="preset-btn">1박2일</button>
-                        <button onclick="presetDays(3)" class="preset-btn">2박3일</button>
-                        <button onclick="presetDays(4)" class="preset-btn active">3박4일</button>
-                        <button onclick="presetDays(5)" class="preset-btn">4박5일</button>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="addDay()" class="text-[11px] font-bold bg-white border border-green-400 text-green-700 hover:bg-green-50 px-3 py-1 rounded transition shadow-sm">+ 일자 추가</button>
-                        <button onclick="applyPOIAll()" class="text-[11px] font-bold bg-teal-50 border border-teal-300 text-teal-800 hover:bg-teal-100 px-3 py-1 rounded transition shadow-sm">✨ 전체 설명 채우기</button>
-                    </div>
-                </div>
-
-                <!-- 일정표 테이블 -->
-                <table class="itinerary-table relative z-0 shrink-0">
-                    <colgroup>
-                        <col width="14%"><col width="68%"><col width="18%">
-                    </colgroup>
-                    <thead>
-                        <tr class="bg-slate-100 border-b-2 border-slate-800">
-                            <th class="py-2.5 text-slate-800 text-[14px]">일자</th>
-                            <th class="py-2.5 text-slate-800 text-[14px]">주요 일정</th>
-                            <th class="py-2.5 text-slate-800 text-[14px]">식사</th>
-                        </tr>
-                    </thead>
-                    <tbody id="itinerary-container">
-                        <!-- JS 렌더링 -->
-                    </tbody>
-                </table>
-                
-                <!-- 하단 여백 채우기용 Flex Spacer -->
-                <div class="flex-grow-space shrink-0 min-h-[10px]"></div>
-
-                <!-- [신규] 포함/불포함 사항 (1페이지 1장 인쇄용) -->
-                <div id="inc-exc-container" class="mt-4 border-2 border-slate-300 rounded p-4 bg-slate-50 hidden shrink-0 self-end w-full">
-                    <div id="row-inc" class="flex text-[13px] mb-2 items-start">
-                        <span class="font-black text-teal-700 w-[70px] shrink-0 pt-[2px]">■ 포함사항</span>
-                        <span class="font-bold text-slate-800 leading-snug" id="out-inc"></span>
-                    </div>
-                    <div id="row-exc" class="flex text-[13px] items-start">
-                        <span class="font-black text-rose-700 w-[70px] shrink-0 pt-[2px]">■ 불포함</span>
-                        <span class="font-bold text-slate-800 leading-snug" id="out-exc"></span>
-                    </div>
-                </div>
-
-                <div class="itinerary-overflow-note no-print shrink-0">인쇄 시 4박 5일 이상 등 내용이 길면 자동으로 다음 장으로 넘어가서 깔끔하게 인쇄됩니다.</div>
-            </div>
-
-            <!-- [2페이지] 산출내역서 -->
-            <div class="a4-sheet" id="page-2">
-                <div class="text-center mb-4 calc-page-title">
-                    <h3 class="text-[24px] font-black tracking-[0.2em] text-slate-900 border-b-[2px] border-slate-900 inline-block pb-1 px-8">가격 산출 내역서</h3>
-                    <p class="text-[10px] font-bold text-slate-500 tracking-[0.3em] mt-1">CALCULATION DETAILS</p>
-                </div>
-
-                <!-- 비용 산출 테이블 -->
-                <table class="cost-table">
-                    <colgroup>
-                        <col width="9%"><col width="13%"><col width="26%"><col width="11%"><col width="13%"><col width="14%"><col width="14%">
-                    </colgroup>
-                    <thead>
-                        <tr class="bg-slate-100 border-b-2 border-slate-800 text-[12px]">
-                            <th class="py-2 text-slate-800 leading-tight font-extrabold">구분</th>
-                            <th class="py-2 text-slate-800 leading-tight font-extrabold">항목</th>
-                            <th class="py-2 text-slate-800 leading-tight font-extrabold">내용</th>
-                            <th class="py-2 text-slate-800 leading-tight font-extrabold whitespace-nowrap">수량/기준</th>
-                            <th class="py-2 text-slate-800 leading-tight font-extrabold">단가<br><span class="font-normal text-[10px]">(KRW 등)</span></th>
-                            <th class="py-2 text-slate-800 leading-tight font-extrabold">총금액</th>
-                            <th class="py-2 text-slate-800 leading-tight font-extrabold">비고</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-costs">
-                        <!-- JS 렌더링 -->
-                    </tbody>
-                </table>
-                
-                <!-- 하단 안내문 -->
-                <div class="mt-4 pt-1 calc-notice">
-                    <p class="text-[12px] font-bold text-slate-800 mb-1 calc-notice-title">1. 세금계산서 발행 관련 안내문</p>
-                    <p class="text-[11.5px] text-slate-600 leading-relaxed text-justify calc-notice-text">
-                        * 본 위탁용역의 특성상 항공권, 숙박비, 현지교통비 등은 당사가 직접 제공하는 서비스가 아닌, 제 3자와의 거래를 통한 수탁 대행 처리 항목으로 분류됩니다. 따라서, 당사는 전체 계약금액 기준의 세금계산서 발행이 불가하며, 국내 과세 대상 경비 중 <span class="text-red-600 font-bold">알선수수료</span> 등 자체수익에 대해서만 세금계산서를 발행함을 사전 안내드립니다.
-                    </p>
-                </div>
-                
-                <!-- 강제 워터마크 영역 -->
-                <div class="mt-8 text-center border-t border-slate-300 pt-4 pb-2 calc-powered bg-slate-50/50 rounded">
-                    <p id="footer-powered-text" class="m-0 p-0 flex flex-col items-center justify-center">
-                        <!-- JS에서 동적(강제) 주입 -->
-                    </p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ================= 자바스크립트 ================= -->
-    <script>
-        // --- [NEW] URL 초기화 파라미터 & 세션 감지 ---
-        const initialUrlParams = new URLSearchParams(window.location.search);
-        if (initialUrlParams.get('init') === 'true') {
-            sessionStorage.setItem('forceBlankMode', 'true');
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-
-        const isBlankMode = sessionStorage.getItem('forceBlankMode') === 'true';
-        let isAdminUnlocked = false; // 관리자 모드 상태 변수
-
-        // --- 1. 유틸리티 함수 ---
-        const unFmt = str => {
-            if (!str) return 0;
-            const parsed = parseInt(String(str).replace(/,/g, ''), 10);
-            return isNaN(parsed) ? 0 : parsed;
-        };
-        const fmt = n => (n === 0 || n === '' || isNaN(n)) ? '' : Number(n).toLocaleString();
-        const fmtTotal = n => Number(n || 0).toLocaleString();
-        const esc = str => String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-        function handlePerPaxPrice(el) {
-            let val = el.value.replace(/[^0-9]/g, '');
-            el.value = val ? Number(val).toLocaleString() : '';
-            renderHeaderAndCosts();
-        }
-
-        function handlePriceInput(el, type, i) {
-            let val = el.value.replace(/[^0-9]/g, '');
-            el.value = val ? Number(val).toLocaleString() : '';
-            costs[type][i]['krw'] = val ? Number(val) : 0;
-            renderHeaderAndCosts();
-        }
-
-        function handleQtyInput(el, type, i) {
-            let val = el.value.replace(/[^0-9.]/g, ''); 
-            el.value = val;
-            costs[type][i]['qty'] = val ? Number(val) : 0;
-            renderHeaderAndCosts();
-        }
-        
-        function commitActiveEditable() {
-            const active = document.activeElement;
-            if (active && typeof active.blur === 'function') active.blur();
-        }
-
-        window.addEventListener('beforeprint', () => {
-            commitActiveEditable();
-            document.body.classList.add('print-mode');
-        });
-
-        window.addEventListener('afterprint', () => {
-            document.body.classList.remove('print-mode');
-        });
-
-        function syncItineraryPreviewHeight() {
-            const page = document.getElementById('page-1');
-            const table = page?.querySelector('.itinerary-table');
-            if (!page || !table) return;
-
-            requestAnimationFrame(() => {
-                page.style.minHeight = '297mm';
-                page.classList.remove('preview-expanded');
-
-                const desiredGap = 92; 
-                const pageRect = page.getBoundingClientRect();
-                const tableRect = table.getBoundingClientRect();
-                const currentGap = pageRect.bottom - tableRect.bottom;
-
-                if (currentGap < desiredGap) {
-                    const extra = desiredGap - currentGap;
-                    const expandedHeight = page.scrollHeight + extra;
-                    page.style.minHeight = `${Math.ceil(expandedHeight)}px`;
-                    page.classList.add('preview-expanded');
+                let normalizedStr = dateStr;
+                if (normalizedStr.replace(/\s/g, '').match(/^\d{6}$/)) {
+                    let clean = normalizedStr.replace(/\s/g, '');
+                    let y = parseInt(clean.substring(0, 2), 10);
+                    y += (y > 50 ? 1900 : 2000); 
+                    normalizedStr = `${y}-${clean.substring(2, 4)}-${clean.substring(4, 6)}`;
                 }
-            });
-        }
 
-        document.addEventListener('input', (event) => {
-            if (event.target && event.target.closest && event.target.closest('#page-1')) {
-                syncItineraryPreviewHeight();
+                const match = normalizedStr.match(/(\d{2,4})[-./년]?\s*(\d{1,2})[-./월]?\s*(\d{1,2})/);
+                if (!match) return { color: "text-slate-600", warning: false };
+                
+                let year = parseInt(match[1], 10);
+                if (year < 100) { year += 2000; }
+                const month = parseInt(match[2], 10);
+                const day = parseInt(match[3], 10);
+
+                const expDate = new Date(year, month - 1, day);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                const sixMonthsLater = new Date();
+                sixMonthsLater.setMonth(today.getMonth() + 6);
+                sixMonthsLater.setHours(0,0,0,0);
+
+                if (expDate < today) return { color: "text-red-600 font-bold bg-red-50", warning: true, msg: "만료됨" };
+                if (expDate < sixMonthsLater) return { color: "text-orange-500 font-bold", warning: true, msg: "6개월 미만" };
+                return { color: "text-slate-700", warning: false };
+            };
+
+            const addEmptyTraveler = () => setTravelers(prev => [...prev, { id: Date.now() + Math.random(), nameKor: "", nameEng: "", birth: "", gender: "M", passportNo: "", expiry: "", nation: "KOR", remark: "" }]);
+            const removeTraveler = (id) => setTravelers(prev => prev.filter(t => t.id !== id));
+            
+            const updateField = (id, field, val) => {
+                setTravelers(prev => prev.map(t => {
+                    if (t.id === id) {
+                        const updated = { ...t, [field]: val };
+                        if (field === 'nameKor') {
+                            if (!t.nameEng || t.nameEng === koreanToEnglish(t.nameKor)) {
+                                updated.nameEng = koreanToEnglish(val);
+                            }
+                        }
+                        if (field === 'nameEng') updated.nameEng = String(val).toUpperCase();
+                        if (field === 'passportNo') updated.passportNo = String(val).toUpperCase();
+                        if (field === 'nation') updated.nation = String(val).toUpperCase();
+                        return updated;
+                    }
+                    return t;
+                }));
+            };
+
+            const TRAVELER_ROWS_PER_PAGE = 25; 
+            const travelerPages = [];
+            const totalTravelerPages = Math.max(1, Math.ceil(travelers.length / TRAVELER_ROWS_PER_PAGE));
+            for (let i = 0; i < totalTravelerPages; i++) {
+                travelerPages.push({ pageIndex: i, data: travelers.slice(i * TRAVELER_ROWS_PER_PAGE, (i + 1) * TRAVELER_ROWS_PER_PAGE) });
             }
-        });
 
-        window.addEventListener('resize', syncItineraryPreviewHeight);
-        window.addEventListener('load', () => setTimeout(syncItineraryPreviewHeight, 120));
-        if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(() => setTimeout(syncItineraryPreviewHeight, 80));
-        }
+            // [여행자 엑셀 처리 로직]
+            const downloadExcelTemplate = () => {
+                const ws_data = [
+                    ['순번', '성명', '영문명(NAME)', '생년월일', '성별(M/F)', '여권번호', '여권만료일', '국적', '기타'],
+                    [1, '홍길동', 'HONG GILDONG', '2009-01-01', 'M', 'M12345678', '2030-12-31', 'KOR', '']
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                const headerStyle = { font: { name: '맑은 고딕', sz: 11, bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "1E3A8A" } }, alignment: { horizontal: "center", vertical: "center" }, border: { top: { style: "thin", color: { rgb: "000000" } }, bottom: { style: "thin", color: { rgb: "000000" } }, left: { style: "thin", color: { rgb: "000000" } }, right: { style: "thin", color: { rgb: "000000" } } } };
+                const dataStyleCenter = { font: { name: '맑은 고딕', sz: 10 }, alignment: { horizontal: "center", vertical: "center" }, border: { top: { style: "thin", color: { rgb: "CBD5E1" } }, bottom: { style: "thin", color: { rgb: "CBD5E1" } }, left: { style: "thin", color: { rgb: "CBD5E1" } }, right: { style: "thin", color: { rgb: "CBD5E1" } } } };
 
-// --- 2. 기본 상태(State) 데이터 탑재 ---
-        const poiDB = {
-            "에코랜드": "곶자왈 원시림을 달리는 낭만적인 클래식 기차여행",
-            "신화월드테마파크": "캐릭터와 함께하는 짜릿한 놀이기구 테마파크 체험",
-            "아쿠아플라넷": "아시아 최대 규모의 프리미엄 해양 테마파크 (오션아레나 포함)",
-            "메이즈랜드": "세계 최장 길이의 돌, 바람, 여자 테마 미로공원",
-            "성산일출봉": "유네스코 세계자연유산, 바다 위에 우뚝 솟은 장엄한 수성화산",
-            "항공우주박물관": "아시아 최대 규모의 항공우주 테마 교육 및 체험 시설",
-            "오설록": "끝없이 펼쳐진 푸른 녹차밭과 여유로운 티뮤지엄 관람",
-            "이호테우": "제주 바다를 배경으로 한 이국적인 조랑말 등대 인생샷",
-            "가파도": "매년 봄 초록빛 청보리가 일렁이는 평화롭고 아름다운 섬 속의 섬",
-            "우도": "소가 누워있는 모습을 닮은 제주의 아름다운 섬 탐방",
-            "수목원테마파크": "아이스뮤지엄, VR, 그리고 화려한 야간 LED 조명 축제",
-            "카멜리아힐": "사계절 내내 동양 최대 규모의 아름답고 화려한 수목원 포토존",
-            "새별오름": "가을 억새가 장관을 이루는 제주의 대표 오름",
-            "용두암": "용이 포효하며 바다에서 솟구치는 듯한 형상의 웅장한 화산 기암괴석",
-            "제주공항": "설렘 가득한 제주 여행의 시작이자 아쉬운 마무리를 맺는 관문",
-            "9.81 파크": "레이싱 2회 + 서바이벌 1회",
-            "스누피가든": "제주의 자연 속에서 스누피 캐릭터와 함께하는 감성 정원",
-            "천지연폭포": "하늘과 땅이 만나 이룬 연못, 단정한 자태의 폭포",
-            "노형수퍼마켙": "흑백 세상에서 화려한 색채로 빠져드는 미디어아트"
-        };
-
-        let days = [
-            { date: "09/08(화)", hotel: "신신호텔 제주오션", desc: "원주공항 도착 및 탑승수속 (신분증 지참!)\n11:15 출발 : 원주공항 출발(진에어)\n12:30 도착 : 제주공항 도착 (인원파악 후 출발)\n9.81 파크 (레이싱 2회 + 서바이벌 1회)\n숙소 도착 및 체크인 (석식 후 자유시간)", meal: "조: -\n중: 흑우불고기\n석: 호텔식" },
-            { date: "09/09(수)", hotel: "신신호텔 제주오션", desc: "기상 및 조식 후 숙소출발\n함덕해변 서우봉 둘레길\n동쪽송당 동화마을 (감성 정원)\n스누피가든\n에코랜드 (곶자왈 숲속 기차여행)\n숙소 도착 후 석식 및 자유시간", meal: "조: 호텔식\n중: 토종돼지주물럭\n석: 호텔식" },
-            { date: "09/10(목)", hotel: "신신호텔 제주오션", desc: "기상 및 조식 후 숙소출발\n제트보트 체험 (스릴 액티비티)\n카멜리아힐 (동양 최대 수목원)\n오설록 녹차밭 & 티뮤지엄\n천지연폭포 & 새섬\n숙소 도착 후 석식 및 자유시간", meal: "조: 호텔식\n중: 한식뷔페\n석: 호텔식" },
-            { date: "09/11(금)", hotel: "", desc: "기상 및 조식 후 숙소출발\n노형수퍼마켙 (미디어아트 전시)\n이호테우 말등대 & 무지개해안도로\n14:00 제주공항 도착 후 탑승수속\n15:20 출발 : 제주공항 출발(진에어)\n16:35 도착 : 원주공항 도착 후 학교로 이동 및 해산", meal: "조: 호텔식\n중: 제육볶음\n+고등어구이\n석: -" }
-        ];
-
-        let costs = {
-            flight: [
-                { name: "진에어", desc: "원주-제주-원주(학생)", qty: 40, krw: 188200, note: "3월발권기준_유류미변동" },
-                { name: "진에어", desc: "원주-제주-원주(교사)", qty: 5, krw: 188200, note: "3월발권기준_유류미변동" },
-                { name: "항공발권대리점", desc: "발권수수료", qty: 45, krw: 5500, note: "" },
-                { name: "차량비", desc: "대형버스 4일", qty: 1, krw: 3520000, note: "제반비용 포함" }
-            ],
-            local: [
-                { name: "숙박료", desc: "신신호텔월드컵점(3박요금)", qty: 45, krw: 180000, note: "조,석식 포함 (2-3인실)" },
-                { name: "식비", desc: "중식_1일차", qty: 45, krw: 20000, note: "흑우불고기정식" },
-                { name: "식비", desc: "중식_2일차", qty: 45, krw: 13000, note: "토종돼지주물럭" },
-                { name: "식비", desc: "중식_3일차", qty: 45, krw: 0, note: "법원플래터_피자,파스타" },
-                { name: "식비", desc: "중식_4일차", qty: 45, krw: 15000, note: "제육볶음+고등어구이" },
-                { name: "관광지입장료", desc: "981파크", qty: 45, krw: 39500, note: "레이싱2회 + 서바이벌1회" },
-                { name: "관광지입장료", desc: "스누피가든", qty: 40, krw: 14000, note: "학생" },
-                { name: "관광지입장료", desc: "스누피가든", qty: 1, krw: 16000, note: "교사_학생 10명당 1명 무료" },
-                { name: "관광지입장료", desc: "에코랜드", qty: 41, krw: 14000, note: "학생 10명당 1명 무료" }
-            ],
-            domestic: [
-                { name: "보험", desc: "여행자보험", qty: 45, krw: 3000, note: "주민번호 필요" },
-                { name: "알선수수료", desc: "운영관리비", qty: 1, krw: 2500000, note: "업체인솔동행" }
-            ]
-        };
-
-        if (isBlankMode) {
-            days = [{ date: "", hotel: "", desc: "", meal: "" }];
-            costs = { flight: [], local: [], domestic: [] };
-        }
-
-        // --- 3. 우측 일정표 렌더링 ---
-        function renderItinerary() {
-            const container = document.getElementById('itinerary-container');
-            let html = '';
-
-            document.querySelectorAll('.preset-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.innerText.charAt(0)) + 1 === days.length && btn.innerText.includes('박')) {
-                    btn.classList.add('active');
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (!ws[cellAddress]) continue;
+                        if (R === 0) ws[cellAddress].s = headerStyle;
+                        else ws[cellAddress].s = dataStyleCenter;
+                    }
                 }
-            });
+                ws['!rows'] = [{ hpt: 25 }, { hpt: 20 }];
+                ws['!cols'] = [{ wch: 6 },  { wch: 12 }, { wch: 22 }, { wch: 14 }, { wch: 10 }, { wch: 16 }, { wch: 14 }, { wch: 8 }, { wch: 18 } ];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "여행자명단");
+                XLSX.writeFile(wb, "투어메이커_명단표준양식.xlsx");
+            };
 
-            const len = days.length;
-            const baseSize = Math.max(12, 16 - (len * 0.7)); 
-            const txtSzStyle = `font-size: ${baseSize}px;`;
+            const importExcelData = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = new Uint8Array(event.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: true });
+
+                        const parseExcelDate = (cellVal) => {
+                            if (cellVal === undefined || cellVal === null || cellVal === "") return "";
+                            if (typeof cellVal === 'number') {
+                                const numStr = String(cellVal);
+                                if (numStr.length === 6 || (numStr.length === 5 && cellVal >= 10000 && cellVal <= 99999)) {
+                                    let padded = numStr.padStart(6, '0');
+                                    let y = parseInt(padded.substring(0, 2), 10);
+                                    y += (y > 50 ? 1900 : 2000);
+                                    return `${y}-${padded.substring(2, 4)}-${padded.substring(4, 6)}`;
+                                }
+                                if (cellVal > 10000 && cellVal < 60000) {
+                                    const date_info = new Date(Math.floor(cellVal - 25569) * 86400 * 1000);
+                                    return `${date_info.getUTCFullYear()}-${String(date_info.getUTCMonth() + 1).padStart(2, '0')}-${String(date_info.getUTCDate()).padStart(2, '0')}`;
+                                }
+                                return numStr;
+                            }
+                            let strVal = String(cellVal).trim();
+                            if (strVal.replace(/\s/g, '').match(/^\d{6}$/)) {
+                                let clean = strVal.replace(/\s/g, '');
+                                let y = parseInt(clean.substring(0, 2), 10);
+                                y += (y > 50 ? 1900 : 2000);
+                                return `${y}-${clean.substring(2, 4)}-${clean.substring(4, 6)}`;
+                            }
+                            strVal = strVal.replace(/\./g, '-').replace(/\//g, '-').replace(/,/g, '-').replace(/\s/g, '');
+                            const stdMatch = strVal.match(/^(\d{2,4})-(\d{1,2})-(\d{1,2})$/);
+                            if (stdMatch) {
+                                let y = parseInt(stdMatch[1], 10);
+                                if (y < 100) y += (y > 50 ? 1900 : 2000);
+                                return `${y}-${String(stdMatch[2]).padStart(2, '0')}-${String(stdMatch[3]).padStart(2, '0')}`;
+                            }
+                            return strVal;
+                        };
+
+                        const newTravelers = [];
+                        for (let i = 1; i < json.length; i++) {
+                            const row = json[i];
+                            if (!row || row.length === 0 || !row[1] || String(row[1]).trim() === '') continue;
+                            const rawGender = row[4] ? String(row[4]).toUpperCase().trim() : '';
+                            newTravelers.push({
+                                id: Date.now() + Math.random() + i,
+                                nameKor: String(row[1]).trim(),
+                                nameEng: row[2] ? String(row[2]).toUpperCase().trim() : koreanToEnglish(String(row[1]).trim()),
+                                birth: parseExcelDate(row[3]),
+                                gender: (rawGender === 'F' || rawGender === '여') ? 'F' : 'M',
+                                passportNo: row[5] ? String(row[5]).toUpperCase().trim() : "",
+                                expiry: parseExcelDate(row[6]),
+                                nation: row[7] ? String(row[7]).toUpperCase().trim() : "KOR",
+                                remark: row[8] ? String(row[8]).trim() : ""
+                            });
+                        }
+
+                        if (newTravelers.length > 0) {
+                            setTravelers(newTravelers);
+                            showAlert(`✅ 성공적으로 ${newTravelers.length}명의 명단 데이터를 불러왔습니다.`);
+                        } else showAlert("⚠️ 유효한 데이터가 없습니다.");
+                    } catch (error) { showAlert("⚠️ 엑셀 파싱 오류가 발생했습니다."); }
+                };
+                reader.readAsArrayBuffer(file);
+                e.target.value = '';
+            };
+
+            const exportTravelersToExcel = () => {
+                const ws_data = [['순번', '성명', '영문명(NAME)', '생년월일', '성별(M/F)', '여권번호', '여권만료일', '국적', '기타']];
+                let count = 1;
+                let currentRowIdx = 1;
+
+                travelers.forEach((t) => {
+                    if(t.nameKor.trim() === "") return; 
+                    ws_data.push([count++, t.nameKor, t.nameEng, t.birth, t.gender, t.passportNo, t.expiry, t.nation, t.remark]);
+                    currentRowIdx++;
+                });
+                if (ws_data.length === 1) return showAlert("⚠️ 내보낼 데이터가 없습니다.");
+
+                // 로고(워터마크) 추가
+                ws_data.push(['', '', '', '', '', '', '', '', '']); // 간격
+                const emptyRowIdx = currentRowIdx;
+                currentRowIdx++;
+
+                // 우측 하단 열(여권번호~기타) 병합용으로 5번 인덱스에 텍스트 배치
+                ws_data.push(['', '', '', '', '', 'System Powered by TOURMAKER', '', '', '']);
+                const logoRowIdx = currentRowIdx;
+                
+                const merges = [
+                    { s: { r: logoRowIdx, c: 5 }, e: { r: logoRowIdx, c: 8 } }
+                ];
+
+                const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                ws['!merges'] = merges;
+
+                const headerStyle = { font: { name: '맑은 고딕', sz: 11, bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "1E3A8A" } }, alignment: { horizontal: "center", vertical: "center" } };
+                const dataStyleCenter = { font: { name: '맑은 고딕', sz: 10 }, alignment: { horizontal: "center", vertical: "center" } };
+                const logoStyle = { font: { name: 'Arial Black', sz: 12, bold: true, italic: true, color: { rgb: "1E3A8A" } }, alignment: { horizontal: "right", vertical: "center" } };
+
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const cell = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (!ws[cell]) continue;
+
+                        let s = R === 0 ? { ...headerStyle } : { ...dataStyleCenter };
+                        
+                        if (R === emptyRowIdx || R === logoRowIdx) {
+                            s.border = {}; // 푸터 영역 테두리 제거
+                            if (R === logoRowIdx && C === 5) s = { ...logoStyle };
+                        } else {
+                            s.border = { left: { style: "thin", color: { rgb: "CBD5E1" } }, right: { style: "thin", color: { rgb: "CBD5E1" } } };
+                            if (R === 0) {
+                                s.border.top = { style: "thick", color: { rgb: "000000" } };
+                                s.border.bottom = { style: "thick", color: { rgb: "000000" } };
+                            } else {
+                                s.border.top = { style: "thin", color: { rgb: "E2E8F0" } };
+                                if (R === emptyRowIdx - 1) s.border.bottom = { style: "medium", color: { rgb: "64748B" } };
+                                else s.border.bottom = { style: "thin", color: { rgb: "E2E8F0" } };
+                            }
+                        }
+                        ws[cell].s = s;
+                    }
+                }
+                
+                const rowHeights = Array(ws_data.length).fill({ hpt: 20 });
+                rowHeights[0] = { hpt: 25 }; 
+                rowHeights[emptyRowIdx] = { hpt: 15 };
+                rowHeights[logoRowIdx] = { hpt: 25 };
+                ws['!rows'] = rowHeights; 
+
+                ws['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 22 }, { wch: 14 }, { wch: 10 }, { wch: 16 }, { wch: 14 }, { wch: 8 }, { wch: 18 }];
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "여행자명단");
+                XLSX.writeFile(wb, commonHeader.groupName ? `${commonHeader.groupName}_여행자명단.xlsx` : `투어메이커_여행자명단.xlsx`);
+            };
+
+
+            // ==========================================
+            // [TAB 2] 방 배정 (루밍리스트)
+            // ==========================================
+            const [isInternationalRooming, setIsInternationalRooming] = useState(true);
+            const [activeSubTabRooming, setActiveSubTabRooming] = useState('text');
+            const [rooms, setRooms] = useState([
+                { id: 1, type: 'TWIN', roomNo: '', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] }
+            ]);
+            const [importTextRooming, setImportTextRooming] = useState("");
+
+            const dragRoomItem = useRef();
+            const dragOverRoomItem = useRef();
+
+            const dragRoomStart = (e, position) => { dragRoomItem.current = position; e.target.closest('.room-row')?.classList.add('dragging'); };
+            const dragRoomEnter = (e, position) => { dragOverRoomItem.current = position; };
+            const dropRoom = (e) => {
+                const tr = e.target.closest('.room-row');
+                if (tr) tr.classList.remove('dragging');
+                if (dragRoomItem.current === undefined || dragRoomItem.current === null || dragOverRoomItem.current === undefined || dragOverRoomItem.current === null) return;
+                setRooms(prev => {
+                    const copyRooms = [...prev];
+                    const dragContent = copyRooms[dragRoomItem.current];
+                    if (!dragContent) return prev;
+                    copyRooms.splice(dragRoomItem.current, 1);
+                    copyRooms.splice(dragOverRoomItem.current, 0, dragContent);
+                    return copyRooms;
+                });
+                dragRoomItem.current = null; dragOverRoomItem.current = null;
+            };
+            const dragRoomEnd = (e) => { e.target.closest('.room-row')?.classList.remove('dragging'); dragRoomItem.current = null; dragOverRoomItem.current = null;};
+
+            const roomStats = useMemo(() => {
+                let total = 0, male = 0, female = 0;
+                let roomCounts = { SINGLE: 0, TWIN: 0, TRIPLE: 0, QUAD: 0 };
+                rooms.forEach(r => {
+                    if (r.guests.some(g => g.name.trim() !== "")) roomCounts[r.type]++;
+                    r.guests.forEach(g => {
+                        if (g.name.trim() !== "") {
+                            total++;
+                            if (g.gender === '남') male++; else female++;
+                        }
+                    });
+                });
+                return { total, male, female, roomCounts };
+            }, [rooms]);
+
+            // [루밍 엑셀 처리 로직 - 방번호/실제호실 세로 병합 적용]
+            const downloadRoomingExcelTemplate = () => {
+                const ws_data = [
+                    ['순서', '성명', '영문명(NAME)', '성별', '객실번호', '기타'],
+                    [1, '홍길동', 'HONG GILDONG', '남', '101호', '인솔자'],
+                    [1, '김철수', 'KIM CHULSOO', '남', '', ''],
+                    [2, '이영희', 'LEE YOUNGHEE', '여', '202호', ''],
+                    [2, '박민지', 'PARK MINJI', '여', '', ''],
+                    [2, '최수진', 'CHOI SUJIN', '여', '', ''],
+                    ['', '', '', '', '', ''],
+                    ['', '', '', '', 'System Powered by TOURMAKER', '']
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                
+                // 엑셀 병합(Merge) 설정 - 1번방(2명), 2번방(3명), 로고
+                ws['!merges'] = [
+                    { s: { r: 1, c: 0 }, e: { r: 2, c: 0 } }, // 1번방 방 번호
+                    { s: { r: 1, c: 4 }, e: { r: 2, c: 4 } }, // 1번방 호실
+                    { s: { r: 3, c: 0 }, e: { r: 5, c: 0 } }, // 2번방 방 번호
+                    { s: { r: 3, c: 4 }, e: { r: 5, c: 4 } },  // 2번방 호실
+                    { s: { r: 7, c: 4 }, e: { r: 7, c: 5 } }  // 로고 텍스트 병합
+                ];
+                
+                const borders = [2, 5]; // 묶음의 마지막 행
+
+                const headerStyle = { font: { name: '맑은 고딕', sz: 11, bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "047857" } }, alignment: { horizontal: "center", vertical: "center" } };
+                const dataStyle = { font: { name: '맑은 고딕', sz: 10 }, alignment: { horizontal: "center", vertical: "center" } };
+                const logoStyle = { font: { name: 'Arial Black', sz: 10, bold: true, italic: true, color: { rgb: "1E3A8A" } }, alignment: { horizontal: "right", vertical: "center" } };
+
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const cell = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (!ws[cell]) continue;
+                        
+                        let s = R === 0 ? { ...headerStyle } : { ...dataStyle };
+                        
+                        if (R === 6 || R === 7) {
+                            s.border = {}; // 푸터 영역 테두리 제거
+                            if (R === 7 && C === 4) s = { ...logoStyle };
+                        } else {
+                            s.border = { left: { style: "thin", color: { rgb: "CBD5E1" } }, right: { style: "thin", color: { rgb: "CBD5E1" } } };
+                            if (R === 0) {
+                                s.border.top = { style: "thick", color: { rgb: "000000" } };
+                                s.border.bottom = { style: "thick", color: { rgb: "000000" } };
+                            } else {
+                                s.border.top = { style: "thin", color: { rgb: "E2E8F0" } };
+                                if (borders.includes(R)) s.border.bottom = { style: "medium", color: { rgb: "64748B" } };
+                                else s.border.bottom = { style: "thin", color: { rgb: "E2E8F0" } };
+                            }
+                        }
+                        ws[cell].s = s;
+                    }
+                }
+                ws['!rows'] = [{ hpt: 25 }, { hpt: 20 }, { hpt: 20 }, { hpt: 20 }, { hpt: 20 }, { hpt: 20 }, { hpt: 15 }, { hpt: 25 }];
+                ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 22 }, { wch: 8 }, { wch: 20 }, { wch: 20 }];
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "방배정_표준양식");
+                XLSX.writeFile(wb, "투어메이커_루밍표준양식.xlsx");
+            };
+
+            const importRoomingExcelData = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = new Uint8Array(event.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: true });
+
+                        const roomMap = new Map();
+                        let lastRoomIndex = "";
+                        let lastRoomNo = "";
+
+                        for (let i = 1; i < json.length; i++) {
+                            const row = json[i] || [];
+                            
+                            // 워터마크/로고 행 무시
+                            if (String(row[4] || '').includes('TOURMAKER') || String(row[1] || '').includes('TOURMAKER')) continue;
+
+                            // 병합된 셀 처리 (빈칸이면 직전 방번호 유지)
+                            let roomIndex = row[0]; 
+                            if (roomIndex !== undefined && roomIndex !== null && String(roomIndex).trim() !== '') {
+                                lastRoomIndex = roomIndex;
+                            } else {
+                                roomIndex = lastRoomIndex;
+                            }
+
+                            const guestName = String(row[1] || '').trim();
+                            if (!guestName && !row[4]) continue; 
+
+                            // 병합된 실제 호실 처리
+                            let roomNoVal = row[4];
+                            if (roomNoVal !== undefined && roomNoVal !== null && String(roomNoVal).trim() !== '') {
+                                lastRoomNo = String(roomNoVal).trim();
+                            } else if (guestName) {
+                                roomNoVal = lastRoomNo; 
+                            } else {
+                                roomNoVal = "";
+                            }
+
+                            const rawGender = row[3] ? String(row[3]).trim() : '';
+                            const gender = (rawGender === 'F' || rawGender === '여') ? '여' : '남';
+                            
+                            const guest = {
+                                name: guestName,
+                                engName: row[2] ? String(row[2]).toUpperCase().trim() : (isInternationalRooming ? koreanToEnglish(guestName) : ""),
+                                gender: gender,
+                                remark: row[5] ? String(row[5]).trim() : ""
+                            };
+
+                            if (!roomMap.has(roomIndex)) {
+                                roomMap.set(roomIndex, {
+                                    id: Date.now() + Math.random() + i,
+                                    roomNo: roomNoVal || '',
+                                    guests: []
+                                });
+                            } else {
+                                if(roomNoVal && !roomMap.get(roomIndex).roomNo) {
+                                    roomMap.get(roomIndex).roomNo = roomNoVal;
+                                }
+                            }
+                            if(guestName) {
+                                roomMap.get(roomIndex).guests.push(guest);
+                            }
+                        }
+
+                        const newRooms = Array.from(roomMap.values()).map(r => {
+                            let type = 'TWIN';
+                            let gCount = r.guests.length;
+                            if (gCount <= 1) type = 'SINGLE';
+                            else if (gCount === 2) type = 'TWIN';
+                            else if (gCount === 3) type = 'TRIPLE';
+                            else type = 'QUAD';
+
+                            const capacity = type === 'SINGLE' ? 1 : (type === 'TWIN' ? 2 : (type === 'TRIPLE' ? 3 : 4));
+                            while(r.guests.length < capacity) {
+                                r.guests.push({name:"", engName:"", gender:"남", remark:""});
+                            }
+                            return { ...r, type };
+                        });
+
+                        if (newRooms.length > 0) {
+                            setRooms(newRooms);
+                            showAlert(`✅ 성공적으로 ${newRooms.length}개의 방 배정 데이터를 불러왔습니다.`);
+                        } else showAlert("⚠️ 유효한 데이터가 없습니다. (순서 및 성명 확인)");
+                    } catch (error) { console.error(error); showAlert("⚠️ 엑셀 파싱 오류가 발생했습니다."); }
+                };
+                reader.readAsArrayBuffer(file);
+                e.target.value = '';
+            };
+
+            const exportRoomingToExcel = () => {
+                const ws_data = [['순서', '성명', '영문명(NAME)', '성별', '객실번호', '기타']];
+                const borders = []; 
+                const merges = [];
+
+                let currentRowIdx = 1;
+                rooms.forEach((r, idx) => {
+                    const roomNumberDisplay = idx + 1;
+                    const startRow = currentRowIdx;
+                    let addedCount = 0;
+
+                    r.guests.forEach((g) => {
+                        if (g.name.trim() !== "" || r.roomNo.trim() !== "") {
+                            ws_data.push([roomNumberDisplay, g.name, g.engName, g.gender, r.roomNo, g.remark]);
+                            currentRowIdx++;
+                            addedCount++;
+                        }
+                    });
+
+                    if (addedCount > 0) {
+                        borders.push(currentRowIdx - 1); 
+                        if (addedCount > 1) {
+                            // 방 번호 & 실제 호실 세로 병합 적용
+                            merges.push({ s: { r: startRow, c: 0 }, e: { r: currentRowIdx - 1, c: 0 } });
+                            merges.push({ s: { r: startRow, c: 4 }, e: { r: currentRowIdx - 1, c: 4 } });
+                        }
+                    }
+                });
+
+                if (ws_data.length === 1) return showAlert("⚠️ 내보낼 방 배정 데이터가 없습니다.");
+
+                // 로고(워터마크) 추가
+                ws_data.push(['', '', '', '', '', '']); // 간격
+                const emptyRowIdx = currentRowIdx;
+                currentRowIdx++;
+
+                ws_data.push(['', '', '', '', 'System Powered by TOURMAKER', '']);
+                const logoRowIdx = currentRowIdx;
+                merges.push({ s: { r: logoRowIdx, c: 4 }, e: { r: logoRowIdx, c: 5 } }); // 우측 하단 병합
+
+                const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                if (merges.length > 0) ws['!merges'] = merges;
+
+                const headerStyle = { font: { name: '맑은 고딕', sz: 11, bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "047857" } }, alignment: { horizontal: "center", vertical: "center" } };
+                const dataStyle = { font: { name: '맑은 고딕', sz: 10 }, alignment: { horizontal: "center", vertical: "center" } };
+                const logoStyle = { font: { name: 'Arial Black', sz: 12, bold: true, italic: true, color: { rgb: "1E3A8A" } }, alignment: { horizontal: "right", vertical: "center" } };
+
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const cell = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (!ws[cell]) continue;
+
+                        let s = R === 0 ? { ...headerStyle } : { ...dataStyle };
+                        
+                        if (R === emptyRowIdx || R === logoRowIdx) {
+                            s.border = {}; // 푸터 영역 테두리 제거
+                            if (R === logoRowIdx && C === 4) s = { ...logoStyle };
+                        } else {
+                            s.border = { left: { style: "thin", color: { rgb: "CBD5E1" } }, right: { style: "thin", color: { rgb: "CBD5E1" } } };
+                            if (R === 0) {
+                                s.border.top = { style: "thick", color: { rgb: "000000" } };
+                                s.border.bottom = { style: "thick", color: { rgb: "000000" } };
+                            } else {
+                                s.border.top = { style: "thin", color: { rgb: "E2E8F0" } };
+                                if (borders.includes(R)) s.border.bottom = { style: "medium", color: { rgb: "64748B" } };
+                                else s.border.bottom = { style: "thin", color: { rgb: "E2E8F0" } };
+                            }
+                        }
+                        ws[cell].s = s;
+                    }
+                }
+                
+                const rowHeights = Array(ws_data.length).fill({ hpt: 20 });
+                rowHeights[0] = { hpt: 25 }; 
+                rowHeights[emptyRowIdx] = { hpt: 15 };
+                rowHeights[logoRowIdx] = { hpt: 25 };
+                ws['!rows'] = rowHeights; 
+                
+                ws['!cols'] = [{ wch: 6 }, { wch: 14 }, { wch: 22 }, { wch: 8 }, { wch: 20 }, { wch: 20 }];
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "방배정_명단");
+                XLSX.writeFile(wb, commonHeader.groupName ? `${commonHeader.groupName}_방배정명단.xlsx` : `투어메이커_루밍리스트.xlsx`);
+            };
+
+            const handleRoomingSmartImport = () => {
+                if (!importTextRooming.trim()) return;
+                const lines = importTextRooming.split('\n').filter(l => l.trim().length > 0);
+                const newRooms = lines.map((line, idx) => {
+                    const rawNames = line.split(/[\s,/\t]+/).map(name => name.trim()).filter(Boolean);
+                    const guests = rawNames.map(raw => {
+                        const hasFemale = raw.includes('(여)') || /여$/.test(raw);
+                        const cleanName = raw.replace(/\(여\)|\(남\)|여$|남$/g, '').trim();
+                        return { name: cleanName, engName: isInternationalRooming ? koreanToEnglish(cleanName) : "", gender: hasFemale ? "여" : "남", remark: "" };
+                    });
+                    let type = 'TWIN';
+                    if (guests.length <= 1) type = 'SINGLE';
+                    else if (guests.length === 2) type = 'TWIN';
+                    else if (guests.length === 3) type = 'TRIPLE';
+                    else type = 'QUAD';
+                    return { id: Date.now() + Math.random(), roomNo: "", type, guests: guests.slice(0, type === 'SINGLE' ? 1 : type === 'TWIN' ? 2 : type === 'TRIPLE' ? 3 : 4) };
+                });
+                
+                setRooms(prev => {
+                    if (prev.length === 1 && prev[0].guests.every(g => g.name === "")) return newRooms;
+                    return [...prev, ...newRooms];
+                });
+                setImportTextRooming("");
+            };
+
+            const updateRoom = (rIdx, field, value) => { 
+                setRooms(prev => prev.map((room, idx) => idx === rIdx ? { ...room, [field]: value } : room)); 
+            };
             
-            let pyClass = "py-3";
-            if(len <= 2) pyClass = "py-6";
-            else if(len === 3) pyClass = "py-5";
-            else if(len >= 5) pyClass = "py-2";
+            const updateGuest = (globalIdx, gIdx, field, value) => {
+                setRooms(prev => prev.map((room, rIndex) => {
+                    if (rIndex === globalIdx) {
+                        const newGuests = room.guests.map((guest, guestIndex) => {
+                            if (guestIndex === gIdx) {
+                                const updatedGuest = { ...guest, [field]: value };
+                                if (field === 'name' && isInternationalRooming) {
+                                    if (!guest.engName || guest.engName === koreanToEnglish(guest.name)) {
+                                        updatedGuest.engName = koreanToEnglish(value);
+                                    }
+                                }
+                                if (field === 'engName') updatedGuest.engName = String(value).toUpperCase();
+                                return updatedGuest;
+                            }
+                            return guest;
+                        });
+                        return { ...room, guests: newGuests };
+                    }
+                    return room;
+                }));
+            };
 
-            days.forEach((day, i) => {
-                const hotelRow = day.hotel ? `
-                    <tr class="border-t border-slate-300">
-                        <td colspan="2" class="px-5 py-2 bg-blue-50/20">
-                            <div class="flex items-center" style="${txtSzStyle}">
-                                <span class="font-extrabold text-blue-900 tracking-widest mr-2">숙소</span>
-                                <span class="font-bold text-blue-900 mx-2">:</span>
-                                <div class="flex-1 text-left">
-                                    <div contenteditable="true" class="edit-input font-bold text-blue-900 inline-block" onblur="updateDay(${i}, 'hotel', this.innerText)">${esc(day.hotel)}</div>
+            const changeRoomType = (globalIdx, type) => {
+                setRooms(prev => prev.map((room, rIndex) => {
+                    if (rIndex === globalIdx) {
+                        const capacity = type === 'SINGLE' ? 1 : (type === 'TWIN' ? 2 : (type === 'TRIPLE' ? 3 : 4));
+                        let currentGuests = [...room.guests];
+                        if (currentGuests.length < capacity) {
+                            while(currentGuests.length < capacity) currentGuests.push({ name: "", engName: "", gender: "남", remark: "" });
+                        } else {
+                            currentGuests = currentGuests.slice(0, capacity);
+                        }
+                        return { ...room, type, guests: currentGuests };
+                    }
+                    return room;
+                }));
+            };
+
+            const removeRoom = (globalIdx) => setRooms(prev => prev.filter((_, idx) => idx !== globalIdx));
+            const addRoom = () => setRooms(prev => [...prev, { id: Date.now() + Math.random(), roomNo: '', type: 'TWIN', guests: [{name:"", engName:"", gender:"남", remark:""}, {name:"", engName:"", gender:"남", remark:""}] }]);
+
+            // PDF 구조 기반 2단 분리를 위한 로직 (1페이지당 36개 방을 처리하여 18줄 생성)
+            const ROOMS_PER_PAGE = 36;
+            const roomPages = [];
+            const totalRoomPages = Math.max(1, Math.ceil(rooms.length / ROOMS_PER_PAGE));
+            for (let i = 0; i < totalRoomPages; i++) roomPages.push(rooms.slice(i * ROOMS_PER_PAGE, (i + 1) * ROOMS_PER_PAGE));
+
+            // 시스템 기능들 (저장/불러오기/프린트 등)
+            const exportData = () => {
+                const dataToSave = { travelers, commonHeader, rooms };
+                const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a'); link.href = url; link.download = `투어메이커_데이터_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+            };
+
+            const importData = (e) => {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.travelers) setTravelers(data.travelers);
+                        if (data.commonHeader) setCommonHeader(data.commonHeader);
+                        if (data.rooms) setRooms(data.rooms);
+                        showAlert("✅ 저장된 데이터를 성공적으로 불러왔습니다.");
+                    } catch (error) { showAlert("⚠️ 데이터를 읽는 중 오류가 발생했습니다."); }
+                };
+                reader.readAsText(file); e.target.value = '';
+            };
+
+            const handleCopyLink = () => {
+                const baseUrl = window.location.origin + window.location.pathname;
+                const shareUrl = `${baseUrl}?shared=true`;
+                
+                fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(shareUrl)}`)
+                    .then(res => res.json())
+                    .then(data => { executeCopy(data.shorturl || shareUrl); })
+                    .catch(() => { executeCopy(shareUrl); });
+            };
+
+            const executeCopy = (urlToCopy) => {
+                const textArea = document.createElement("textarea");
+                textArea.value = urlToCopy; textArea.style.position = "fixed"; textArea.style.top = "-9999px"; textArea.style.left = "-9999px";
+                document.body.appendChild(textArea); textArea.focus(); textArea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    if(successful) showAlert(`✅ 담당자 공유용 단축 링크(${urlToCopy})가 복사되었습니다!`);
+                    else showPrompt("자동 복사에 실패했습니다. 복사해주세요:", urlToCopy);
+                } catch (err) { showPrompt("자동 복사에 실패했습니다. 복사해주세요:", urlToCopy); } 
+                finally { document.body.removeChild(textArea); }
+            };
+
+            const handlePrint = () => {
+                if(isSharedMode) {
+                    showPrintConfirm();
+                } else {
+                    setTimeout(() => { window.print(); }, 100);
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col bg-slate-50 relative">
+                    {/* 상단 헤더 */}
+                    <div className="no-print bg-[#1e293b] border-b shadow-md sticky top-0 z-50">
+                        <div className="max-w-[1400px] mx-auto px-3 md:px-4 flex flex-col md:flex-row justify-between items-center py-2 md:py-0 gap-2 md:gap-3">
+                            <div className="flex w-full md:w-auto justify-center md:justify-start items-center pb-1 md:pb-0">
+                                <div className="flex items-center gap-2 md:gap-3">
+                                    <img src={TM_LOGO} className="h-5 md:h-6 filter brightness-0 invert" alt="Tourmaker Logo" />
+                                    <div className="h-3 md:h-4 w-[1px] bg-slate-500"></div>
+                                    <h1 className="font-bold text-white tracking-wide text-xs md:text-sm">통합 관리 센터</h1>
                                 </div>
                             </div>
-                        </td>
-                    </tr>` : '';
-                
-                const rs = day.hotel ? 2 : 1;
+                            
+                            <div className="flex w-full md:w-auto justify-center overflow-x-auto hide-scrollbar">
+                                <button onClick={() => setActiveMainTab('traveler')} className={`whitespace-nowrap px-3 md:px-5 py-2 md:py-4 h-full flex items-center font-bold text-[13px] md:text-sm border-b-[3px] transition-all md:rounded-t-md ${activeMainTab === 'traveler' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
+                                    <i className="fas fa-passport mr-2"></i> 1. 여행자 명단
+                                </button>
+                                <button onClick={() => setActiveMainTab('rooming')} className={`whitespace-nowrap px-3 md:px-5 py-2 md:py-4 h-full flex items-center font-bold text-[13px] md:text-sm border-b-[3px] transition-all md:rounded-t-md ${activeMainTab === 'rooming' ? 'border-blue-400 text-white bg-slate-800' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800'}`}>
+                                    <i className="fas fa-bed mr-2"></i> 2. 방 배정 (루밍)
+                                </button>
+                            </div>
 
-                html += `
-                <tbody class="border-b border-slate-300 last:border-b-0">
-                    <tr class="bg-white">
-                        <td rowspan="${rs}" class="text-center font-extrabold text-slate-900 border-r border-slate-300 align-middle relative ${pyClass}" style="${txtSzStyle}">
-                            <div contenteditable="true" class="edit-input text-center tracking-wide" onblur="updateDay(${i}, 'date', this.innerText)">${esc(day.date)}</div>
-                        </td>
-                        <td class="text-left px-5 leading-relaxed font-medium text-slate-800 border-r border-slate-300 align-middle relative ${pyClass}" style="${txtSzStyle}">
-                            <div class="action-btn-container absolute left-[-42px] top-2 flex flex-col gap-1 w-9 z-10 no-print">
-                                <button onclick="removeDay(${i})" class="action-btn btn-del-row" title="일정 삭제">✕<br>삭제</button>
-                                <button onclick="toggleHotel(${i})" class="action-btn btn-hotel-row" title="숙소란 토글">🏨<br>숙소</button>
-                                <button onclick="applyPOISingle(${i})" class="action-btn btn-poi-row" title="설명 채우기">✨<br>설명</button>
-                            </div>
-                            <div contenteditable="true" class="edit-input w-full text-left" onblur="updateDay(${i}, 'desc', this.innerText)">${esc(day.desc)}</div>
-                        </td>
-                        <td rowspan="${rs}" class="px-3 font-bold text-slate-800 leading-relaxed align-middle ${pyClass}" style="${txtSzStyle}">
-                            <div contenteditable="true" class="edit-input w-full text-center" onblur="updateDay(${i}, 'meal', this.innerText)">${esc(day.meal)}</div>
-                        </td>
-                    </tr>
-                    ${hotelRow}
-                </tbody>`;
-            });
-            container.innerHTML = html;
-            syncItineraryPreviewHeight();
-        }
-
-        // [좌측] 비용 입력 폼 렌더링
-        function renderCostInputs() {
-            ['flight', 'local', 'domestic'].forEach(type => {
-                let html = '';
-                costs[type].forEach((c, i) => {
-                    html += `
-                    <div class="card-box">
-                        <button class="btn-remove" onclick="removeCost('${type}', ${i})" title="삭제">✕</button>
-                        <div class="grid grid-cols-12 gap-1.5 mb-2 pr-2">
-                            <div class="col-span-3">
-                                <input type="text" class="input-field !p-1.5 text-[11px] font-bold text-slate-700 w-full" value="${esc(c.name)}" onchange="updateCost('${type}', ${i}, 'name', this.value)" placeholder="항목명">
-                            </div>
-                            <div class="col-span-4">
-                                <input type="text" class="input-field !p-1.5 text-[11px] w-full" value="${esc(c.desc)}" onchange="updateCost('${type}', ${i}, 'desc', this.value)" placeholder="세부내용">
-                            </div>
-                            <div class="col-span-2">
-                                <input type="text" class="input-field !p-1.5 text-[11px] text-center w-full" value="${c.qty}" oninput="handleQtyInput(this, '${type}', ${i})" placeholder="수량">
-                            </div>
-                            <div class="col-span-3">
-                                <input type="text" class="input-field !p-1.5 text-[11px] text-right font-black text-blue-900 bg-blue-50/30 w-full" value="${fmt(c.krw)}" oninput="handlePriceInput(this, '${type}', ${i})" placeholder="단가">
+                            <div className="flex w-full md:w-auto justify-end gap-2 pt-1 md:pt-0 border-t border-slate-700 md:border-none">
+                                {!isSharedMode && (
+                                    <React.Fragment>
+                                        <button onClick={handleCopyLink} className="text-slate-300 hover:text-white px-2 py-1.5 text-xs font-bold transition flex items-center gap-1" title="링크 복사"><i className="fas fa-link"></i> 링크 복사</button>
+                                        <input type="file" id="json-upload" accept=".json" className="hidden" onChange={importData} />
+                                        <label htmlFor="json-upload" className="cursor-pointer text-slate-300 hover:text-white px-2 py-1.5 text-xs font-bold transition flex items-center gap-1" title="데이터 불러오기"><i className="fas fa-folder-open"></i> 불러오기</label>
+                                        <button onClick={exportData} className="text-slate-300 hover:text-white px-2 py-1.5 text-xs font-bold transition flex items-center gap-1" title="데이터 저장"><i className="fas fa-save"></i> 데이터 저장</button>
+                                    </React.Fragment>
+                                )}
+                                <button onClick={handlePrint} className="bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded font-bold text-xs md:text-sm hover:bg-blue-500 transition shadow flex items-center gap-2">
+                                    <i className="fas fa-file-pdf"></i> PDF 인쇄
+                                </button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 gap-1.5 pr-2">
-                            <div>
-                                <input type="text" class="input-field !p-1.5 text-[11px] text-slate-500 w-full" value="${esc(c.note)}" onchange="updateCost('${type}', ${i}, 'note', this.value)" placeholder="비고란 (충분히 길게 입력하세요)">
-                            </div>
-                        </div>
-                    </div>`;
-                });
-                document.getElementById(`cost-${type}-list`).innerHTML = html;
-            });
-        }
-
-        // 공통 헤더 및 비용 렌더링
-        function renderHeaderAndCosts() {
-            const title = document.getElementById('inp-title').value;
-            const date = document.getElementById('inp-date').value;
-            const pax = document.getElementById('inp-pax').value;
-            const issue = document.getElementById('inp-issue').value;
-            const perPaxPrice = document.getElementById('inp-per-pax-price').value;
-            
-            // 포함, 불포함 사항
-            const incText = document.getElementById('inp-inc').value.trim();
-            const excText = document.getElementById('inp-exc').value.trim();
-
-            document.getElementById('out-title').innerText = title;
-            document.getElementById('out-date').innerText = date;
-            document.getElementById('out-pax').innerText = pax;
-            document.getElementById('out-issue').innerText = `작성일: ${issue}`;
-
-            // 1인 단가 노출
-            const outPerPax = document.getElementById('out-per-pax');
-            const sepPerPax = document.querySelector('.sep-per-pax');
-            if(perPaxPrice) {
-                outPerPax.innerText = `1인 단가: ${perPaxPrice}원`;
-                outPerPax.classList.remove('hidden');
-                sepPerPax.classList.remove('hidden');
-            } else {
-                outPerPax.innerText = '';
-                outPerPax.classList.add('hidden');
-                sepPerPax.classList.add('hidden');
-            }
-            
-            // 포함/불포함 노출
-            const boxIncExc = document.getElementById('inc-exc-container');
-            const rowInc = document.getElementById('row-inc');
-            const rowExc = document.getElementById('row-exc');
-            
-            if(incText || excText) {
-                boxIncExc.classList.remove('hidden');
-                if(incText) { rowInc.classList.remove('hidden'); document.getElementById('out-inc').innerText = incText; }
-                else { rowInc.classList.add('hidden'); }
-                
-                if(excText) { rowExc.classList.remove('hidden'); document.getElementById('out-exc').innerText = excText; }
-                else { rowExc.classList.add('hidden'); }
-            } else {
-                boxIncExc.classList.add('hidden');
-            }
-
-            let costHtml = '';
-            let grandTotal = 0;
-            let eventTot = 0;
-
-            function getRowspanMulti(arr, idx, keys) {
-                let span = 1;
-                for (let j = idx + 1; j < arr.length; j++) {
-                    let match = true;
-                    for (let k of keys) {
-                        if (arr[j][k] !== arr[idx][k]) { match = false; break; }
-                    }
-                    if (match) span++; else break;
-                }
-                return span;
-            }
-
-            function renderGroup(groupCatName, dataArr, subtotalLabel) {
-                let subHtml = '';
-                let subTotal = 0;
-                let validItems = dataArr.filter(c => c.name || c.desc);
-                
-                if(validItems.length === 0) return { html: '', sum: 0 };
-
-                validItems.forEach((c, i) => {
-                    const q = Number(c.qty) || 0;
-                    const k = unFmt(c.krw);
-                    const rowTot = q * k;
-                    subTotal += rowTot;
-                    
-                    subHtml += `<tr class="bg-white">`;
-                    
-                    if (i === 0) {
-                        subHtml += `<td rowspan="${validItems.length}" class="text-center font-extrabold bg-slate-50 text-slate-800 tracking-tight text-[12px] align-middle">${groupCatName}</td>`;
-                    }
-                    
-                    if (i === 0 || c.name !== validItems[i-1].name) {
-                        subHtml += `<td rowspan="${getRowspanMulti(validItems, i, ['name'])}" class="text-center font-bold text-slate-800 text-[12px] align-middle break-keep">${esc(c.name)}</td>`;
-                    }
-
-                    if (i === 0 || c.name !== validItems[i-1].name || c.desc !== validItems[i-1].desc) {
-                        subHtml += `<td rowspan="${getRowspanMulti(validItems, i, ['name', 'desc'])}" class="text-center px-3 font-medium text-slate-800 text-[12px] align-middle leading-snug break-keep">${esc(c.desc)}</td>`;
-                    }
-
-                    subHtml += `
-                        <td class="text-center font-bold text-slate-700 text-[12px] align-middle">${fmt(q)}</td>
-                        <td class="text-right pr-3 font-semibold text-slate-800 text-[12px] align-middle">${fmt(k)}</td>
-                        <td class="text-right pr-3 font-extrabold text-slate-900 text-[12px] align-middle">${fmtTotal(rowTot)}</td>
-                        <td class="text-center px-1 text-[11px] text-slate-600 tracking-tight break-keep align-middle">${esc(c.note)}</td>
-                    </tr>`;
-                });
-
-                if(subTotal > 0) {
-                    subHtml += `<tr class="subtotal-row">
-                        <td colspan="5" class="text-center py-2 text-[12px]">${subtotalLabel}</td>
-                        <td class="text-right pr-3 text-[13px] font-black tracking-tight text-slate-800">₩ ${fmtTotal(subTotal)}</td>
-                        <td class="bg-slate-50 border-b-2 border-slate-400"></td>
-                    </tr>`;
-                }
-                return { html: subHtml, sum: subTotal };
-            }
-
-            const flightRes = renderGroup("교통비<br>(항공/선박/차량)", costs.flight, "(1) 합계 - 교통비");
-            const localRes = renderGroup("현지<br>발생비용", costs.local, "(2) 합계 - 현지 발생 비용");
-            const domesticRes = renderGroup("수수료 및<br>기타비용", costs.domestic, "(3) 합계 - 기타 비용");
-
-            costHtml += flightRes.html + localRes.html + domesticRes.html;
-            
-            grandTotal = flightRes.sum + localRes.sum + domesticRes.sum;
-            eventTot = localRes.sum + domesticRes.sum;
-
-            costHtml += `
-            <tr class="bg-slate-100 border-t-[3px] border-slate-900">
-                <td colspan="5" class="text-center py-3 font-black text-[13px] tracking-wide text-slate-900">(1)+(2)+(3) 전 체 합 계 금 액</td>
-                <td colspan="2" class="text-right pr-3 font-black text-[15px] text-blue-800 tracking-tighter">₩ ${fmtTotal(grandTotal)}</td>
-            </tr>
-            <tr class="bg-slate-100 border-b-2 border-slate-900">
-                <td colspan="5" class="text-center py-2 font-bold text-[12px] text-slate-600">(2)+(3) 행사 비용 합계 <span class="font-normal text-[10px]">(교통비 제외)</span></td>
-                <td colspan="2" class="text-right pr-3 font-black text-[13px] text-slate-700 tracking-tight">₩ ${fmtTotal(eventTot)}</td>
-            </tr>`;
-
-            document.getElementById('tbody-costs').innerHTML = costHtml;
-            document.getElementById('top-total').innerText = fmtTotal(grandTotal);
-        }
-
-        // --- 4. 업체 선택 및 워터마크 (보안강화) ---
-        function handleAgencyChange() {
-            const agencySelect = document.getElementById('inp-agency');
-            const agency = agencySelect.value;
-            const wordBtn = document.getElementById('btn-word-download');
-            const customFields = document.getElementById('custom-agency-fields');
-            
-            // [관리자 차단 로직] 타사 화이트라벨 무단 도용 방지
-            if (agency === 'custom') {
-                if (!isAdminUnlocked) {
-                    const pwd = prompt("B2B 화이트라벨(타사 상호/로고 입력) 기능은 관리자 권한이 필요합니다.\n\n관리자 비밀번호를 입력해주세요.");
-                    if (pwd === "tourmaker2026") {
-                        isAdminUnlocked = true;
-                        alert("관리자 권한이 인증되었습니다.");
-                    } else {
-                        if (pwd !== null) alert("비밀번호가 일치하지 않습니다. 기본 투어메이커 로고로 돌아갑니다.");
-                        agencySelect.value = "tourmaker";
-                        return handleAgencyChange(); // 롤백 후 재실행
-                    }
-                }
-                customFields.classList.remove('hidden');
-                wordBtn.classList.remove('hidden');
-            } else {
-                customFields.classList.add('hidden');
-                if (agency === 'jeju' || agency === 'woorideul') wordBtn.classList.remove('hidden');
-                else wordBtn.classList.add('hidden');
-            }
-
-            let agencyHtml = '';
-            let currentAgencyName = '투어메이커';
-
-            if (agency === 'tourmaker') {
-                agencyHtml = `<a href="http://tourmaker.kr" target="_blank"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="TOURMAKER" class="h-[36px] object-contain float-right mb-1"></a><div class="clear-both"></div>`;
-            } 
-            else if (agency === 'jeju') {
-                currentAgencyName = '(주)제주테마투어';
-                agencyHtml = `<div class="text-[18px] font-black text-slate-800 tracking-widest mt-1">${currentAgencyName}</div><div class="text-[11px] font-bold text-slate-500 mt-1">담당: 문정희 (010-2645-7524)</div><div class="clear-both"></div>`;
-            }
-            else if (agency === 'woorideul') {
-                currentAgencyName = '(주)우리들여행';
-                const woorideulLogo = 'https://blogger.googleusercontent.com/img/a/AVvXsEhkIGXEfaJ-_hnuZKhDchK_posExV6zRFC9our1Le1ytGsvui1fRuPODev1S2byqlo75MWRdaWT2CUJjEIrNrSVGGI7PBcB424dimkxc0jZrn_gG7v3S_GCGEsC-DjsxaDS1qIu0HF0ObCZF9LygAodexbi0saCcJQJqe9uJ6vQUhl47NkZuRFROBDNP2s';
-                agencyHtml = `<img src="${woorideulLogo}" alt="${currentAgencyName}" class="h-[36px] object-contain float-right mb-1"><div class="clear-both"></div>`;
-            }
-            else if (agency === 'custom') {
-                const cName = document.getElementById('inp-custom-name').value || '여행사명 입력';
-                const cContact = document.getElementById('inp-custom-contact').value || '연락처 입력';
-                const cLogo = document.getElementById('inp-custom-logo').value;
-                currentAgencyName = cName;
-
-                if (cLogo) {
-                    agencyHtml = `<img src="${esc(cLogo)}" alt="${esc(cName)}" class="h-[36px] object-contain float-right mb-1" onerror="this.style.display='none'"><div class="clear-both"></div>`;
-                } else {
-                    agencyHtml = `<div class="text-[18px] font-black text-slate-800 tracking-widest mt-1">${esc(cName)}</div><div class="text-[11px] font-bold text-slate-500 mt-1">${esc(cContact)}</div><div class="clear-both"></div>`;
-                }
-            }
-            
-            // 1페이지 일정표 상단 워터마크 텍스트 (투어메이커 노출)
-            agencyHtml += `
-                <div class="text-[9px] font-black text-slate-500 tracking-[0.1em] mt-1.5 text-right uppercase border-t border-slate-300 pt-1 inline-block float-right">
-                    <a href="http://tourmaker.kr" target="_blank" class="hover:text-blue-600 transition">System powered by tourmaker</a>
-                </div>
-                <div class="clear-both"></div>
-            `;
-            
-            document.getElementById('out-agency-1').innerHTML = agencyHtml;
-
-            // 2페이지 산출내역서 하단 워터마크 영역
-            const footerText = `
-                <span class="text-[10px] font-black text-white bg-slate-800 px-2 py-0.5 rounded tracking-widest mb-1.5">SYSTEM POWERED BY TOURMAKER</span>
-                <span class="text-[11.5px] text-slate-600">본 산출내역서는 <strong class="text-slate-800">${esc(currentAgencyName)}</strong>의 기획과 <a href="http://tourmaker.kr" target="_blank" class="font-bold text-blue-600 hover:underline">투어메이커 트래블 테크</a> 시스템 제휴로 제작 및 배포되었습니다.</span>
-            `;
-            document.getElementById('footer-powered-text').innerHTML = footerText;
-        }
-
-        // 워드 다운로드 시에도 워터마크 강제 포함 및 포함/불포함 내역 반영
-        function exportToWord() {
-            const title = document.getElementById('inp-title').value.split(' ')[0] || "고객";
-            const agency = document.getElementById('inp-agency').value;
-            
-            let exportAgencyName = "투어메이커";
-            if(agency === 'jeju') exportAgencyName = "(주)제주테마투어";
-            else if(agency === 'woorideul') exportAgencyName = "(주)우리들여행";
-            else if (agency === 'custom') exportAgencyName = document.getElementById('inp-custom-name').value || "여행사";
-
-            const perPaxPrice = document.getElementById('inp-per-pax-price').value;
-            const perPaxHtml = perPaxPrice ? `&nbsp;|&nbsp; <span style="color:#047857;">1인 단가: ₩${perPaxPrice}</span>` : '';
-            const docInfoHtml = `${document.getElementById('inp-date').value} &nbsp;|&nbsp; ${document.getElementById('inp-pax').value} ${perPaxHtml}`;
-
-            // 포함/불포함 사항 추출
-            const incText = document.getElementById('inp-inc').value.trim();
-            const excText = document.getElementById('inp-exc').value.trim();
-            let incExcHtml = '';
-            
-            if(incText || excText) {
-                incExcHtml = `
-                <div style="border: 2px solid #ccc; padding: 15px; background-color: #f9f9f9; margin-top: 20px;">
-                    ${incText ? `<div style="margin-bottom: 5px;"><strong><span style="color:#0f766e;">■ 포함사항:</span></strong> ${esc(incText)}</div>` : ''}
-                    ${excText ? `<div><strong><span style="color:#be123c;">■ 불포함:</span></strong> ${esc(excText)}</div>` : ''}
-                </div>`;
-            }
-
-            const sourceHTML = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head>
-                    <meta charset='utf-8'>
-                    <title>견적서</title>
-                    <style>
-                        body { font-family: 'Malgun Gothic', 'Dotum', sans-serif; font-size: 10pt; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-                        th, td { border: 1px solid #333; padding: 6px; }
-                        th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
-                    </style>
-                </head>
-                <body>
-                    <div style="text-align:right; margin-bottom: 2px; font-weight: bold; font-size: 14pt;">${exportAgencyName}</div>
-                    
-                    <!-- 워드 파일 1페이지 상단 강제 워터마크 -->
-                    <div style="text-align:right; margin-bottom: 15px; font-size: 8pt; color: #555; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">System powered by tourmaker</div>
-                    
-                    <div style="font-size: 20pt; font-weight: bold; text-align: center; margin-bottom: 5px; border-bottom: 2px solid #000; padding-bottom:10px;">상세 일정 및 산출 내역서</div>
-                    <div style="text-align: center; margin-bottom: 20px; font-size: 11pt; color: #555;">${docInfoHtml}</div>
-                    
-                    <h3>1. 일정표</h3>
-                    <table>
-                        <tr><th>일자</th><th>주요일정</th><th>식사</th></tr>
-                        ${days.map(d => `<tr><td style="text-align:center; font-weight:bold;">${esc(d.date)}</td><td>${esc(d.desc).replace(/\n/g, '<br>')}</td><td style="font-weight:bold; text-align:center;">${esc(d.meal).replace(/\n/g, '<br>')}</td></tr>${d.hotel ? `<tr><td colspan="3" style="background-color:#f0f8ff; font-weight:bold;">숙소 : ${esc(d.hotel)}</td></tr>` : ''}`).join('')}
-                    </table>
-                    
-                    <!-- 포함 불포함 항목 추가 -->
-                    ${incExcHtml}
-
-                    <br clear=all style='mso-special-character:line-break;page-break-before:always'>
-
-                    <h3>2. 비용 산출 내역</h3>
-                    <table>
-                        ${document.getElementById('tbody-costs').parentElement.innerHTML.replace(/class="[^"]*"/g, '')}
-                    </table>
-                    
-                    <!-- 워드 파일 2페이지 하단 강제 워터마크 -->
-                    <div style="text-align: center; margin-top: 30px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 9pt; color: #666;">
-                        <strong>[ SYSTEM POWERED BY TOURMAKER ]</strong><br>
-                        본 산출내역서는 <strong>${exportAgencyName}</strong>의 기획과 <strong>투어메이커 트래블 테크</strong> 시스템 제휴로 제작 및 배포되었습니다.
                     </div>
-                </body>
-                </html>
-            `;
-            const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url; link.download = `${title}_행사견적_${exportAgencyName}.doc`;
-            document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
-        }
 
-        // --- 5. 이벤트 핸들러 ---
-        function updateDay(i, key, val) { days[i][key] = val; }
-        
-        function addDay() { days.push({ date: "", hotel: "", desc: "", meal: "" }); renderItinerary(); }
-        function removeDay(i) { if(confirm('해당 일자를 삭제하시겠습니까?')) { days.splice(i, 1); renderItinerary(); } }
-        function toggleHotel(i) {
-            if(days[i].hotel) days[i].hotel = "";
-            else days[i].hotel = "신신호텔 제주오션";
-            renderItinerary();
-        }
-        function presetDays(num) {
-            if(!confirm(`현재 일정을 지우고 ${num}일 프리셋으로 초기화하시겠습니까?`)) return;
-            let newDays = [];
-            for(let i=1; i<=num; i++) {
-                newDays.push({ date: `09/0${i+7}(화)`, hotel: i === num ? "" : "신신호텔 제주오션", desc: "", meal: "" });
-            }
-            days = newDays; renderItinerary();
-        }
+                    <main className="flex-grow p-0 sm:p-4 md:p-8">
+                        {/* ========================================================================= */}
+                        {/* TAB 1: 여행자 명단 */}
+                        {/* ========================================================================= */}
+                        <div className={activeMainTab === 'traveler' ? 'block' : 'hidden'}>
+                            {isSharedMode && (
+                                <div className="no-print max-w-[1400px] mx-auto px-3 mt-4 mb-1">
+                                    <div className="bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded text-[13px] md:text-sm text-indigo-800 font-bold flex flex-col md:flex-row justify-between items-start md:items-center gap-2 shadow-sm">
+                                        <div>
+                                            <i className="fas fa-info-circle mr-1 text-indigo-600"></i>
+                                            담당자님, 작성을 모두 마치신 후 가급적 우측의 <span className="text-indigo-900 bg-indigo-100 px-1.5 py-0.5 rounded mx-0.5">완성본 엑셀 저장</span> 버튼을 눌러 엑셀 파일로 전달해 주시면 가장 오류가 적습니다.
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div className="no-print max-w-[1400px] mx-auto mb-3 flex flex-col gap-2 px-3 md:px-4 bg-blue-50 py-3 rounded border border-blue-100 mt-2">
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                                    <p className="text-[11px] md:text-sm text-blue-800 font-bold leading-relaxed">
+                                        <i className="fas fa-lightbulb text-amber-500 mr-2"></i> 셀을 마우스로 클릭해 직접 타이핑하세요. (좌측 ≡ 드래그로 행 순서 변경 가능)
+                                    </p>
+                                    <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap justify-end">
+                                        <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-emerald-400">
+                                            {!isSharedMode && (
+                                                <React.Fragment>
+                                                    <button onClick={downloadExcelTemplate} className="text-[11px] md:text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 transition whitespace-nowrap"><i className="fas fa-download"></i> 양식 다운</button>
+                                                    <div className="w-[1px] h-3 bg-emerald-300"></div>
+                                                    <label htmlFor="excel-upload" className="cursor-pointer text-[11px] md:text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 transition m-0 whitespace-nowrap"><i className="fas fa-upload"></i> 명단 업로드</label>
+                                                    <input type="file" id="excel-upload" accept=".xlsx, .xls" className="hidden" onChange={importExcelData} />
+                                                    <div className="w-[1px] h-3 bg-emerald-300"></div>
+                                                </React.Fragment>
+                                            )}
+                                            <button onClick={exportTravelersToExcel} className="text-[11px] md:text-xs font-black text-emerald-700 hover:text-emerald-900 flex items-center gap-1 transition whitespace-nowrap"><i className="fas fa-file-excel"></i> 완성본 엑셀 저장</button>
+                                        </div>
+                                        <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-slate-200">
+                                            <span className="text-xs font-bold text-slate-500 whitespace-nowrap"><i className="fas fa-search-plus"></i> 크기:</span>
+                                            <button onClick={() => setDocFontSize(Math.max(8, docFontSize - 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">-</button>
+                                            <span className="text-xs font-bold text-blue-600 w-10 text-center">{docFontSize}pt</span>
+                                            <button onClick={() => setDocFontSize(Math.min(16, docFontSize + 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">+</button>
+                                        </div>
+                                        {!isSharedMode && <button onClick={() => setTravelers([{ id: Date.now(), nameKor: "", nameEng: "", birth: "", gender: "M", passportNo: "", expiry: "", nation: "KOR", remark: "" }])} className="text-[10px] md:text-xs text-red-500 hover:text-red-700 font-bold underline whitespace-nowrap ml-1"><i className="fas fa-trash-alt"></i> 초기화</button>}
+                                        <span className="text-[11px] md:text-sm font-black text-slate-700 whitespace-nowrap ml-2">실 인원 <span className="text-blue-600 text-base md:text-lg">{travelers.length}</span> 명</span>
+                                    </div>
+                                </div>
+                            </div>
 
-        function updateCost(type, i, key, val) { costs[type][i][key] = key==='krw'||key==='qty' ? unFmt(val) : val; renderHeaderAndCosts(); }
-        function addCost(type) { costs[type].push({ name: "", desc: "", qty: "", krw: "", note: "" }); renderCostInputs(); renderHeaderAndCosts(); }
-        function removeCost(type, i) { costs[type].splice(i, 1); renderCostInputs(); renderHeaderAndCosts(); }
+                            {travelerPages.map((page) => (
+                                <div key={page.pageIndex} className="print-page bg-white w-full max-w-full xl:max-w-[1400px] mx-auto shadow-xl p-3 sm:p-5 md:p-8 xl:px-12 flex flex-col justify-between border border-slate-200 mb-8 box-border" style={{ minHeight: '277mm' }}>
+                                    <div className="w-full flex-1 flex flex-col overflow-hidden">
+                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b-[3px] border-slate-900 pb-3 md:pb-4 mb-3 gap-4 w-full box-border">
+                                            <div className="space-y-3 flex-1 w-full min-w-0">
+                                                <h2 className="font-black tracking-tighter text-slate-900 mt-2" style={{ fontSize: `${docFontSize * 2.2}pt` }}>OVERSEAS TRAVELERS LIST</h2>
+                                                <div className="flex flex-col gap-1.5 font-bold text-slate-700 w-full print:max-w-none max-w-full sm:max-w-[600px] box-border">
+                                                    <HeaderField label="GROUP NAME" value={commonHeader.groupName} onChange={(v) => setCommonHeader({ ...commonHeader, groupName: v })} fontSize={docFontSize} placeholder="단체명" />
+                                                    <HeaderField label="DATE" value={commonHeader.date} onChange={(v) => setCommonHeader({ ...commonHeader, date: v })} fontSize={docFontSize} placeholder="YYYY.MM.DD" />
+                                                    <HeaderField label="NATION" value={commonHeader.location} onChange={(v) => setCommonHeader({ ...commonHeader, location: v })} fontSize={docFontSize} placeholder="지역" />
+                                                    <HeaderField label="NUMBER" value={commonHeader.number} onChange={(v) => setCommonHeader({ ...commonHeader, number: v })} fontSize={docFontSize} placeholder="인원" />
+                                                </div>
+                                            </div>
+                                            <div className="text-left sm:text-right flex flex-col items-start sm:items-end w-full sm:w-auto self-end flex-shrink-0">
+                                                <div className="text-red-500 font-black italic mb-1 md:mb-0 bg-red-50 px-3 py-1 border border-red-200" style={{ fontSize: `${Math.max(9, docFontSize - 1)}pt` }}>여권 만료일 6개월 확인필</div>
+                                                {totalTravelerPages > 1 && <div className="mt-2 text-slate-500 font-bold" style={{ fontSize: `${Math.max(8, docFontSize - 2)}pt` }}>Page {page.pageIndex + 1} / {totalTravelerPages}</div>}
+                                            </div>
+                                        </div>
 
-        // --- 6. 설명 채우기 (POI) ---
-        function applyPOI(text, globalUsed) {
-            let updated = false;
-            let newText = text;
-            const sortedKeys = Object.keys(poiDB).sort((a, b) => b.length - a.length);
-            for (const key of sortedKeys) {
-                const val = poiDB[key];
-                if (newText.includes(key) && !newText.includes(val) && !globalUsed.has(key)) {
-                    const hasTargetDesc = new RegExp(key + '\\s*\\(※', 'g');
-                    if (!hasTargetDesc.test(newText)) {
-                        newText = newText.replace(key, `${key} (※ ${val})`);
-                        globalUsed.add(key);
-                        updated = true;
-                    }
-                }
-            }
-            return { text: newText, updated };
-        }
+                                        <div className="table-wrapper w-full relative flex-1 box-border">
+                                            <table className="w-full border-collapse min-w-full print:min-w-0 border-b-[3px] print:border-b-2 border-slate-800" style={{ fontSize: `${docFontSize}pt`, tableLayout: 'fixed' }}>
+                                                <colgroup>
+                                                    <col className="no-print w-[3%]" />
+                                                    <col className="w-[4%] print:w-[5%]" />
+                                                    <col className="w-[10%] print:w-[12%]" />
+                                                    <col className="w-[22%] print:w-[23%]" />
+                                                    <col className="w-[12%] print:w-[14%]" />
+                                                    <col className="w-[5%] print:w-[6%]" />
+                                                    <col className="w-[14%] print:w-[16%]" />
+                                                    <col className="w-[12%] print:w-[13%]" />
+                                                    <col className="w-[7%] print:w-[8%]" />
+                                                    <col className="w-[11%] print:w-[3%]" />
+                                                    <col className="no-print w-[4%]" />
+                                                </colgroup>
+                                                <thead className="print:table-header-group">
+                                                    <tr className="text-slate-800 border-b-2 border-slate-800 bg-transparent">
+                                                        <th className="no-print text-center py-2"><i className="fas fa-sort text-slate-300"></i></th>
+                                                        <th className="text-center font-bold py-2 border-x-transparent">NO</th>
+                                                        <th className="text-center font-bold py-2 border-x-transparent">성명</th>
+                                                        <th className="text-left font-bold pl-2 py-2 border-x-transparent">NAME</th>
+                                                        <th className="text-center font-bold py-2 border-x-transparent">생년월일</th>
+                                                        <th className="text-center font-bold py-2 border-x-transparent">성별</th>
+                                                        <th className="text-center font-bold py-2 border-x-transparent">여권번호</th>
+                                                        <th className="text-center font-bold whitespace-nowrap py-2 border-x-transparent">만료일</th>
+                                                        <th className="text-center font-bold py-2 border-x-transparent">국적</th>
+                                                        <th className="text-left font-bold py-2 border-x-transparent">기타</th>
+                                                        <th className="no-print text-center font-bold py-2">삭제</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="print:table-row-group text-slate-800">
+                                                    {page.data.map((t, localIdx) => {
+                                                        const actualIdx = (page.pageIndex * TRAVELER_ROWS_PER_PAGE) + localIdx + 1;
+                                                        const status = getExpiryStatus(t.expiry);
+                                                        const globalIdx = actualIdx - 1; 
+                                                        return (
+                                                            <tr key={t.id} className="border-b border-slate-200 hover:bg-slate-50 transition group bg-white fixed-row-height" draggable onDragStart={(e) => dragStart(e, globalIdx)} onDragEnter={(e) => dragEnter(e, globalIdx)} onDragEnd={dragEnd} onDrop={drop} onDragOver={(e) => e.preventDefault()}>
+                                                                <td className="no-print text-center text-slate-300 hover:text-blue-500 drag-handle"><i className="fas fa-bars"></i></td>
+                                                                <td className="text-center text-slate-500 font-bold">{actualIdx}</td>
+                                                                <td className="border-r border-slate-200 text-center"><EditableCell val={t.nameKor} onChange={(v) => updateField(t.id, 'nameKor', v)} bold center fontSize={docFontSize} /></td>
+                                                                <td className="border-r border-slate-200 pl-2"><EditableCell val={t.nameEng} onChange={(v) => updateField(t.id, 'nameEng', v.toUpperCase())} uppercase fontSize={docFontSize} /></td>
+                                                                <td className="border-r border-slate-200 text-center"><EditableCell val={t.birth} onChange={(v) => updateField(t.id, 'birth', v)} placeholder="YY-MM-DD" center fontSize={docFontSize} /></td>
+                                                                <td className="border-r border-slate-200 text-center">
+                                                                    <select className="bg-transparent border-none outline-none cursor-pointer text-slate-700 font-bold w-full p-0 text-center" style={{ fontSize: 'inherit' }} value={t.gender} onChange={(e) => updateField(t.id, 'gender', e.target.value)}><option value="M">M</option><option value="F">F</option></select>
+                                                                </td>
+                                                                <td className="border-r border-slate-200 text-center"><EditableCell val={t.passportNo} onChange={(v) => updateField(t.id, 'passportNo', v.toUpperCase())} uppercase center fontSize={docFontSize} /></td>
+                                                                <td className={`border-r border-slate-200 text-center ${status.color}`}>
+                                                                    <div className="flex items-center justify-center gap-1 w-full relative">
+                                                                        <EditableCell val={t.expiry} onChange={(v) => updateField(t.id, 'expiry', v)} placeholder="YY-MM-DD" center fontSize={docFontSize} />
+                                                                        {status.warning && <i className="fas fa-exclamation-triangle text-orange-400 no-print absolute right-1" title={status.msg}></i>}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="border-r border-slate-200 text-center"><EditableCell val={t.nation} onChange={(v) => updateField(t.id, 'nation', v)} uppercase center fontSize={docFontSize} /></td>
+                                                                <td className="pl-1"><EditableCell val={t.remark} onChange={(v) => updateField(t.id, 'remark', v)} fontSize={docFontSize} /></td>
+                                                                <td className="no-print text-center"><button onClick={() => removeTraveler(t.id)} className="text-slate-300 hover:text-red-500 transition px-1"><i className="fas fa-trash-alt"></i></button></td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div className="print-footer w-full mt-auto pt-8">
+                                        <div className="flex justify-between items-end border-t-[2px] border-slate-800 pt-4 pb-2 w-full">
+                                            <div className="font-bold text-slate-500" style={{ fontSize: `${Math.max(8, docFontSize - 2)}pt` }}>
+                                                제출일: {new Date().toLocaleDateString()}
+                                            </div>
+                                            <div className="flex flex-col items-end justify-center gap-1 pr-1">
+                                                {/* 투어메이커 인쇄 규정에 따라 하단 로고 이미지는 과감히 제거하여 잘림 문제를 완벽히 해결합니다. 텍스트로 대체. */}
+                                                <p className="text-[#6c757d] leading-relaxed m-0 font-bold text-right tracking-tight" style={{ fontSize: `${Math.max(7, docFontSize - 3)}pt` }}>
+                                                    [System Powered by TOURMAKER]<br/>본 스마트 가이드북은 해당 단체의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            <div className="no-print mt-6 mb-12 flex justify-center">
+                                <button onClick={addEmptyTraveler} className="bg-white border-2 border-dashed border-blue-300 text-blue-600 font-bold text-sm px-10 py-4 rounded-xl flex items-center gap-2 hover:bg-blue-50 transition shadow-sm"><i className="fas fa-plus text-lg"></i> 탑승객 추가</button>
+                            </div>
+                        </div>
 
-        function getUsedPOIs() {
-            const used = new Set();
-            days.forEach(d => { for (const [k, v] of Object.entries(poiDB)) { if (d.desc.includes(k) && d.desc.includes(v)) used.add(k); } });
-            return used;
-        }
+                        {/* ========================================================================= */}
+                        {/* TAB 2: 방 배정 (루밍리스트) */}
+                        {/* ========================================================================= */}
+                        <div className={activeMainTab === 'rooming' ? 'block' : 'hidden'}>
+                            <div className="w-full max-w-full xl:max-w-[1400px] mx-auto p-0 sm:p-4 md:p-6 print-rooming-list">
+                                <div className="no-print mb-4 md:mb-6">
+                                    {isSharedMode && (
+                                        <div className="mb-4 bg-indigo-50 border-l-4 border-indigo-500 p-3 rounded text-[13px] md:text-sm text-indigo-800 font-bold flex flex-col md:flex-row justify-between items-start md:items-center gap-2 shadow-sm">
+                                            <div>
+                                                <i className="fas fa-info-circle mr-1 text-indigo-600"></i>
+                                                담당자님, 작성을 모두 마치신 후 가급적 우측의 <span className="text-indigo-900 bg-indigo-100 px-1.5 py-0.5 rounded mx-0.5">완성본 엑셀 저장</span> 버튼을 눌러 엑셀 파일로 전달해 주시면 가장 오류가 적습니다.
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4 bg-blue-50 py-3 px-3 md:px-4 rounded border border-blue-100">
+                                        
+                                        <div className="flex flex-col sm:flex-row gap-2 md:items-center">
+                                            <div className="flex bg-white p-1 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto">
+                                                <button onClick={() => setIsInternationalRooming(false)} className={`flex-1 sm:flex-none px-3 py-1.5 rounded text-xs md:text-sm font-bold transition ${!isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>국내행사(한글)</button>
+                                                <button onClick={() => setIsInternationalRooming(true)} className={`flex-1 sm:flex-none px-3 py-1.5 rounded text-xs md:text-sm font-bold transition ${isInternationalRooming ? 'bg-blue-50 text-blue-600' : 'text-slate-500'}`}>해외행사(영문)</button>
+                                            </div>
+                                            <p className="text-[11px] md:text-xs text-blue-800 font-bold leading-relaxed ml-1 hidden lg:block">
+                                                <i className="fas fa-lightbulb text-amber-500 mr-1"></i> 텍스트를 복사해 붙여넣으면 시스템이 알아서 배치합니다.
+                                            </p>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-2 flex-wrap justify-end">
+                                            <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-emerald-400">
+                                                {!isSharedMode && (
+                                                    <React.Fragment>
+                                                        <button onClick={downloadRoomingExcelTemplate} className="text-[11px] md:text-xs font-bold text-emerald-600 hover:text-emerald-800 flex items-center gap-1 transition whitespace-nowrap" title="루밍 엑셀 양식 다운로드"><i className="fas fa-download"></i> 양식 다운</button>
+                                                        <div className="w-[1px] h-3 bg-emerald-300"></div>
+                                                    </React.Fragment>
+                                                )}
+                                                <button onClick={exportRoomingToExcel} className="text-[11px] md:text-xs font-black text-emerald-700 hover:text-emerald-900 flex items-center gap-1 transition whitespace-nowrap" title="방배정 엑셀로 내보내기"><i className="fas fa-file-excel"></i> 완성본 엑셀 저장</button>
+                                            </div>
+                                            
+                                            <div className="flex items-center gap-2 bg-white px-2 py-1.5 rounded shadow-sm border border-slate-200">
+                                                <span className="text-xs font-bold text-slate-500"><i className="fas fa-search-plus"></i> 크기:</span>
+                                                <button onClick={() => setDocFontSize(Math.max(8, docFontSize - 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">-</button>
+                                                <span className="text-xs font-bold text-blue-600 w-10 text-center">{docFontSize}pt</span>
+                                                <button onClick={() => setDocFontSize(Math.min(16, docFontSize + 0.5))} className="w-5 h-5 flex justify-center items-center bg-slate-100 hover:bg-slate-200 rounded text-slate-600 font-bold">+</button>
+                                            </div>
+                                            <button onClick={() => setIsNavMenuOpen(!isNavMenuOpen)} className="bg-white border border-slate-200 text-slate-600 hover:text-blue-600 px-3 py-1.5 rounded text-xs font-bold transition shadow-sm"><i className={`fas fa-chevron-${isNavMenuOpen ? 'up' : 'down'}`}></i> 복붙기능</button>
+                                        </div>
+                                    </div>
 
-        function applyPOISingle(i) {
-            const used = getUsedPOIs();
-            const res = applyPOI(days[i].desc, used);
-            if (res.updated) { days[i].desc = res.text; renderItinerary(); } 
-            else alert('해당 일자에 더 이상 추가할 수 있는 관광지 설명이 없거나 이미 적용되었습니다.');
-        }
+                                    {isNavMenuOpen && (
+                                        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                                            <div className="flex border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-xs md:text-sm font-bold text-blue-700 items-center justify-center md:justify-start">
+                                                <i className="fas fa-bolt text-amber-400 mr-2"></i> 스마트 변환기 (텍스트 복붙으로 명단 자동 완성)
+                                            </div>
+                                            <div className="p-4 md:p-5">
+                                                <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                                                    <div className="md:w-1/3">
+                                                        <h4 className="font-bold mb-2 text-slate-800 text-xs md:text-sm flex items-center gap-2"><i className="fas fa-circle-info text-blue-500"></i> 한 줄에 한 객실씩 붙여넣기</h4>
+                                                        <ul className="space-y-1.5 text-[11px] md:text-xs text-slate-600">
+                                                            <li>1. 카톡/메모장 텍스트를 복사해 붙여넣으세요.</li>
+                                                            <li>2. 자동으로 사람 이름만 쏙쏙 골라 방을 만듭니다.</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div className="flex-1 flex flex-col">
+                                                        <AutoResizeTextarea placeholder="참가자1 참가자2&#10;참가자3 참가자4&#10;인솔자" value={importTextRooming} onChange={setImportTextRooming} minRows={4} />
+                                                        <button onClick={handleRoomingSmartImport} className="w-full mt-3 py-2 bg-slate-800 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-black transition shadow-sm"><i className="fas fa-wand-magic-sparkles mr-2"></i> 방 배정표 자동 생성</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
 
-        function applyPOIAll() {
-            const used = getUsedPOIs();
-            let totalUpdated = false;
-            days.forEach((day, i) => {
-                const res = applyPOI(day.desc, used);
-                if (res.updated) { days[i].desc = res.text; totalUpdated = true; }
-            });
-            if (totalUpdated) renderItinerary();
-            else alert('추가할 설명이 없습니다.');
-        }
+                                <div className="space-y-6 print:space-y-0 w-full">
+                                    {roomPages.map((pageRooms, pageIndex) => {
+                                        const leftTableRooms = pageRooms.slice(0, Math.ceil(pageRooms.length / 2));
+                                        const rightTableRooms = pageRooms.slice(Math.ceil(pageRooms.length / 2));
+                                        const pageStartIndex = pageIndex * ROOMS_PER_PAGE;
 
-        // --- 7. 템플릿 관리 ---
-        function getFormData() {
-            return {
-                agency: document.getElementById('inp-agency').value,
-                customName: document.getElementById('inp-custom-name').value,
-                customContact: document.getElementById('inp-custom-contact').value,
-                customLogo: document.getElementById('inp-custom-logo').value,
-                title: document.getElementById('inp-title').value,
-                date: document.getElementById('inp-date').value,
-                pax: document.getElementById('inp-pax').value,
-                perPaxPrice: document.getElementById('inp-per-pax-price').value,
-                issue: document.getElementById('inp-issue').value,
-                inc: document.getElementById('inp-inc').value,
-                exc: document.getElementById('inp-exc').value,
-                days: JSON.parse(JSON.stringify(days)),
-                costs: JSON.parse(JSON.stringify(costs))
-            };
-        }
+                                        return (
+                                            <div key={pageIndex} className={`print-page box-border overflow-hidden bg-white shadow-xl p-3 sm:p-5 md:p-8 border-t-[4px] md:border-t-[6px] border-slate-800 print:shadow-none print:p-0 print:border-none print:m-0 relative flex flex-col justify-between`} style={{ minHeight: '277mm', fontSize: `${docFontSize}pt` }}>
+                                                <div className="flex-1 flex flex-col w-full box-border">
+                                                    
+                                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b-[3px] border-slate-900 pb-3 md:pb-4 mb-3 gap-4 w-full box-border">
+                                                        <div className="space-y-3 flex-1 w-full min-w-0">
+                                                            <h2 className="font-black tracking-tighter text-slate-900 mt-2" style={{ fontSize: `${docFontSize * 2.2}pt` }}>ROOMING LIST</h2>
+                                                            <div className="flex flex-col gap-1.5 font-bold text-slate-700 w-full print:max-w-none max-w-full sm:max-w-[750px] box-border">
+                                                                <HeaderField label="GROUP" value={commonHeader.groupName} onChange={(v) => setCommonHeader({ ...commonHeader, groupName: v })} isMain={true} fontSize={docFontSize} placeholder="단체명" />
+                                                                <HeaderField label="DATE" value={commonHeader.date} onChange={(v) => setCommonHeader({ ...commonHeader, date: v })} fontSize={docFontSize} placeholder="일정" />
+                                                                <HeaderField label="LOCATION" value={commonHeader.location} onChange={(v) => setCommonHeader({ ...commonHeader, location: v })} fontSize={docFontSize} placeholder="지역" />
+                                                                
+                                                                <div className="flex items-center group w-full mt-1 md:mt-0 box-border">
+                                                                    <span className="font-black text-slate-500 tracking-widest uppercase flex-shrink-0 whitespace-nowrap" style={{ fontSize: `${Math.max(8, docFontSize - 1.5)}pt`, width: `${Math.max(140, docFontSize * 11)}px` }}>TOTAL PAX</span>
+                                                                    <div className="font-bold text-slate-800 flex-1 flex flex-row items-center gap-2 md:gap-3 px-1 md:px-2 whitespace-nowrap overflow-hidden" style={{ fontSize: `${docFontSize}pt` }}>
+                                                                        <div className="flex items-center gap-1.5 md:gap-2">
+                                                                            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">총 인원: <span className="text-blue-600">{roomStats.total}</span>명</span>
+                                                                        </div>
+                                                                        <div className="flex items-center gap-1.5 hidden sm:flex">
+                                                                            <span className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200">TWN: {roomStats.roomCounts.TWIN}</span>
+                                                                            <span className="bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200">TRP: {roomStats.roomCounts.TRIPLE}</span>
+                                                                            <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">SGL: {roomStats.roomCounts.SINGLE}</span>
+                                                                            {roomStats.roomCounts.QUAD > 0 && <span className="bg-violet-50 text-violet-700 px-1.5 py-0.5 rounded border border-violet-200">QAD: {roomStats.roomCounts.QUAD}</span>}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-left sm:text-right flex flex-col items-start sm:items-end w-full sm:w-auto self-end flex-shrink-0">
+                                                            {totalRoomPages > 1 && <div className="mt-2 text-slate-500 font-bold" style={{ fontSize: `${Math.max(8, docFontSize - 2)}pt` }}>Page {pageIndex + 1} / {totalRoomPages}</div>}
+                                                        </div>
+                                                    </div>
 
-        function setFormData(data) {
-            document.getElementById('inp-agency').value = data.agency || 'tourmaker';
-            document.getElementById('inp-custom-name').value = data.customName || '';
-            document.getElementById('inp-custom-contact').value = data.customContact || '';
-            document.getElementById('inp-custom-logo').value = data.customLogo || '';
-            document.getElementById('inp-title').value = data.title || '';
-            document.getElementById('inp-date').value = data.date || '';
-            document.getElementById('inp-pax').value = data.pax || '';
-            document.getElementById('inp-per-pax-price').value = data.perPaxPrice || '';
-            document.getElementById('inp-issue').value = data.issue || '';
-            document.getElementById('inp-inc').value = data.inc || '';
-            document.getElementById('inp-exc').value = data.exc || '';
-            if(data.days) days = JSON.parse(JSON.stringify(data.days));
-            if(data.costs) costs = JSON.parse(JSON.stringify(data.costs));
-            
-            handleAgencyChange();
-            renderItinerary();
-            renderCostInputs();
-            renderHeaderAndCosts();
-        }
+                                                    <div className="flex justify-between items-center mb-2 gap-2">
+                                                        {isInternationalRooming ? <p className="font-bold text-red-600 no-print" style={{ fontSize: `${Math.max(9, docFontSize - 1)}pt` }}><i className="fas fa-exclamation-circle mr-1"></i> 자동 변환된 영문명은 여권과 상이할 수 있습니다. 꼭 재확인 바랍니다.</p> : <div></div>}
+                                                    </div>
 
-        function updatePresetDropdown() {
-            const select = document.getElementById('preset-select');
-            const presets = JSON.parse(localStorage.getItem('tourmaker_jeju_presets') || '{}');
-            select.innerHTML = '<option value="">저장된 템플릿 선택...</option>';
-            Object.keys(presets).sort().forEach(key => {
-                const opt = document.createElement('option');
-                opt.value = key; opt.textContent = key;
-                select.appendChild(opt);
-            });
-        }
+                                                    <div className="table-wrapper flex-1 w-full relative box-border overflow-hidden">
+                                                        <div className="w-full border-t-[2px] border-slate-800 border-b-[3px] border-slate-800 print:border-b-2 flex flex-col bg-white box-border">
+                                                            
+                                                            {/* 표 헤더 */}
+                                                            <div className="flex flex-col md:flex-row print:flex-row items-stretch w-full border-b-[2px] border-slate-800 text-slate-800 font-bold bg-slate-50 box-border" style={{ fontSize: `${Math.max(8, docFontSize - 1)}pt` }}>
+                                                                <div className="room-grid text-center items-stretch w-full md:w-1/2 print:w-1/2 md:border-r-[2px] print:border-r-[2px] border-slate-800 box-border">
+                                                                    <div className="no-print flex items-center justify-center py-2 border-r border-slate-200"><i className="fas fa-sort text-slate-300"></i></div>
+                                                                    <div className="flex items-center justify-center py-2 border-r border-slate-200">NO</div>
+                                                                    <div className="flex items-center justify-center py-2 border-r border-slate-200">TYPE</div>
+                                                                    <div className="flex items-center justify-start pl-2 py-2 border-r border-slate-200">GUEST INFO</div>
+                                                                    <div className="flex items-center justify-center py-2">ROOM NO</div>
+                                                                </div>
+                                                                <div className="room-grid text-center items-stretch w-full md:w-1/2 print:w-1/2 hidden md:grid print:grid box-border">
+                                                                    <div className="no-print flex items-center justify-center py-2 border-r border-slate-200"><i className="fas fa-sort text-slate-300"></i></div>
+                                                                    <div className="flex items-center justify-center py-2 border-r border-slate-200">NO</div>
+                                                                    <div className="flex items-center justify-center py-2 border-r border-slate-200">TYPE</div>
+                                                                    <div className="flex items-center justify-start pl-2 py-2 border-r border-slate-200">GUEST INFO</div>
+                                                                    <div className="flex items-center justify-center py-2">ROOM NO</div>
+                                                                </div>
+                                                            </div>
 
-        function savePreset() {
-            const currentTitle = document.getElementById('inp-title').value || '새 견적';
-            const name = prompt("저장할 템플릿 이름을 입력하세요.", currentTitle + " 산출내역");
-            if(!name) return; 
-            let presets = JSON.parse(localStorage.getItem('tourmaker_jeju_presets') || '{}');
-            presets[name] = getFormData();
-            localStorage.setItem('tourmaker_jeju_presets', JSON.stringify(presets));
-            updatePresetDropdown(); 
-            document.getElementById('preset-select').value = name;
-            alert(`[${name}] 견적이 로컬에 저장되었습니다.`);
-        }
+                                                            {/* 표 몸통 (Row 단위) */}
+                                                            <div className="flex flex-col w-full box-border">
+                                                                {Array.from({ length: leftTableRooms.length }).map((_, i) => {
+                                                                    const leftRoom = leftTableRooms[i];
+                                                                    const rightRoom = rightTableRooms[i];
+                                                                    const leftGlobalIdx = rooms.findIndex(r => r.id === leftRoom.id);
+                                                                    const rightGlobalIdx = rightRoom ? rooms.findIndex(r => r.id === rightRoom.id) : -1;
 
-        function loadPreset() {
-            const name = document.getElementById('preset-select').value;
-            if(!name) return alert('불러올 템플릿을 선택해주세요.');
-            const presets = JSON.parse(localStorage.getItem('tourmaker_jeju_presets') || '{}');
-            if(presets[name]) { setFormData(presets[name]); }
-        }
+                                                                    return (
+                                                                        <div key={i} className="flex flex-col md:flex-row print:flex-row w-full items-stretch bg-white box-border">
+                                                                            <div className="w-full md:w-1/2 print:w-1/2 md:border-r-[2px] print:border-r-[2px] border-slate-800 flex box-border">
+                                                                                <RoomRow room={leftRoom} actualIdx={pageStartIndex + i + 1} globalIdx={leftGlobalIdx} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} dragRoomStart={dragRoomStart} dragRoomEnter={dragRoomEnter} dragRoomEnd={dragRoomEnd} dropRoom={dropRoom} fontSize={docFontSize} isInternationalRooming={isInternationalRooming} />
+                                                                            </div>
+                                                                            <div className="w-full md:w-1/2 print:w-1/2 flex border-b md:border-b-0 print:border-b-0 border-slate-300 box-border">
+                                                                                {rightRoom ? (
+                                                                                    <RoomRow room={rightRoom} actualIdx={pageStartIndex + leftTableRooms.length + i + 1} globalIdx={rightGlobalIdx} updateRoom={updateRoom} updateGuest={updateGuest} changeRoomType={changeRoomType} removeRoom={removeRoom} dragRoomStart={dragRoomStart} dragRoomEnter={dragRoomEnter} dragRoomEnd={dragRoomEnd} dropRoom={dropRoom} fontSize={docFontSize} isInternationalRooming={isInternationalRooming} />
+                                                                                ) : (
+                                                                                    <div className="w-full h-full bg-white border-b border-slate-300 last:border-b-0 print:border-b box-border"></div>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-        function deletePreset() {
-            const name = document.getElementById('preset-select').value;
-            if(!name) return;
-            if(confirm(`[${name}] 템플릿을 영구 삭제하시겠습니까?`)) {
-                let presets = JSON.parse(localStorage.getItem('tourmaker_jeju_presets') || '{}');
-                delete presets[name]; 
-                localStorage.setItem('tourmaker_jeju_presets', JSON.stringify(presets));
-                updatePresetDropdown(); 
-                alert('삭제되었습니다.');
-            }
-        }
+                                                <div className="print-footer w-full mt-auto pt-8">
+                                                    <div className="flex justify-between items-end border-t-[2px] border-slate-800 pt-4 pb-2 w-full">
+                                                        <div className="font-bold text-slate-500" style={{ fontSize: `${Math.max(8, docFontSize - 2)}pt` }}>
+                                                            제출일: {new Date().toLocaleDateString()}
+                                                        </div>
+                                                        <div className="flex flex-col items-end justify-center gap-1 pr-1">
+                                                            {/* 하단 로고 이미지 생략, 텍스트 정보만 우측에 노출 */}
+                                                            <p className="text-[#6c757d] leading-relaxed m-0 font-bold text-right tracking-tight" style={{ fontSize: `${Math.max(7, docFontSize - 3)}pt` }}>
+                                                                [System Powered by TOURMAKER]<br/>본 스마트 가이드북은 해당 단체의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
 
-        function exportData() {
-            const data = localStorage.getItem('tourmaker_jeju_presets');
-            if (!data || data === '{}') return alert('백업할 데이터가 없습니다. 먼저 템플릿을 저장해주세요.');
-            const blob = new Blob([data], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url;
-            a.download = `tourmaker_jeju_presets_${new Date().toISOString().slice(0,10)}.json`;
-            a.click(); URL.revokeObjectURL(url);
-        }
+                                <div className="no-print mt-6 md:mt-8 flex justify-center">
+                                    <button onClick={addRoom} className="bg-white border-2 border-dashed border-blue-300 text-blue-600 px-6 md:px-10 py-3 md:py-4 rounded-xl font-bold text-xs md:text-sm hover:bg-blue-50 hover:border-blue-500 transition-all shadow-sm"><i className="fas fa-bed text-lg mr-2"></i> 빈 객실 추가하기</button>
+                                </div>
+                            </div>
+                        </div>
 
-        function importData(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const json = JSON.parse(e.target.result);
-                    const currentData = JSON.parse(localStorage.getItem('tourmaker_jeju_presets') || '{}');
-                    localStorage.setItem('tourmaker_jeju_presets', JSON.stringify({ ...currentData, ...json }));
-                    updatePresetDropdown(); 
-                    alert('성공적으로 불러왔습니다.');
-                } catch(err) { alert('불러올 수 없는 파일 형식입니다.'); }
-            };
-            reader.readAsText(file); e.target.value = '';
-        }
+                        {modal.isOpen && (
+                            <div className="no-print fixed inset-0 bg-slate-900 bg-opacity-50 flex items-center justify-center z-[99999] px-4 backdrop-blur-sm transition-opacity">
+                                <div className="bg-white rounded-xl shadow-2xl max-w-sm md:max-w-md w-full p-6 text-center transform transition-all scale-100">
+                                    <p className="text-slate-800 font-bold mb-6 text-[14px] md:text-[15px] leading-relaxed whitespace-pre-wrap text-left pl-2">{modal.message}</p>
+                                    {modal.type === 'prompt' && <input type="text" className="w-full border-2 border-blue-200 focus:border-blue-500 rounded-lg px-4 py-2.5 mb-6 outline-none text-slate-700 font-bold text-center" value={modal.inputValue} readOnly />}
+                                    <div className="flex justify-center gap-3">
+                                        {(modal.type === 'prompt' || modal.type === 'confirm') && <button onClick={modal.onCancel} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg font-bold hover:bg-slate-200">취소(닫기)</button>}
+                                        <button onClick={modal.onConfirm} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 shadow-sm">
+                                            {modal.type === 'confirm' ? "그래도 인쇄하기" : "확인"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
-        function clearForm() {
-            if(!confirm('모든 입력 데이터를 초기화하시겠습니까?')) return;
-            document.getElementById('inp-agency').value = 'tourmaker';
-            document.getElementById('inp-custom-name').value = '';
-            document.getElementById('inp-custom-contact').value = '';
-            document.getElementById('inp-custom-logo').value = '';
-            document.getElementById('inp-title').value = '';
-            document.getElementById('inp-date').value = '';
-            document.getElementById('inp-pax').value = '';
-            document.getElementById('inp-per-pax-price').value = ''; 
-            document.getElementById('inp-issue').value = '';
-            document.getElementById('inp-inc').value = '';
-            document.getElementById('inp-exc').value = '';
-            
-            days = [{ date: "", hotel: "", desc: "", meal: "" }];
-            costs = { flight: [], local: [], domestic: [] };
-            
-            handleAgencyChange();
-            renderItinerary();
-            renderCostInputs();
-            renderHeaderAndCosts();
-        }
+                    </main>
+                </div>
+            );
+        };
 
-        // --- 8. 초기화 (렌더링) ---
-        function initApp() {
-            if (!isBlankMode) {
-                document.getElementById('inp-title').value = '황지정보산업고등학교 제주도 테마여행';
-                document.getElementById('inp-date').value = '2026.09.08 ~ 09.11 (3박 4일)';
-                document.getElementById('inp-pax').value = '45명기준(학생 40+ 교사5)';
-                document.getElementById('inp-per-pax-price').value = '650,000';
-                document.getElementById('inp-issue').value = '2026.03.20 / 국내행사 (환율 미적용)';
-            }
-            
-            handleAgencyChange();
-            updatePresetDropdown();
-            renderItinerary();
-            renderCostInputs();
-            renderHeaderAndCosts();
-        }
-
-        initApp();
-
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
