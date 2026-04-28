@@ -6,7 +6,7 @@
     
     <!-- 카카오톡 공유 썸네일 및 메타 태그 -->
     <meta property="og:title" content="투어메이커 스마트 명단/루밍 설문 시스템">
-    <meta property="og:description" content="담당자님, 링크를 통해 여행자 명단 및 방배정(루밍리스트)을 작성 후 제출해주세요.">
+    <meta property="og:description" content="담당자님, 링크를 통해 방배정(루밍리스트) 작성을 부탁드립니다.">
     <meta property="og:image" content="https://blogger.googleusercontent.com/img/a/AVvXsEjQVWjqNlaxb98AP-qG4LHAIN9gK9sn4cGowBArA_-DUz0rxQycXrr3vFhvUqMM9Pa5tP2cDBxqBzW_re-HqzVLVAngEO8FAORbaQ36ANr0BULZ_q2PBFdDbEUJhQqr7LCGGuXO1snQ-bYx5SdFP1GZllmKNTxYv66H8E7zYyvQLsq3jour2LNjQ4PyAbo">
     <meta property="og:type" content="website">
     
@@ -915,9 +915,9 @@
                     return;
                 }
 
-                showPrompt("마지막 단계입니다!\n담당자 확인을 위해 '제출자 성함(또는 직책)'을 입력해주세요.\n(예: 1반 담임 김철수)", "", async (submitterName) => {
+                showPrompt("마지막 단계입니다!\n담당자 확인을 위해 '단체명' 또는 '고객명'을 입력해 주세요.\n(예: 고한중학교, 김철수 등)", "", async (submitterName) => {
                     if(!submitterName || submitterName.trim() === "") {
-                        showAlert("⚠️ 제출자 성함을 입력해야 제출이 가능합니다.");
+                        showAlert("⚠️ 단체명 또는 고객명을 입력해야 제출이 가능합니다.");
                         return;
                     }
 
@@ -1405,7 +1405,7 @@
                             <div className="no-print fixed inset-0 bg-slate-900 bg-opacity-50 flex items-center justify-center z-[99999] px-4 backdrop-blur-sm transition-opacity">
                                 <div className="bg-white rounded-xl shadow-2xl max-w-sm md:max-w-md w-full p-6 text-center transform transition-all scale-100">
                                     <p className="text-slate-800 font-bold mb-6 text-[14px] md:text-[15px] leading-relaxed whitespace-pre-wrap text-left pl-2">{modal.message}</p>
-                                    {modal.type === 'prompt' && <input type="text" className="w-full border-2 border-blue-200 focus:border-blue-500 rounded-lg px-4 py-2.5 mb-6 outline-none text-slate-700 font-bold text-center" value={modal.inputValue} onChange={(e) => modal.onChange && modal.onChange(e.target.value)} placeholder="직책 및 성함 입력" />}
+                                    {modal.type === 'prompt' && <input type="text" className="w-full border-2 border-blue-200 focus:border-blue-500 rounded-lg px-4 py-2.5 mb-6 outline-none text-slate-700 font-bold text-center" value={modal.inputValue} onChange={(e) => modal.onChange && modal.onChange(e.target.value)} placeholder="단체명 또는 고객명 입력" />}
                                     <div className="flex justify-center gap-3">
                                         {(modal.type === 'prompt' || modal.type === 'confirm') && <button onClick={modal.onCancel} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg font-bold hover:bg-slate-200">취소(닫기)</button>}
                                         <button onClick={modal.onConfirm} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 shadow-sm">
