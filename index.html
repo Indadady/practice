@@ -50,7 +50,7 @@
                 box-sizing: border-box !important; /* 박스 사이징 강제 */
             }
             
-            @page { size: A4 portrait; margin: 10mm 10mm; }
+            @page { size: A4 portrait; margin: 8mm 8mm; } /* 여백을 10mm에서 8mm로 줄여 상하좌우 공간 확장 */
 
             .print-page { 
                 box-shadow: none !important; padding: 0 !important; border: none !important; margin: 0 !important; 
@@ -137,7 +137,8 @@
         // 지정된 공식 투어메이커 헤더 로고 URL
         const TM_LOGO = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png";
         
-        // 하단 로고(TM_FOOTER_LOGO)는 인쇄 표준 원칙에 따라 "로고 이미지 생략, 텍스트만 표시" 규칙 적용으로 제외됨
+        // 요청된 하단 로고(TM_FOOTER_LOGO) 적용
+        const TM_FOOTER_LOGO = "https://blogger.googleusercontent.com/img/a/AVvXsEitI-Z-hD82keOJ1AqHw-VTZjpw2U-O5UjtV9h3zblyG0wjsVfBWe9X9o0Q_Spctrt7krkd9qXO0xKTmGJLw4gyMZrRqpshKMFttnyx6OcC8-IGz3XLUZpGQOnRqVdol8jz5HuoDLqsEifnVRhcjUJHm13Sz8JrX9aPswMNUwZPvGtJEnQjhc2PiXlo-B8";
 
         // 영문 자동 변환 로직
         const getRomanization = (char) => {
@@ -1068,15 +1069,16 @@
                                             <table className="w-full border-collapse min-w-full print:min-w-0 border-b-[3px] print:border-b-2 border-slate-800" style={{ fontSize: `${docFontSize}pt`, tableLayout: 'fixed' }}>
                                                 <colgroup>
                                                     <col className="no-print w-[3%]" />
-                                                    <col className="w-[4%] print:w-[5%]" />
-                                                    <col className="w-[10%] print:w-[12%]" />
-                                                    <col className="w-[22%] print:w-[23%]" />
+                                                    <col className="w-[4%] print:w-[4%]" />
+                                                    <col className="w-[10%] print:w-[10%]" />
+                                                    <col className="w-[22%] print:w-[21%]" />
                                                     <col className="w-[12%] print:w-[14%]" />
-                                                    <col className="w-[5%] print:w-[6%]" />
-                                                    <col className="w-[14%] print:w-[16%]" />
+                                                    <col className="w-[5%] print:w-[5%]" />
+                                                    <col className="w-[14%] print:w-[15%]" />
                                                     <col className="w-[12%] print:w-[13%]" />
                                                     <col className="w-[7%] print:w-[8%]" />
-                                                    <col className="w-[11%] print:w-[3%]" />
+                                                    {/* 기타 열 넓이를 3% -> 10%로 대폭 확장하여 줄바꿈 해결 (전체비율 100% 교정) */}
+                                                    <col className="w-[11%] print:w-[10%]" />
                                                     <col className="no-print w-[4%]" />
                                                 </colgroup>
                                                 <thead className="print:table-header-group">
@@ -1131,10 +1133,11 @@
                                             <div className="font-bold text-slate-500" style={{ fontSize: `${Math.max(8, docFontSize - 2)}pt` }}>
                                                 제출일: {new Date().toLocaleDateString()}
                                             </div>
-                                            <div className="flex flex-col items-end justify-center gap-1 pr-1">
-                                                {/* 투어메이커 인쇄 규정에 따라 하단 로고 이미지는 과감히 제거하여 잘림 문제를 완벽히 해결합니다. 텍스트로 대체. */}
+                                            <div className="flex flex-col items-end justify-center gap-1.5 pr-1">
+                                                {/* 로고 추가 및 단체명 변수 연동 */}
+                                                <img src={TM_FOOTER_LOGO} alt="Tourmaker" className="h-6 md:h-8 object-contain" />
                                                 <p className="text-[#6c757d] leading-relaxed m-0 font-bold text-right tracking-tight" style={{ fontSize: `${Math.max(7, docFontSize - 3)}pt` }}>
-                                                    [System Powered by TOURMAKER]<br/>본 스마트 가이드북은 해당 단체의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
+                                                    본 시스템은 <span className="text-slate-800 font-black">{commonHeader.groupName || '해당 단체'}</span>의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
                                                 </p>
                                             </div>
                                         </div>
@@ -1314,10 +1317,11 @@
                                                         <div className="font-bold text-slate-500" style={{ fontSize: `${Math.max(8, docFontSize - 2)}pt` }}>
                                                             제출일: {new Date().toLocaleDateString()}
                                                         </div>
-                                                        <div className="flex flex-col items-end justify-center gap-1 pr-1">
-                                                            {/* 하단 로고 이미지 생략, 텍스트 정보만 우측에 노출 */}
+                                                        <div className="flex flex-col items-end justify-center gap-1.5 pr-1">
+                                                            {/* 방배정 리스트 푸터에도 로고 추가 및 단체명 변수 연동 */}
+                                                            <img src={TM_FOOTER_LOGO} alt="Tourmaker" className="h-6 md:h-8 object-contain" />
                                                             <p className="text-[#6c757d] leading-relaxed m-0 font-bold text-right tracking-tight" style={{ fontSize: `${Math.max(7, docFontSize - 3)}pt` }}>
-                                                                [System Powered by TOURMAKER]<br/>본 스마트 가이드북은 해당 단체의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
+                                                                본 시스템은 <span className="text-slate-800 font-black">{commonHeader.groupName || '해당 단체'}</span>의 기획과 투어메이커의 트래블 테크 기술 제휴로 제작되었습니다.
                                                             </p>
                                                         </div>
                                                     </div>
